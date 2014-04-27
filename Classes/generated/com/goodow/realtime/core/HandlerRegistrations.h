@@ -12,6 +12,7 @@
 
 #import "JreEmulation.h"
 #include "com/goodow/realtime/core/HandlerRegistration.h"
+#include "com/goodow/realtime/json/JsonArray.h"
 
 @interface ComGoodowRealtimeCoreHandlerRegistrations : NSObject < ComGoodowRealtimeCoreHandlerRegistration > {
  @public
@@ -20,10 +21,33 @@
 
 - (void)addWithComGoodowRealtimeCoreHandlerRegistration:(id<ComGoodowRealtimeCoreHandlerRegistration>)registration;
 - (void)unregisterHandler;
+- (id<ComGoodowRealtimeCoreHandlerRegistration>)wrapWithComGoodowRealtimeCoreHandlerRegistration:(id<ComGoodowRealtimeCoreHandlerRegistration>)registration;
 - (id)init;
 - (void)copyAllFieldsTo:(ComGoodowRealtimeCoreHandlerRegistrations *)other;
 @end
 
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeCoreHandlerRegistrations, registrations_, id<GDJsonArray>)
+
+@interface ComGoodowRealtimeCoreHandlerRegistrations_$1 : NSObject < GDJsonArray_Iterator > {
+}
+
+- (void)callWithInt:(int)index
+             withId:(id<ComGoodowRealtimeCoreHandlerRegistration>)value;
+- (id)init;
+@end
+
+@interface ComGoodowRealtimeCoreHandlerRegistrations_$2 : NSObject < ComGoodowRealtimeCoreHandlerRegistration > {
+ @public
+  ComGoodowRealtimeCoreHandlerRegistrations *this$0_;
+  id<ComGoodowRealtimeCoreHandlerRegistration> val$registration_;
+}
+
+- (void)unregisterHandler;
+- (id)initWithComGoodowRealtimeCoreHandlerRegistrations:(ComGoodowRealtimeCoreHandlerRegistrations *)outer$
+           withComGoodowRealtimeCoreHandlerRegistration:(id<ComGoodowRealtimeCoreHandlerRegistration>)capture$0;
+@end
+
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeCoreHandlerRegistrations_$2, this$0_, ComGoodowRealtimeCoreHandlerRegistrations *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeCoreHandlerRegistrations_$2, val$registration_, id<ComGoodowRealtimeCoreHandlerRegistration>)
 
 #endif // _ComGoodowRealtimeCoreHandlerRegistrations_H_
