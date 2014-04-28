@@ -39,7 +39,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
   NSString *key = [NSString stringWithFormat:@"%d", id_];
   if ([((id<GDJsonObject>) nil_chk(timers_)) has:key]) {
     [ComGoodowRealtimeObjcObjCScheduler nativeCancelTimerWithId:[timers_ getWithNSString:key]];
-    (void) [timers_ remove:key];
+    (void) [timers_ removeWithNSString:key];
     return YES;
   }
   return NO;
@@ -100,8 +100,8 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
     { "init", NULL, NULL, 0x0, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
-    { "timerId_", NULL, 0x12, "Ljava.util.concurrent.atomic.AtomicInteger;" },
-    { "timers_", NULL, 0x12, "Lcom.goodow.realtime.json.JsonObject;" },
+    { "timerId_", NULL, 0x12, "Ljava.util.concurrent.atomic.AtomicInteger;", NULL,  },
+    { "timers_", NULL, 0x12, "Lcom.goodow.realtime.json.JsonObject;", NULL,  },
   };
   static J2ObjcClassInfo _ComGoodowRealtimeObjcObjCScheduler = { "ObjCScheduler", "com.goodow.realtime.objc", NULL, 0x0, 9, methods, 2, fields, 0, NULL};
   return &_ComGoodowRealtimeObjcObjCScheduler;

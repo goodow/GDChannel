@@ -4,28 +4,28 @@ PODS:
     - SocketRocket (~> 0.3.1-beta2)
   - GDJson (0.5.5):
     - J2ObjC (~> 0.8)
-  - J2ObjC (0.9.1):
+  - J2ObjC (0.9.2):
     - J2ObjC/lib/jre
-  - J2ObjC/lib/jre (0.9.1)
+  - J2ObjC/lib/jre (0.9.2)
   - SocketRocket (0.3.1-beta2)
 
 DEPENDENCIES:
   - GDChannel (from `..`)
-  - GDJson (from `https://github.com/goodow/realtime-json.git`)
+  - GDJson (from `https://github.com/goodow/GDJson.git`)
   - J2ObjC (from `https://github.com/goodow/j2objc.git`)
 
 EXTERNAL SOURCES:
   GDChannel:
     :path: ..
   GDJson:
-    :git: https://github.com/goodow/realtime-json.git
+    :git: https://github.com/goodow/GDJson.git
   J2ObjC:
     :git: https://github.com/goodow/j2objc.git
 
 SPEC CHECKSUMS:
-  GDChannel: d891ab12512381cbc274a40d515e1889a26c80f8
-  GDJson: 30bdbae9abedc68fcb589b7d6dae0fd0804aa982
-  J2ObjC: 58e9886633bbb401041c473d8e118380f7076ed6
+  GDChannel: d6b489364ce308c361d7f60bbfc72f1ea23e63b7
+  GDJson: 425eaa6e2f2df52486ea4e5dcaef8d54061f7eb8
+  J2ObjC: 1a0ecde2fe9f624d076ef2aea16723ef2094e7fc
   SocketRocket: 7ac946bcce46287a791dfff3c1f8daa692821dae
 
 COCOAPODS: 0.32.1

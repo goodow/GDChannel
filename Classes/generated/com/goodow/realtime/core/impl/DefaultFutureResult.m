@@ -106,11 +106,11 @@
     { "checkCallHandler", NULL, "V", 0x2, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
-    { "failed__", "failed", 0x2, "Z" },
-    { "succeeded__", "succeeded", 0x2, "Z" },
-    { "handler_", NULL, 0x2, "Lcom.goodow.realtime.core.Handler;" },
-    { "result__", "result", 0x2, "TT;" },
-    { "throwable_", NULL, 0x2, "Ljava.lang.Throwable;" },
+    { "failed__", "failed", 0x2, "Z", NULL,  },
+    { "succeeded__", "succeeded", 0x2, "Z", NULL,  },
+    { "handler_", NULL, 0x2, "Lcom.goodow.realtime.core.Handler;", NULL,  },
+    { "result__", "result", 0x2, "TT;", NULL,  },
+    { "throwable_", NULL, 0x2, "Ljava.lang.Throwable;", NULL,  },
   };
   static J2ObjcClassInfo _ComGoodowRealtimeCoreImplDefaultFutureResult = { "DefaultFutureResult", "com.goodow.realtime.core.impl", NULL, 0x1, 12, methods, 5, fields, 0, NULL};
   return &_ComGoodowRealtimeCoreImplDefaultFutureResult;

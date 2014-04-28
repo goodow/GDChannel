@@ -13,9 +13,15 @@
 #import "JreEmulation.h"
 
 @protocol ComGoodowRealtimeCoreAsyncResult < NSObject, JavaObject >
+
 - (JavaLangThrowable *)cause;
+
 - (BOOL)failed;
+
 - (id)result;
+
 @end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeCoreAsyncResult_init() {}
 
 #endif // _ComGoodowRealtimeCoreAsyncResult_H_

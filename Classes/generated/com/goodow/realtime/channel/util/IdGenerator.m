@@ -5,23 +5,17 @@
 //  Created by retechretech.
 //
 
-#include "IOSCharArray.h"
+#include "IOSPrimitiveArray.h"
 #include "com/goodow/realtime/channel/util/IdGenerator.h"
 #include "java/lang/StringBuilder.h"
 #include "java/util/Random.h"
 
+BOOL ComGoodowRealtimeChannelUtilIdGenerator_initialized = NO;
+
 @implementation ComGoodowRealtimeChannelUtilIdGenerator
 
-static IOSCharArray * ComGoodowRealtimeChannelUtilIdGenerator_ALPHABET_;
-static IOSCharArray * ComGoodowRealtimeChannelUtilIdGenerator_NUMBERS_;
-
-+ (IOSCharArray *)ALPHABET {
-  return ComGoodowRealtimeChannelUtilIdGenerator_ALPHABET_;
-}
-
-+ (IOSCharArray *)NUMBERS {
-  return ComGoodowRealtimeChannelUtilIdGenerator_NUMBERS_;
-}
+IOSCharArray * ComGoodowRealtimeChannelUtilIdGenerator_ALPHABET_;
+IOSCharArray * ComGoodowRealtimeChannelUtilIdGenerator_NUMBERS_;
 
 - (id)init {
   return [self initComGoodowRealtimeChannelUtilIdGeneratorWithJavaUtilRandom:[[JavaUtilRandom alloc] init]];
@@ -58,6 +52,7 @@ static IOSCharArray * ComGoodowRealtimeChannelUtilIdGenerator_NUMBERS_;
   if (self == [ComGoodowRealtimeChannelUtilIdGenerator class]) {
     ComGoodowRealtimeChannelUtilIdGenerator_ALPHABET_ = [@"abcdefghijklmnopqrstuvwxyz0123456789" toCharArray];
     ComGoodowRealtimeChannelUtilIdGenerator_NUMBERS_ = [@"0123456789" toCharArray];
+    ComGoodowRealtimeChannelUtilIdGenerator_initialized = YES;
   }
 }
 
@@ -74,9 +69,9 @@ static IOSCharArray * ComGoodowRealtimeChannelUtilIdGenerator_NUMBERS_;
     { "nextNumbersWithInt:", "nextNumbers", "Ljava.lang.String;", 0x1, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
-    { "ALPHABET_", NULL, 0x18, "[C" },
-    { "NUMBERS_", NULL, 0x18, "[C" },
-    { "random_", NULL, 0x12, "Ljava.util.Random;" },
+    { "ALPHABET_", NULL, 0x18, "[C", &ComGoodowRealtimeChannelUtilIdGenerator_ALPHABET_,  },
+    { "NUMBERS_", NULL, 0x18, "[C", &ComGoodowRealtimeChannelUtilIdGenerator_NUMBERS_,  },
+    { "random_", NULL, 0x12, "Ljava.util.Random;", NULL,  },
   };
   static J2ObjcClassInfo _ComGoodowRealtimeChannelUtilIdGenerator = { "IdGenerator", "com.goodow.realtime.channel.util", NULL, 0x1, 4, methods, 3, fields, 0, NULL};
   return &_ComGoodowRealtimeChannelUtilIdGenerator;

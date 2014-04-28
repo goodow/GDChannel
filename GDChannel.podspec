@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
   s.summary      = "Event bus client over WebSocket for Java/Android/iOS/Javascript/GWT/J2ObjC"
   s.homepage     = "https://github.com/goodow/realtime-channel"
   s.author       = { "Larry Tin" => "dev@goodow.com" }
-  s.source       = { :git => "https://github.com/goodow/realtime-channel.git", :tag => "v#{s.version}" }
+  s.source       = { :git => "https://github.com/goodow/GDChannel.git", :tag => "v#{s.version}" }
 
   s.requires_arc = true
   # Top level attributes can't be specified by subspecs.

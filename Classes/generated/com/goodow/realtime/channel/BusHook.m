@@ -9,7 +9,6 @@
 #include "com/goodow/realtime/channel/Message.h"
 #include "com/goodow/realtime/core/Handler.h"
 
-
 @interface GDCBusHook : NSObject
 @end
 
@@ -30,6 +29,7 @@
 }
 
 @end
+
 @implementation GDCBusHook_BusHookProxy
 
 - (void)handleOpened {

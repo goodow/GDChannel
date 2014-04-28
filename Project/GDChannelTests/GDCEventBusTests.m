@@ -29,18 +29,18 @@
 
 - (void)testExample
 {
-  id<GDCBus> bus = [[GDCReconnectBusClient alloc] initWithUrl:@"ws://data.goodow.com:8080/eventbus/websocket" options:@{@"forkLocal":@YES}];
+  id<GDCBus> bus = [[GDCReconnectBus alloc] initWithUrl:@"ws://goodow.com:8080/eventbus/websocket" options:@{@"forkLocal":@YES}];
   __block id<GDCHandlerRegistration> handlerRegistration;
   __block BOOL testComplete = NO;
   
-  [bus registerHandler:[GDCBus LOCAL_ON_OPEN] handler:^(id<GDCMessage> message) {
+  [bus registerHandler:GDCBus_get_LOCAL_ON_OPEN_() handler:^(id<GDCMessage> message) {
     [self handlerEventBusOpened:bus];
   }];
-  [bus registerHandler:[GDCBus LOCAL_ON_CLOSE] handler:^(id<GDCMessage> message) {
+  [bus registerHandler:GDCBus_get_LOCAL_ON_CLOSE_() handler:^(id<GDCMessage> message) {
     NSLog(@"%@", @"EventBus closed");
     testComplete = YES;
   }];
-  [bus registerHandler:[GDCBus LOCAL_ON_ERROR] handler:^(id<GDCMessage> message) {
+  [bus registerHandler:GDCBus_get_LOCAL_ON_ERROR_() handler:^(id<GDCMessage> message) {
     NSLog(@"%@", @"EventBus Error");
   }];
   

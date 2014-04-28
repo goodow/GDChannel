@@ -22,22 +22,34 @@
 }
 
 + (void)nativeCancelTimerWithId:(id)timer;
+
 + (void)nativeHandleWithId:(id)handler
                     withId:(id)event;
+
 + (id)nativeScheduleTimerWithInt:(int)delayMs
                      withBoolean:(BOOL)repeat
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+
 - (BOOL)cancelTimerWithInt:(int)id_;
+
 - (void)handleWithId:(id)handler
               withId:(id)event;
+
 - (void)scheduleDeferredWithComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+
 - (int)scheduleDelayWithInt:(int)delayMs
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+
 - (int)schedulePeriodicWithInt:(int)delayMs
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+
 - (id)init;
+
 - (void)copyAllFieldsTo:(ComGoodowRealtimeObjcObjCScheduler *)other;
+
 @end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeObjcObjCScheduler_init() {}
 
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeObjcObjCScheduler, timerId_, JavaUtilConcurrentAtomicAtomicInteger *)
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeObjcObjCScheduler, timers_, id<GDJsonObject>)

@@ -83,11 +83,11 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
     { "sendReplyWithId:withComGoodowRealtimeCoreHandler:", "sendReply", "V", 0x2, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
-    { "body__", "body", 0x4, "TU;" },
-    { "bus_", NULL, 0x4, "Lcom.goodow.realtime.channel.Bus;" },
-    { "address__", "address", 0x4, "Ljava.lang.String;" },
-    { "replyAddress__", "replyAddress", 0x4, "Ljava.lang.String;" },
-    { "send_", NULL, 0x4, "Z" },
+    { "body__", "body", 0x4, "TU;", NULL,  },
+    { "bus_", NULL, 0x4, "Lcom.goodow.realtime.channel.Bus;", NULL,  },
+    { "address__", "address", 0x4, "Ljava.lang.String;", NULL,  },
+    { "replyAddress__", "replyAddress", 0x4, "Ljava.lang.String;", NULL,  },
+    { "send_", NULL, 0x4, "Z", NULL,  },
   };
   static J2ObjcClassInfo _GDCDefaultMessage = { "DefaultMessage", "com.goodow.realtime.channel.impl", NULL, 0x0, 9, methods, 5, fields, 0, NULL};
   return &_GDCDefaultMessage;

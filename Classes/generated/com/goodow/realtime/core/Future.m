@@ -9,7 +9,6 @@
 #include "com/goodow/realtime/core/Handler.h"
 #include "java/lang/Throwable.h"
 
-
 @interface ComGoodowRealtimeCoreFuture : NSObject
 @end
 

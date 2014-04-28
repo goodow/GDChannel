@@ -24,19 +24,34 @@
 }
 
 - (id)init;
+
 - (id)initWithId:(id)result;
+
 - (id)initWithJavaLangThrowable:(JavaLangThrowable *)t;
+
 - (JavaLangThrowable *)cause;
+
 - (BOOL)complete;
+
 - (BOOL)failed;
+
 - (id)result;
+
 - (ComGoodowRealtimeCoreImplDefaultFutureResult *)setFailureWithJavaLangThrowable:(JavaLangThrowable *)throwable;
+
 - (ComGoodowRealtimeCoreImplDefaultFutureResult *)setHandlerWithComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+
 - (ComGoodowRealtimeCoreImplDefaultFutureResult *)setResultWithId:(id)result;
+
 - (BOOL)succeeded;
+
 - (void)checkCallHandler;
+
 - (void)copyAllFieldsTo:(ComGoodowRealtimeCoreImplDefaultFutureResult *)other;
+
 @end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeCoreImplDefaultFutureResult_init() {}
 
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeCoreImplDefaultFutureResult, handler_, id<ComGoodowRealtimeCoreHandler>)
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeCoreImplDefaultFutureResult, result__, id)

@@ -64,17 +64,18 @@
     { "reset", NULL, "V", 0x1, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
-    { "randomizationFactor_", NULL, 0x12, "D" },
-    { "initialBackOff_", NULL, 0x12, "I" },
-    { "maxBackOff_", NULL, 0x12, "I" },
-    { "nextBackOffTime_", NULL, 0x2, "I" },
-    { "backOffTime_", NULL, 0x2, "I" },
+    { "randomizationFactor_", NULL, 0x12, "D", NULL,  },
+    { "initialBackOff_", NULL, 0x12, "I", NULL,  },
+    { "maxBackOff_", NULL, 0x12, "I", NULL,  },
+    { "nextBackOffTime_", NULL, 0x2, "I", NULL,  },
+    { "backOffTime_", NULL, 0x2, "I", NULL,  },
   };
   static J2ObjcClassInfo _ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator = { "FuzzingBackOffGenerator", "com.goodow.realtime.channel.util", NULL, 0x1, 3, methods, 5, fields, 0, NULL};
   return &_ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator;
 }
 
 @end
+
 @implementation ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator_BackOffParameters
 
 - (id)initWithInt:(int)targetDelay
@@ -97,8 +98,8 @@
     { "initWithInt:withInt:", "BackOffParameters", NULL, 0x2, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
-    { "targetDelay_", NULL, 0x11, "I" },
-    { "minimumDelay_", NULL, 0x11, "I" },
+    { "targetDelay_", NULL, 0x11, "I", NULL,  },
+    { "minimumDelay_", NULL, 0x11, "I", NULL,  },
   };
   static J2ObjcClassInfo _ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator_BackOffParameters = { "BackOffParameters", "com.goodow.realtime.channel.util", "FuzzingBackOffGenerator", 0x9, 1, methods, 2, fields, 0, NULL};
   return &_ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator_BackOffParameters;

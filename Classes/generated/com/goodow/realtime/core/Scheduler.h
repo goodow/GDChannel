@@ -13,14 +13,22 @@
 #import "JreEmulation.h"
 
 @protocol ComGoodowRealtimeCoreScheduler < NSObject, JavaObject >
+
 - (BOOL)cancelTimerWithInt:(int)id_;
+
 - (void)handleWithId:(id)handler
               withId:(id)event;
+
 - (void)scheduleDeferredWithComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+
 - (int)scheduleDelayWithInt:(int)delayMs
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+
 - (int)schedulePeriodicWithInt:(int)delayMs
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+
 @end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeCoreScheduler_init() {}
 
 #endif // _ComGoodowRealtimeCoreScheduler_H_

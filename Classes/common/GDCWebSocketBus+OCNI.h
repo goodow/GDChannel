@@ -13,15 +13,15 @@
 // limitations under the License.
 
 //
-//  GDCWebSocketBusClient+OCNI.h
+//  GDCWebSocketBus+OCNI.h
 //  GDChannel
 //
 //  Created by Larry Tin.
 //
 
-#import "com/goodow/realtime/channel/impl/WebSocketBusClient.h"
+#import "com/goodow/realtime/channel/impl/WebSocketBus.h"
 
-@interface GDCWebSocketBusClient (OCNI)
+@interface GDCWebSocketBus (OCNI)
 
 - (id)initWithUrl:(NSString *)url options:(NSDictionary *)options;
 

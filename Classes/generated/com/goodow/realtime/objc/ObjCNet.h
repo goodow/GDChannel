@@ -19,7 +19,11 @@
 
 - (id<ComGoodowRealtimeCoreWebSocket>)createWebSocketWithNSString:(NSString *)url
                                                  withGDJsonObject:(id<GDJsonObject>)options;
+
 - (id)init;
+
 @end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeObjcObjCNet_init() {}
 
 #endif // _ComGoodowRealtimeObjcObjCNet_H_

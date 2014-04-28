@@ -18,15 +18,27 @@
   JavaUtilRandom *random_;
 }
 
-+ (IOSCharArray *)ALPHABET;
-+ (IOSCharArray *)NUMBERS;
 - (id)init;
+
 - (id)initWithJavaUtilRandom:(JavaUtilRandom *)random;
+
 - (NSString *)nextWithInt:(int)length;
+
 - (NSString *)nextNumbersWithInt:(int)length;
+
 - (void)copyAllFieldsTo:(ComGoodowRealtimeChannelUtilIdGenerator *)other;
+
 @end
 
+FOUNDATION_EXPORT BOOL ComGoodowRealtimeChannelUtilIdGenerator_initialized;
+J2OBJC_STATIC_INIT(ComGoodowRealtimeChannelUtilIdGenerator)
+
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelUtilIdGenerator, random_, JavaUtilRandom *)
+
+FOUNDATION_EXPORT IOSCharArray *ComGoodowRealtimeChannelUtilIdGenerator_ALPHABET_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelUtilIdGenerator, ALPHABET_, IOSCharArray *)
+
+FOUNDATION_EXPORT IOSCharArray *ComGoodowRealtimeChannelUtilIdGenerator_NUMBERS_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelUtilIdGenerator, NUMBERS_, IOSCharArray *)
 
 #endif // _ComGoodowRealtimeChannelUtilIdGenerator_H_

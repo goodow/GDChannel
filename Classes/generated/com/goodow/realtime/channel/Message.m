@@ -8,7 +8,6 @@
 #include "com/goodow/realtime/channel/Message.h"
 #include "com/goodow/realtime/core/Handler.h"
 
-
 @interface GDCMessage : NSObject
 @end
 

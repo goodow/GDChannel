@@ -14,15 +14,7 @@
 
 @implementation ComGoodowRealtimeCorePlatform
 
-static id<ComGoodowRealtimeCorePlatformFactory> ComGoodowRealtimeCorePlatform_FACTORY_;
-
-+ (id<ComGoodowRealtimeCorePlatformFactory>)FACTORY {
-  return ComGoodowRealtimeCorePlatform_FACTORY_;
-}
-
-+ (void)setFACTORY:(id<ComGoodowRealtimeCorePlatformFactory>)FACTORY {
-  ComGoodowRealtimeCorePlatform_FACTORY_ = FACTORY;
-}
+id<ComGoodowRealtimeCorePlatformFactory> ComGoodowRealtimeCorePlatform_FACTORY_;
 
 + (id<ComGoodowRealtimeCoreNet>)net {
   return [((id<ComGoodowRealtimeCorePlatformFactory>) nil_chk([ComGoodowRealtimeCorePlatform get])) net];
@@ -59,7 +51,7 @@ static id<ComGoodowRealtimeCorePlatformFactory> ComGoodowRealtimeCorePlatform_FA
     { "init", "Platform", NULL, 0x4, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
-    { "FACTORY_", NULL, 0xa, "Lcom.goodow.realtime.core.PlatformFactory;" },
+    { "FACTORY_", NULL, 0xa, "Lcom.goodow.realtime.core.PlatformFactory;", &ComGoodowRealtimeCorePlatform_FACTORY_,  },
   };
   static J2ObjcClassInfo _ComGoodowRealtimeCorePlatform = { "Platform", "com.goodow.realtime.core", NULL, 0x1, 6, methods, 1, fields, 0, NULL};
   return &_ComGoodowRealtimeCorePlatform;
@@ -67,34 +59,11 @@ static id<ComGoodowRealtimeCorePlatformFactory> ComGoodowRealtimeCorePlatform_FA
 
 @end
 
-static ComGoodowRealtimeCorePlatform_TypeEnum *ComGoodowRealtimeCorePlatform_TypeEnum_JAVA;
-static ComGoodowRealtimeCorePlatform_TypeEnum *ComGoodowRealtimeCorePlatform_TypeEnum_HTML;
-static ComGoodowRealtimeCorePlatform_TypeEnum *ComGoodowRealtimeCorePlatform_TypeEnum_ANDROID;
-static ComGoodowRealtimeCorePlatform_TypeEnum *ComGoodowRealtimeCorePlatform_TypeEnum_IOS;
-static ComGoodowRealtimeCorePlatform_TypeEnum *ComGoodowRealtimeCorePlatform_TypeEnum_FLASH;
-static ComGoodowRealtimeCorePlatform_TypeEnum *ComGoodowRealtimeCorePlatform_TypeEnum_STUB;
-IOSObjectArray *ComGoodowRealtimeCorePlatform_TypeEnum_values;
+BOOL ComGoodowRealtimeCorePlatform_TypeEnum_initialized = NO;
+
+ComGoodowRealtimeCorePlatform_TypeEnum *ComGoodowRealtimeCorePlatform_TypeEnum_values[7];
 
 @implementation ComGoodowRealtimeCorePlatform_TypeEnum
-
-+ (ComGoodowRealtimeCorePlatform_TypeEnum *)JAVA {
-  return ComGoodowRealtimeCorePlatform_TypeEnum_JAVA;
-}
-+ (ComGoodowRealtimeCorePlatform_TypeEnum *)HTML {
-  return ComGoodowRealtimeCorePlatform_TypeEnum_HTML;
-}
-+ (ComGoodowRealtimeCorePlatform_TypeEnum *)ANDROID {
-  return ComGoodowRealtimeCorePlatform_TypeEnum_ANDROID;
-}
-+ (ComGoodowRealtimeCorePlatform_TypeEnum *)IOS {
-  return ComGoodowRealtimeCorePlatform_TypeEnum_IOS;
-}
-+ (ComGoodowRealtimeCorePlatform_TypeEnum *)FLASH {
-  return ComGoodowRealtimeCorePlatform_TypeEnum_FLASH;
-}
-+ (ComGoodowRealtimeCorePlatform_TypeEnum *)STUB {
-  return ComGoodowRealtimeCorePlatform_TypeEnum_STUB;
-}
 
 - (id)copyWithZone:(NSZone *)zone {
   return self;
@@ -112,17 +81,18 @@ IOSObjectArray *ComGoodowRealtimeCorePlatform_TypeEnum_values;
     ComGoodowRealtimeCorePlatform_TypeEnum_IOS = [[ComGoodowRealtimeCorePlatform_TypeEnum alloc] initWithNSString:@"IOS" withInt:3];
     ComGoodowRealtimeCorePlatform_TypeEnum_FLASH = [[ComGoodowRealtimeCorePlatform_TypeEnum alloc] initWithNSString:@"FLASH" withInt:4];
     ComGoodowRealtimeCorePlatform_TypeEnum_STUB = [[ComGoodowRealtimeCorePlatform_TypeEnum alloc] initWithNSString:@"STUB" withInt:5];
-    ComGoodowRealtimeCorePlatform_TypeEnum_values = [[IOSObjectArray alloc] initWithObjects:(id[]){ ComGoodowRealtimeCorePlatform_TypeEnum_JAVA, ComGoodowRealtimeCorePlatform_TypeEnum_HTML, ComGoodowRealtimeCorePlatform_TypeEnum_ANDROID, ComGoodowRealtimeCorePlatform_TypeEnum_IOS, ComGoodowRealtimeCorePlatform_TypeEnum_FLASH, ComGoodowRealtimeCorePlatform_TypeEnum_STUB, nil } count:6 type:[IOSClass classWithClass:[ComGoodowRealtimeCorePlatform_TypeEnum class]]];
+    ComGoodowRealtimeCorePlatform_TypeEnum_VERTX = [[ComGoodowRealtimeCorePlatform_TypeEnum alloc] initWithNSString:@"VERTX" withInt:6];
+    ComGoodowRealtimeCorePlatform_TypeEnum_initialized = YES;
   }
 }
 
 + (IOSObjectArray *)values {
-  return [IOSObjectArray arrayWithArray:ComGoodowRealtimeCorePlatform_TypeEnum_values];
+  return [IOSObjectArray arrayWithObjects:ComGoodowRealtimeCorePlatform_TypeEnum_values count:7 type:[IOSClass classWithClass:[ComGoodowRealtimeCorePlatform_TypeEnum class]]];
 }
 
 + (ComGoodowRealtimeCorePlatform_TypeEnum *)valueOfWithNSString:(NSString *)name {
-  for (int i = 0; i < [ComGoodowRealtimeCorePlatform_TypeEnum_values count]; i++) {
-    ComGoodowRealtimeCorePlatform_TypeEnum *e = ComGoodowRealtimeCorePlatform_TypeEnum_values->buffer_[i];
+  for (int i = 0; i < 7; i++) {
+    ComGoodowRealtimeCorePlatform_TypeEnum *e = ComGoodowRealtimeCorePlatform_TypeEnum_values[i];
     if ([name isEqual:[e name]]) {
       return e;
     }

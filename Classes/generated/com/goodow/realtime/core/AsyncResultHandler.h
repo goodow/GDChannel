@@ -14,4 +14,6 @@
 @protocol ComGoodowRealtimeCoreAsyncResultHandler < ComGoodowRealtimeCoreHandler, NSObject, JavaObject >
 @end
 
+__attribute__((always_inline)) inline void ComGoodowRealtimeCoreAsyncResultHandler_init() {}
+
 #endif // _ComGoodowRealtimeCoreAsyncResultHandler_H_

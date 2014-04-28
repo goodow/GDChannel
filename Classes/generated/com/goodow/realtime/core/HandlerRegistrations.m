@@ -50,13 +50,14 @@
     { "init", NULL, NULL, 0x1, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
-    { "registrations_", NULL, 0x2, "Lcom.goodow.realtime.json.JsonArray;" },
+    { "registrations_", NULL, 0x2, "Lcom.goodow.realtime.json.JsonArray;", NULL,  },
   };
   static J2ObjcClassInfo _ComGoodowRealtimeCoreHandlerRegistrations = { "HandlerRegistrations", "com.goodow.realtime.core", NULL, 0x1, 4, methods, 1, fields, 0, NULL};
   return &_ComGoodowRealtimeCoreHandlerRegistrations;
 }
 
 @end
+
 @implementation ComGoodowRealtimeCoreHandlerRegistrations_$1
 
 - (void)callWithInt:(int)index
@@ -78,12 +79,13 @@
 }
 
 @end
+
 @implementation ComGoodowRealtimeCoreHandlerRegistrations_$2
 
 - (void)unregisterHandler {
   int idx = [((id<GDJsonArray>) nil_chk(this$0_->registrations_)) indexOf:val$registration_];
   if (idx != -1) {
-    (void) [this$0_->registrations_ remove:idx];
+    (void) [this$0_->registrations_ removeWithInt:idx];
   }
   [((id<ComGoodowRealtimeCoreHandlerRegistration>) nil_chk(val$registration_)) unregisterHandler];
 }
@@ -101,8 +103,8 @@
     { "initWithComGoodowRealtimeCoreHandlerRegistrations:withComGoodowRealtimeCoreHandlerRegistration:", "init", NULL, 0x0, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
-    { "this$0_", NULL, 0x1012, "Lcom.goodow.realtime.core.HandlerRegistrations;" },
-    { "val$registration_", NULL, 0x1012, "Lcom.goodow.realtime.core.HandlerRegistration;" },
+    { "this$0_", NULL, 0x1012, "Lcom.goodow.realtime.core.HandlerRegistrations;", NULL,  },
+    { "val$registration_", NULL, 0x1012, "Lcom.goodow.realtime.core.HandlerRegistration;", NULL,  },
   };
   static J2ObjcClassInfo _ComGoodowRealtimeCoreHandlerRegistrations_$2 = { "$2", "com.goodow.realtime.core", "HandlerRegistrations", 0x8000, 2, methods, 2, fields, 0, NULL};
   return &_ComGoodowRealtimeCoreHandlerRegistrations_$2;

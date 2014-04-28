@@ -11,19 +11,30 @@
 #import "JreEmulation.h"
 
 @protocol ComGoodowRealtimeCoreHandlerRegistration < NSObject, JavaObject >
+
 - (void)unregisterHandler;
+
 @end
 
-@interface ComGoodowRealtimeCoreHandlerRegistration : NSObject {
-}
-+ (id<ComGoodowRealtimeCoreHandlerRegistration>)EMPTY;
+@interface ComGoodowRealtimeCoreHandlerRegistration : NSObject
+
 @end
+
+FOUNDATION_EXPORT BOOL ComGoodowRealtimeCoreHandlerRegistration_initialized;
+J2OBJC_STATIC_INIT(ComGoodowRealtimeCoreHandlerRegistration)
+
+FOUNDATION_EXPORT id<ComGoodowRealtimeCoreHandlerRegistration> ComGoodowRealtimeCoreHandlerRegistration_EMPTY_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeCoreHandlerRegistration, EMPTY_, id<ComGoodowRealtimeCoreHandlerRegistration>)
 
 @interface ComGoodowRealtimeCoreHandlerRegistration_$1 : NSObject < ComGoodowRealtimeCoreHandlerRegistration > {
 }
 
 - (void)unregisterHandler;
+
 - (id)init;
+
 @end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeCoreHandlerRegistration_$1_init() {}
 
 #endif // _ComGoodowRealtimeCoreHandlerRegistration_H_

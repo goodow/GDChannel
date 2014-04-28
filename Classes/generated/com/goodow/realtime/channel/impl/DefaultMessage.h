@@ -28,17 +28,29 @@
          withNSString:(NSString *)address
          withNSString:(NSString *)replyAddress
                withId:(id)body;
+
 - (NSString *)address;
+
 - (id)body;
+
 - (void)fail:(int)failureCode message:(NSString *)msg;
+
 - (void)reply:(id)msg;
+
 - (void)reply:(id)msg replyHandler:(id)replyHandler;
+
 - (NSString *)replyAddress;
+
 - (NSString *)description;
+
 - (void)sendReplyWithId:(id)msg
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
+
 - (void)copyAllFieldsTo:(GDCDefaultMessage *)other;
+
 @end
+
+__attribute__((always_inline)) inline void GDCDefaultMessage_init() {}
 
 J2OBJC_FIELD_SETTER(GDCDefaultMessage, body__, id)
 J2OBJC_FIELD_SETTER(GDCDefaultMessage, bus_, id<GDCBus>)

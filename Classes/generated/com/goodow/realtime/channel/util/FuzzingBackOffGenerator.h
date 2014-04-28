@@ -24,10 +24,16 @@
 - (id)initWithInt:(int)initialBackOff
           withInt:(int)maxBackOff
        withDouble:(double)randomizationFactor;
+
 - (ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator_BackOffParameters *)next;
+
 - (void)reset;
+
 - (void)copyAllFieldsTo:(ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator *)other;
+
 @end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator_init() {}
 
 @interface ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator_BackOffParameters : NSObject {
  @public
@@ -37,7 +43,11 @@
 
 - (id)initWithInt:(int)targetDelay
           withInt:(int)minimumDelay;
+
 - (void)copyAllFieldsTo:(ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator_BackOffParameters *)other;
+
 @end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator_BackOffParameters_init() {}
 
 #endif // _ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator_H_

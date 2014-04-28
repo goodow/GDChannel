@@ -10,23 +10,11 @@
 #include "java/lang/IllegalArgumentException.h"
 #include "java/lang/IllegalStateException.h"
 
+BOOL GDCReplyFailureEnum_initialized = NO;
 
-static GDCReplyFailureEnum *GDCReplyFailureEnum_TIMEOUT;
-static GDCReplyFailureEnum *GDCReplyFailureEnum_NO_HANDLERS;
-static GDCReplyFailureEnum *GDCReplyFailureEnum_RECIPIENT_FAILURE;
-IOSObjectArray *GDCReplyFailureEnum_values;
+GDCReplyFailureEnum *GDCReplyFailureEnum_values[3];
 
 @implementation GDCReplyFailureEnum
-
-+ (GDCReplyFailureEnum *)TIMEOUT {
-  return GDCReplyFailureEnum_TIMEOUT;
-}
-+ (GDCReplyFailureEnum *)NO_HANDLERS {
-  return GDCReplyFailureEnum_NO_HANDLERS;
-}
-+ (GDCReplyFailureEnum *)RECIPIENT_FAILURE {
-  return GDCReplyFailureEnum_RECIPIENT_FAILURE;
-}
 
 - (id)copyWithZone:(NSZone *)zone {
   return self;
@@ -67,17 +55,17 @@ IOSObjectArray *GDCReplyFailureEnum_values;
     GDCReplyFailureEnum_TIMEOUT = [[GDCReplyFailureEnum alloc] initWithNSString:@"TIMEOUT" withInt:0];
     GDCReplyFailureEnum_NO_HANDLERS = [[GDCReplyFailureEnum alloc] initWithNSString:@"NO_HANDLERS" withInt:1];
     GDCReplyFailureEnum_RECIPIENT_FAILURE = [[GDCReplyFailureEnum alloc] initWithNSString:@"RECIPIENT_FAILURE" withInt:2];
-    GDCReplyFailureEnum_values = [[IOSObjectArray alloc] initWithObjects:(id[]){ GDCReplyFailureEnum_TIMEOUT, GDCReplyFailureEnum_NO_HANDLERS, GDCReplyFailureEnum_RECIPIENT_FAILURE, nil } count:3 type:[IOSClass classWithClass:[GDCReplyFailureEnum class]]];
+    GDCReplyFailureEnum_initialized = YES;
   }
 }
 
 + (IOSObjectArray *)values {
-  return [IOSObjectArray arrayWithArray:GDCReplyFailureEnum_values];
+  return [IOSObjectArray arrayWithObjects:GDCReplyFailureEnum_values count:3 type:[IOSClass classWithClass:[GDCReplyFailureEnum class]]];
 }
 
 + (GDCReplyFailureEnum *)valueOfWithNSString:(NSString *)name {
-  for (int i = 0; i < [GDCReplyFailureEnum_values count]; i++) {
-    GDCReplyFailureEnum *e = GDCReplyFailureEnum_values->buffer_[i];
+  for (int i = 0; i < 3; i++) {
+    GDCReplyFailureEnum *e = GDCReplyFailureEnum_values[i];
     if ([name isEqual:[e name]]) {
       return e;
     }

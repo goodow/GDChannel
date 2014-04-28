@@ -8,7 +8,6 @@
 #include "com/goodow/realtime/core/Handler.h"
 #include "com/goodow/realtime/core/Scheduler.h"
 
-
 @interface ComGoodowRealtimeCoreScheduler : NSObject
 @end
 

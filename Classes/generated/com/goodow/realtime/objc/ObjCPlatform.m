@@ -31,7 +31,7 @@
 }
 
 - (ComGoodowRealtimeCorePlatform_TypeEnum *)type {
-  return [ComGoodowRealtimeCorePlatform_TypeEnum IOS];
+  return ComGoodowRealtimeCorePlatform_TypeEnum_get_IOS();
 }
 
 - (id)init {
@@ -57,8 +57,8 @@
     { "init", NULL, NULL, 0x0, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
-    { "net__", "net", 0x12, "Lcom.goodow.realtime.core.Net;" },
-    { "scheduler__", "scheduler", 0x12, "Lcom.goodow.realtime.objc.ObjCScheduler;" },
+    { "net__", "net", 0x12, "Lcom.goodow.realtime.core.Net;", NULL,  },
+    { "scheduler__", "scheduler", 0x12, "Lcom.goodow.realtime.objc.ObjCScheduler;", NULL,  },
   };
   static J2ObjcClassInfo _ComGoodowRealtimeObjcObjCPlatform = { "ObjCPlatform", "com.goodow.realtime.objc", NULL, 0x0, 5, methods, 2, fields, 0, NULL};
   return &_ComGoodowRealtimeObjcObjCPlatform;

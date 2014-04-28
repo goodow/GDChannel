@@ -10,7 +10,6 @@
 #include "com/goodow/realtime/core/PlatformFactory.h"
 #include "com/goodow/realtime/core/Scheduler.h"
 
-
 @interface ComGoodowRealtimeCorePlatformFactory : NSObject
 @end
 

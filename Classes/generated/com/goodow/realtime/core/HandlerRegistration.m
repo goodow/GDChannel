@@ -7,17 +7,17 @@
 
 #include "com/goodow/realtime/core/HandlerRegistration.h"
 
+BOOL ComGoodowRealtimeCoreHandlerRegistration_initialized = NO;
+
+id<ComGoodowRealtimeCoreHandlerRegistration> ComGoodowRealtimeCoreHandlerRegistration_EMPTY_;
 
 @implementation ComGoodowRealtimeCoreHandlerRegistration
 
-static id<ComGoodowRealtimeCoreHandlerRegistration> ComGoodowRealtimeCoreHandlerRegistration_EMPTY_;
-
-+ (id<ComGoodowRealtimeCoreHandlerRegistration>)EMPTY {
-  return ComGoodowRealtimeCoreHandlerRegistration_EMPTY_;
-}
-
 + (void)initialize {
-  ComGoodowRealtimeCoreHandlerRegistration_EMPTY_ = [[ComGoodowRealtimeCoreHandlerRegistration_$1 alloc] init];
+  if (self == [ComGoodowRealtimeCoreHandlerRegistration class]) {
+    ComGoodowRealtimeCoreHandlerRegistration_EMPTY_ = [[ComGoodowRealtimeCoreHandlerRegistration_$1 alloc] init];
+    ComGoodowRealtimeCoreHandlerRegistration_initialized = YES;
+  }
 }
 
 + (J2ObjcClassInfo *)__metadata {
@@ -25,13 +25,14 @@ static id<ComGoodowRealtimeCoreHandlerRegistration> ComGoodowRealtimeCoreHandler
     { "unregisterHandler", NULL, "V", 0x401, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
-    { "EMPTY_", NULL, 0x19, "Lcom.goodow.realtime.core.HandlerRegistration;" },
+    { "EMPTY_", NULL, 0x19, "Lcom.goodow.realtime.core.HandlerRegistration;", &ComGoodowRealtimeCoreHandlerRegistration_EMPTY_,  },
   };
   static J2ObjcClassInfo _ComGoodowRealtimeCoreHandlerRegistration = { "HandlerRegistration", "com.goodow.realtime.core", NULL, 0x201, 1, methods, 1, fields, 0, NULL};
   return &_ComGoodowRealtimeCoreHandlerRegistration;
 }
 
 @end
+
 @implementation ComGoodowRealtimeCoreHandlerRegistration_$1
 
 - (void)unregisterHandler {

@@ -16,21 +16,34 @@
 #import "JreEmulation.h"
 
 @protocol GDCBus < NSObject, JavaObject >
+
 - (void)close;
+
 - (GDCStateEnum *)getReadyState;
+
 - (id<GDCBus>)publish:(NSString *)address message:(id)msg;
+
 - (id<ComGoodowRealtimeCoreHandlerRegistration>)registerHandler:(NSString *)address handler:(id)handler;
+
 - (id<GDCBus>)send:(NSString *)address message:(id)msg replyHandler:(id)replyHandler;
+
 - (id<GDCBus>)setHookWithGDCBusHook:(id<GDCBusHook>)hook;
+
 @end
 
-@interface GDCBus : NSObject {
-}
-+ (NSString *)LOCAL;
-+ (NSString *)LOCAL_ON_OPEN;
-+ (NSString *)LOCAL_ON_CLOSE;
-+ (NSString *)LOCAL_ON_ERROR;
-@end
+__attribute__((always_inline)) inline void GDCBus_init() {}
+
+FOUNDATION_EXPORT NSString *GDCBus_LOCAL_;
+J2OBJC_STATIC_FIELD_GETTER(GDCBus, LOCAL_, NSString *)
+
+FOUNDATION_EXPORT NSString *GDCBus_LOCAL_ON_OPEN_;
+J2OBJC_STATIC_FIELD_GETTER(GDCBus, LOCAL_ON_OPEN_, NSString *)
+
+FOUNDATION_EXPORT NSString *GDCBus_LOCAL_ON_CLOSE_;
+J2OBJC_STATIC_FIELD_GETTER(GDCBus, LOCAL_ON_CLOSE_, NSString *)
+
+FOUNDATION_EXPORT NSString *GDCBus_LOCAL_ON_ERROR_;
+J2OBJC_STATIC_FIELD_GETTER(GDCBus, LOCAL_ON_ERROR_, NSString *)
 
 #define ComGoodowRealtimeChannelBus GDCBus
 

@@ -23,12 +23,20 @@
 }
 
 + (void)register__;
+
 - (id<ComGoodowRealtimeCoreNet>)net;
+
 - (id<ComGoodowRealtimeCoreScheduler>)scheduler;
+
 - (ComGoodowRealtimeCorePlatform_TypeEnum *)type;
+
 - (id)init;
+
 - (void)copyAllFieldsTo:(ComGoodowRealtimeObjcObjCPlatform *)other;
+
 @end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeObjcObjCPlatform_init() {}
 
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeObjcObjCPlatform, net__, id<ComGoodowRealtimeCoreNet>)
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeObjcObjCPlatform, scheduler__, ComGoodowRealtimeObjcObjCScheduler *)

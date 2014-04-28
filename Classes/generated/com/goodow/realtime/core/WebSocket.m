@@ -8,7 +8,6 @@
 #include "com/goodow/realtime/core/WebSocket.h"
 #include "com/goodow/realtime/json/JsonObject.h"
 
-
 @interface ComGoodowRealtimeCoreWebSocket : NSObject
 @end
 

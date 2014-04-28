@@ -9,27 +9,11 @@
 #include "com/goodow/realtime/channel/State.h"
 #include "java/lang/IllegalArgumentException.h"
 
+BOOL GDCStateEnum_initialized = NO;
 
-static GDCStateEnum *GDCStateEnum_CONNECTING;
-static GDCStateEnum *GDCStateEnum_OPEN;
-static GDCStateEnum *GDCStateEnum_CLOSING;
-static GDCStateEnum *GDCStateEnum_CLOSED;
-IOSObjectArray *GDCStateEnum_values;
+GDCStateEnum *GDCStateEnum_values[4];
 
 @implementation GDCStateEnum
-
-+ (GDCStateEnum *)CONNECTING {
-  return GDCStateEnum_CONNECTING;
-}
-+ (GDCStateEnum *)OPEN {
-  return GDCStateEnum_OPEN;
-}
-+ (GDCStateEnum *)CLOSING {
-  return GDCStateEnum_CLOSING;
-}
-+ (GDCStateEnum *)CLOSED {
-  return GDCStateEnum_CLOSED;
-}
 
 - (id)copyWithZone:(NSZone *)zone {
   return self;
@@ -45,17 +29,17 @@ IOSObjectArray *GDCStateEnum_values;
     GDCStateEnum_OPEN = [[GDCStateEnum alloc] initWithNSString:@"OPEN" withInt:1];
     GDCStateEnum_CLOSING = [[GDCStateEnum alloc] initWithNSString:@"CLOSING" withInt:2];
     GDCStateEnum_CLOSED = [[GDCStateEnum alloc] initWithNSString:@"CLOSED" withInt:3];
-    GDCStateEnum_values = [[IOSObjectArray alloc] initWithObjects:(id[]){ GDCStateEnum_CONNECTING, GDCStateEnum_OPEN, GDCStateEnum_CLOSING, GDCStateEnum_CLOSED, nil } count:4 type:[IOSClass classWithClass:[GDCStateEnum class]]];
+    GDCStateEnum_initialized = YES;
   }
 }
 
 + (IOSObjectArray *)values {
-  return [IOSObjectArray arrayWithArray:GDCStateEnum_values];
+  return [IOSObjectArray arrayWithObjects:GDCStateEnum_values count:4 type:[IOSClass classWithClass:[GDCStateEnum class]]];
 }
 
 + (GDCStateEnum *)valueOfWithNSString:(NSString *)name {
-  for (int i = 0; i < [GDCStateEnum_values count]; i++) {
-    GDCStateEnum *e = GDCStateEnum_values->buffer_[i];
+  for (int i = 0; i < 4; i++) {
+    GDCStateEnum *e = GDCStateEnum_values[i];
     if ([name isEqual:[e name]]) {
       return e;
     }

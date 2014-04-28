@@ -8,7 +8,6 @@
 #include "com/goodow/realtime/core/AsyncResult.h"
 #include "java/lang/Throwable.h"
 
-
 @interface ComGoodowRealtimeCoreAsyncResult : NSObject
 @end
 

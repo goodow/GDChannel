@@ -7,7 +7,6 @@
 
 #include "com/goodow/realtime/core/AsyncResultHandler.h"
 
-
 @interface ComGoodowRealtimeCoreAsyncResultHandler : NSObject
 @end
 

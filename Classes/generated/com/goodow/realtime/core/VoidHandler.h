@@ -17,8 +17,13 @@
 }
 
 - (void)handleWithId:(id)event;
+
 - (void)handle;
+
 - (id)init;
+
 @end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeCoreVoidHandler_init() {}
 
 #endif // _ComGoodowRealtimeCoreVoidHandler_H_

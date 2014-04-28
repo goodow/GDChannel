@@ -19,15 +19,25 @@
 @interface ComGoodowRealtimeCorePlatform : NSObject {
 }
 
-+ (id<ComGoodowRealtimeCorePlatformFactory>)FACTORY;
-+ (void)setFACTORY:(id<ComGoodowRealtimeCorePlatformFactory>)FACTORY;
 + (id<ComGoodowRealtimeCoreNet>)net;
+
 + (id<ComGoodowRealtimeCoreScheduler>)scheduler;
+
 + (void)setFactoryWithComGoodowRealtimeCorePlatformFactory:(id<ComGoodowRealtimeCorePlatformFactory>)factory;
+
 + (ComGoodowRealtimeCorePlatform_TypeEnum *)type;
+
 + (id<ComGoodowRealtimeCorePlatformFactory>)get;
+
 - (id)init;
+
 @end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeCorePlatform_init() {}
+
+FOUNDATION_EXPORT id<ComGoodowRealtimeCorePlatformFactory> ComGoodowRealtimeCorePlatform_FACTORY_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeCorePlatform, FACTORY_, id<ComGoodowRealtimeCorePlatformFactory>)
+J2OBJC_STATIC_FIELD_SETTER(ComGoodowRealtimeCorePlatform, FACTORY_, id<ComGoodowRealtimeCorePlatformFactory>)
 
 typedef enum {
   ComGoodowRealtimeCorePlatform_Type_JAVA = 0,
@@ -36,20 +46,42 @@ typedef enum {
   ComGoodowRealtimeCorePlatform_Type_IOS = 3,
   ComGoodowRealtimeCorePlatform_Type_FLASH = 4,
   ComGoodowRealtimeCorePlatform_Type_STUB = 5,
+  ComGoodowRealtimeCorePlatform_Type_VERTX = 6,
 } ComGoodowRealtimeCorePlatform_Type;
 
 @interface ComGoodowRealtimeCorePlatform_TypeEnum : JavaLangEnum < NSCopying > {
 }
-+ (ComGoodowRealtimeCorePlatform_TypeEnum *)JAVA;
-+ (ComGoodowRealtimeCorePlatform_TypeEnum *)HTML;
-+ (ComGoodowRealtimeCorePlatform_TypeEnum *)ANDROID;
-+ (ComGoodowRealtimeCorePlatform_TypeEnum *)IOS;
-+ (ComGoodowRealtimeCorePlatform_TypeEnum *)FLASH;
-+ (ComGoodowRealtimeCorePlatform_TypeEnum *)STUB;
 + (IOSObjectArray *)values;
 + (ComGoodowRealtimeCorePlatform_TypeEnum *)valueOfWithNSString:(NSString *)name;
 - (id)copyWithZone:(NSZone *)zone;
+
 - (id)initWithNSString:(NSString *)__name withInt:(int)__ordinal;
 @end
+
+FOUNDATION_EXPORT BOOL ComGoodowRealtimeCorePlatform_TypeEnum_initialized;
+J2OBJC_STATIC_INIT(ComGoodowRealtimeCorePlatform_TypeEnum)
+
+FOUNDATION_EXPORT ComGoodowRealtimeCorePlatform_TypeEnum *ComGoodowRealtimeCorePlatform_TypeEnum_values[];
+
+#define ComGoodowRealtimeCorePlatform_TypeEnum_JAVA ComGoodowRealtimeCorePlatform_TypeEnum_values[ComGoodowRealtimeCorePlatform_Type_JAVA]
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeCorePlatform_TypeEnum, JAVA, ComGoodowRealtimeCorePlatform_TypeEnum *)
+
+#define ComGoodowRealtimeCorePlatform_TypeEnum_HTML ComGoodowRealtimeCorePlatform_TypeEnum_values[ComGoodowRealtimeCorePlatform_Type_HTML]
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeCorePlatform_TypeEnum, HTML, ComGoodowRealtimeCorePlatform_TypeEnum *)
+
+#define ComGoodowRealtimeCorePlatform_TypeEnum_ANDROID ComGoodowRealtimeCorePlatform_TypeEnum_values[ComGoodowRealtimeCorePlatform_Type_ANDROID]
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeCorePlatform_TypeEnum, ANDROID, ComGoodowRealtimeCorePlatform_TypeEnum *)
+
+#define ComGoodowRealtimeCorePlatform_TypeEnum_IOS ComGoodowRealtimeCorePlatform_TypeEnum_values[ComGoodowRealtimeCorePlatform_Type_IOS]
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeCorePlatform_TypeEnum, IOS, ComGoodowRealtimeCorePlatform_TypeEnum *)
+
+#define ComGoodowRealtimeCorePlatform_TypeEnum_FLASH ComGoodowRealtimeCorePlatform_TypeEnum_values[ComGoodowRealtimeCorePlatform_Type_FLASH]
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeCorePlatform_TypeEnum, FLASH, ComGoodowRealtimeCorePlatform_TypeEnum *)
+
+#define ComGoodowRealtimeCorePlatform_TypeEnum_STUB ComGoodowRealtimeCorePlatform_TypeEnum_values[ComGoodowRealtimeCorePlatform_Type_STUB]
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeCorePlatform_TypeEnum, STUB, ComGoodowRealtimeCorePlatform_TypeEnum *)
+
+#define ComGoodowRealtimeCorePlatform_TypeEnum_VERTX ComGoodowRealtimeCorePlatform_TypeEnum_values[ComGoodowRealtimeCorePlatform_Type_VERTX]
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeCorePlatform_TypeEnum, VERTX, ComGoodowRealtimeCorePlatform_TypeEnum *)
 
 #endif // _ComGoodowRealtimeCorePlatform_H_

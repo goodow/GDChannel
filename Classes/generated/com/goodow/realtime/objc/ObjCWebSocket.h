@@ -19,7 +19,10 @@
 
 - (id)initWithNSString:(NSString *)url
       withGDJsonObject:(id<GDJsonObject>)options;
+
 @end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeObjcObjCWebSocket_init() {}
 
 @interface ComGoodowRealtimeObjcObjCWebSocket (NativeMethods)
 - (void)close;

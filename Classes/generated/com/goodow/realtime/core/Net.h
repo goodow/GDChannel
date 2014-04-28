@@ -14,8 +14,12 @@
 #import "JreEmulation.h"
 
 @protocol ComGoodowRealtimeCoreNet < NSObject, JavaObject >
+
 - (id<ComGoodowRealtimeCoreWebSocket>)createWebSocketWithNSString:(NSString *)url
                                                  withGDJsonObject:(id<GDJsonObject>)options;
+
 @end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeCoreNet_init() {}
 
 #endif // _ComGoodowRealtimeCoreNet_H_

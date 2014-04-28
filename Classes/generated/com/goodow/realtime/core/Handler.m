@@ -7,7 +7,6 @@
 
 #include "com/goodow/realtime/core/Handler.h"
 
-
 @interface ComGoodowRealtimeCoreHandler : NSObject
 @end
 

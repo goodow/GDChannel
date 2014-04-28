@@ -14,16 +14,29 @@
 #import "JreEmulation.h"
 
 @protocol ComGoodowRealtimeCoreWebSocket < NSObject, JavaObject >
+
 - (void)close;
+
 - (void)sendWithNSString:(NSString *)data;
+
 - (void)setListenWithComGoodowRealtimeCoreWebSocket_WebSocketHandler:(id<ComGoodowRealtimeCoreWebSocket_WebSocketHandler>)handler;
+
 @end
 
+__attribute__((always_inline)) inline void ComGoodowRealtimeCoreWebSocket_init() {}
+
 @protocol ComGoodowRealtimeCoreWebSocket_WebSocketHandler < NSObject, JavaObject >
+
 - (void)onCloseWithGDJsonObject:(id<GDJsonObject>)reason;
+
 - (void)onErrorWithNSString:(NSString *)error;
+
 - (void)onMessageWithNSString:(NSString *)message;
+
 - (void)onOpen;
+
 @end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeCoreWebSocket_WebSocketHandler_init() {}
 
 #endif // _ComGoodowRealtimeCoreWebSocket_H_

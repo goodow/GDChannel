@@ -15,7 +15,10 @@
 
 @protocol GDCMessageHandler < ComGoodowRealtimeCoreHandler, NSObject, JavaObject >
 - (void)handleWithId:(id<GDCMessage>)message;
+
 @end
+
+__attribute__((always_inline)) inline void GDCMessageHandler_init() {}
 
 #define ComGoodowRealtimeChannelMessageHandler GDCMessageHandler
 

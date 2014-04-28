@@ -21,19 +21,28 @@
   int failureCode__;
 }
 
-+ (long long int)serialVersionUID;
 - (id)initWithGDCReplyFailureEnum:(GDCReplyFailureEnum *)failureType;
+
 - (id)initWithGDCReplyFailureEnum:(GDCReplyFailureEnum *)failureType
                           withInt:(int)failureCode
                      withNSString:(NSString *)message;
+
 - (id)initWithGDCReplyFailureEnum:(GDCReplyFailureEnum *)failureType
                      withNSString:(NSString *)message;
+
 - (int)failureCode;
+
 - (GDCReplyFailureEnum *)failureType;
+
 - (void)copyAllFieldsTo:(GDCReplyException *)other;
+
 @end
 
+__attribute__((always_inline)) inline void GDCReplyException_init() {}
+
 J2OBJC_FIELD_SETTER(GDCReplyException, failureType__, GDCReplyFailureEnum *)
+
+J2OBJC_STATIC_FIELD_GETTER(GDCReplyException, serialVersionUID, long long int)
 
 typedef GDCReplyException ComGoodowRealtimeChannelReplyException;
 
