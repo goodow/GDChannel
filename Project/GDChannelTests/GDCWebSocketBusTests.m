@@ -33,14 +33,14 @@
   __block id<GDCHandlerRegistration> handlerRegistration;
   __block BOOL testComplete = NO;
   
-  [bus registerHandler:GDCBus_get_LOCAL_ON_OPEN_() handler:^(id<GDCMessage> message) {
-    [self handlerEventBusOpened:bus];
+  [bus registerLocalHandler:GDCBus_get_ON_OPEN_() handler:^(id<GDCMessage> message) {
+    NSLog(@"%@", @"EventBus opend");
   }];
-  [bus registerHandler:GDCBus_get_LOCAL_ON_CLOSE_() handler:^(id<GDCMessage> message) {
+  [bus registerLocalHandler:GDCBus_get_ON_CLOSE_() handler:^(id<GDCMessage> message) {
     NSLog(@"%@", @"EventBus closed");
     testComplete = YES;
   }];
-  [bus registerHandler:GDCBus_get_LOCAL_ON_ERROR_() handler:^(id<GDCMessage> message) {
+  [bus registerLocalHandler:GDCBus_get_ON_ERROR_() handler:^(id<GDCMessage> message) {
     NSLog(@"%@", @"EventBus Error");
   }];
   
@@ -59,17 +59,15 @@
     }];
   }];
   
-  // Begin a run loop terminated when the testComplete it set to true
-  while (!testComplete && [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.01]]);
-}
-
--(void)handlerEventBusOpened:(id<GDCBus>) bus {
   [bus send:@"objc.someaddress" message:@{@"text": @"send1"} replyHandler:^(id<GDCMessage> message) {
     NSMutableDictionary *body = [message body];
     XCTAssertTrue([@"reply1" isEqualToString:[body objectForKey:@"text"]]);
     
     [message reply:@{@"text": @"reply2"}];
   }];
+  
+  // Begin a run loop terminated when the testComplete it set to true
+  while (!testComplete && [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.01]]);
 }
 
 @end

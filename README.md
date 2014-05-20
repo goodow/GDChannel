@@ -20,10 +20,7 @@ pod 'GDChannel', :git => 'https://github.com/goodow/GDChannel.git'
 ## Usage
 
 ### WebSocket mode
-See https://github.com/goodow/GDChannel/blob/master/Project/GDChannelTests/GDCEventBusTests.m
+See https://github.com/goodow/GDChannel/blob/master/Project/GDChannelTests/GDCWebSocketBusTests.m
 
 ### Local mode
-See https://github.com/goodow/GDChannel/blob/master/Project/GDChannelTests/GDCLocalEventBusTests.m
-
-### Mix mode
-todo
+See https://github.com/goodow/GDChannel/blob/master/Project/GDChannelTests/GDCSimpleBusTests.m

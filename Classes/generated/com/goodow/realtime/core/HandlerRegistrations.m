@@ -12,12 +12,13 @@
 
 @implementation ComGoodowRealtimeCoreHandlerRegistrations
 
-- (void)addWithComGoodowRealtimeCoreHandlerRegistration:(id<ComGoodowRealtimeCoreHandlerRegistration>)registration {
+- (ComGoodowRealtimeCoreHandlerRegistrations *)addWithComGoodowRealtimeCoreHandlerRegistration:(id<ComGoodowRealtimeCoreHandlerRegistration>)registration {
   NSAssert(registration != nil, @"registration shouldn't be null");
   if (registrations_ == nil) {
     registrations_ = [GDJson createArray];
   }
   (void) [((id<GDJsonArray>) nil_chk(registrations_)) push:registration];
+  return self;
 }
 
 - (void)unregisterHandler {
@@ -29,7 +30,7 @@
 }
 
 - (id<ComGoodowRealtimeCoreHandlerRegistration>)wrapWithComGoodowRealtimeCoreHandlerRegistration:(id<ComGoodowRealtimeCoreHandlerRegistration>)registration {
-  [self addWithComGoodowRealtimeCoreHandlerRegistration:registration];
+  (void) [self addWithComGoodowRealtimeCoreHandlerRegistration:registration];
   return [[ComGoodowRealtimeCoreHandlerRegistrations_$2 alloc] initWithComGoodowRealtimeCoreHandlerRegistrations:self withComGoodowRealtimeCoreHandlerRegistration:registration];
 }
 
@@ -44,7 +45,7 @@
 
 + (J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {
-    { "addWithComGoodowRealtimeCoreHandlerRegistration:", "add", "V", 0x1, NULL },
+    { "addWithComGoodowRealtimeCoreHandlerRegistration:", "add", "Lcom.goodow.realtime.core.HandlerRegistrations;", 0x1, NULL },
     { "unregisterHandler", NULL, "V", 0x1, NULL },
     { "wrapWithComGoodowRealtimeCoreHandlerRegistration:", "wrap", "Lcom.goodow.realtime.core.HandlerRegistration;", 0x1, NULL },
     { "init", NULL, NULL, 0x1, NULL },
@@ -83,10 +84,7 @@
 @implementation ComGoodowRealtimeCoreHandlerRegistrations_$2
 
 - (void)unregisterHandler {
-  int idx = [((id<GDJsonArray>) nil_chk(this$0_->registrations_)) indexOf:val$registration_];
-  if (idx != -1) {
-    (void) [this$0_->registrations_ removeWithInt:idx];
-  }
+  [((id<GDJsonArray>) nil_chk(this$0_->registrations_)) removeValue:val$registration_];
   [((id<ComGoodowRealtimeCoreHandlerRegistration>) nil_chk(val$registration_)) unregisterHandler];
 }
 

@@ -19,7 +19,7 @@
   id<GDJsonArray> registrations_;
 }
 
-- (void)addWithComGoodowRealtimeCoreHandlerRegistration:(id<ComGoodowRealtimeCoreHandlerRegistration>)registration;
+- (ComGoodowRealtimeCoreHandlerRegistrations *)addWithComGoodowRealtimeCoreHandlerRegistration:(id<ComGoodowRealtimeCoreHandlerRegistration>)registration;
 
 - (void)unregisterHandler;
 

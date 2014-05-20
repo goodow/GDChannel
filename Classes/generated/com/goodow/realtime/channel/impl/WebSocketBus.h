@@ -8,8 +8,8 @@
 #ifndef _GDCWebSocketBus_H_
 #define _GDCWebSocketBus_H_
 
+@class GDCStateEnum;
 @class JavaLangVoid;
-@class JavaUtilLoggingLogger;
 @protocol ComGoodowRealtimeCoreWebSocket;
 @protocol GDCMessage;
 @protocol GDJsonObject;
@@ -21,12 +21,15 @@
 
 @interface GDCWebSocketBus : GDCSimpleBus {
  @public
-  id<ComGoodowRealtimeCoreWebSocket> webSocket_;
-  NSString *url_;
   id<ComGoodowRealtimeCoreWebSocket_WebSocketHandler> webSocketHandler_;
+  NSString *url_;
+  id<ComGoodowRealtimeCoreWebSocket> webSocket_;
   int pingInterval_;
-  NSString *sessionID_;
+  NSString *authAddress_;
   int pingTimerID_;
+  NSString *accessToken_;
+  NSString *sid_;
+  id<GDJsonObject> handlerCount_;
 }
 
 - (id)initWithNSString:(NSString *)url
@@ -35,22 +38,27 @@
 - (void)connectWithNSString:(NSString *)url
            withGDJsonObject:(id<GDJsonObject>)options;
 
-- (void)login:(NSString *)username password:(NSString *)password replyHandler:(id)replyHandler;
+- (GDCStateEnum *)getReadyState;
+
+- (void)login:(NSString *)userId token:(NSString *)token replyHandler:(id)replyHandler;
 
 - (void)doClose;
 
-- (BOOL)doRegisterHandlerWithNSString:(NSString *)address
-     withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+- (BOOL)doRegisterHandlerWithBoolean:(BOOL)local
+                        withNSString:(NSString *)address
+    withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
-- (void)doSendOrPubWithBoolean:(BOOL)send
+- (void)doSendOrPubWithBoolean:(BOOL)local
+                   withBoolean:(BOOL)send
                   withNSString:(NSString *)address
                         withId:(id)msg
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
-- (BOOL)doUnregisterHandlerWithNSString:(NSString *)address
-       withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+- (BOOL)doUnregisterHandlerWithBoolean:(BOOL)local
+                          withNSString:(NSString *)address
+      withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
-- (void)sendWithNSString:(NSString *)msg;
+- (void)sendWithGDJsonObject:(id<GDJsonObject>)msg;
 
 - (void)sendPing;
 
@@ -62,16 +70,21 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
 @end
 
-FOUNDATION_EXPORT BOOL GDCWebSocketBus_initialized;
-J2OBJC_STATIC_INIT(GDCWebSocketBus)
+__attribute__((always_inline)) inline void GDCWebSocketBus_init() {}
 
-J2OBJC_FIELD_SETTER(GDCWebSocketBus, webSocket_, id<ComGoodowRealtimeCoreWebSocket>)
-J2OBJC_FIELD_SETTER(GDCWebSocketBus, url_, NSString *)
 J2OBJC_FIELD_SETTER(GDCWebSocketBus, webSocketHandler_, id<ComGoodowRealtimeCoreWebSocket_WebSocketHandler>)
-J2OBJC_FIELD_SETTER(GDCWebSocketBus, sessionID_, NSString *)
+J2OBJC_FIELD_SETTER(GDCWebSocketBus, url_, NSString *)
+J2OBJC_FIELD_SETTER(GDCWebSocketBus, webSocket_, id<ComGoodowRealtimeCoreWebSocket>)
+J2OBJC_FIELD_SETTER(GDCWebSocketBus, authAddress_, NSString *)
+J2OBJC_FIELD_SETTER(GDCWebSocketBus, accessToken_, NSString *)
+J2OBJC_FIELD_SETTER(GDCWebSocketBus, sid_, NSString *)
+J2OBJC_FIELD_SETTER(GDCWebSocketBus, handlerCount_, id<GDJsonObject>)
 
 FOUNDATION_EXPORT NSString *GDCWebSocketBus_PING_INTERVAL_;
 J2OBJC_STATIC_FIELD_GETTER(GDCWebSocketBus, PING_INTERVAL_, NSString *)
+
+FOUNDATION_EXPORT NSString *GDCWebSocketBus_AUTH_ADDRESS_;
+J2OBJC_STATIC_FIELD_GETTER(GDCWebSocketBus, AUTH_ADDRESS_, NSString *)
 
 FOUNDATION_EXPORT NSString *GDCWebSocketBus_BODY_;
 J2OBJC_STATIC_FIELD_GETTER(GDCWebSocketBus, BODY_, NSString *)
@@ -84,9 +97,6 @@ J2OBJC_STATIC_FIELD_GETTER(GDCWebSocketBus, REPLY_ADDRESS_, NSString *)
 
 FOUNDATION_EXPORT NSString *GDCWebSocketBus_TYPE_;
 J2OBJC_STATIC_FIELD_GETTER(GDCWebSocketBus, TYPE_, NSString *)
-
-FOUNDATION_EXPORT JavaUtilLoggingLogger *GDCWebSocketBus_log_WebSocketBus_;
-J2OBJC_STATIC_FIELD_GETTER(GDCWebSocketBus, log_WebSocketBus_, JavaUtilLoggingLogger *)
 
 typedef GDCWebSocketBus ComGoodowRealtimeChannelImplWebSocketBus;
 

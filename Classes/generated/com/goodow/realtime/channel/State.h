@@ -8,6 +8,8 @@
 #ifndef _GDCState_H_
 #define _GDCState_H_
 
+@class IOSObjectArray;
+
 #import "JreEmulation.h"
 #include "java/lang/Enum.h"
 
@@ -43,5 +45,8 @@ J2OBJC_STATIC_FIELD_GETTER(GDCStateEnum, CLOSING, GDCStateEnum *)
 
 #define GDCStateEnum_CLOSED GDCStateEnum_values[GDCState_CLOSED]
 J2OBJC_STATIC_FIELD_GETTER(GDCStateEnum, CLOSED, GDCStateEnum *)
+
+FOUNDATION_EXPORT IOSObjectArray *GDCStateEnum_values__;
+J2OBJC_STATIC_FIELD_GETTER(GDCStateEnum, values__, IOSObjectArray *)
 
 #endif // _GDCState_H_

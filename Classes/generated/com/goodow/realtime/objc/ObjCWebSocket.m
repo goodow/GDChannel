@@ -45,6 +45,10 @@
   [_webSocket close];
 }
 
+-(GDCStateEnum *)getReadyState {
+  return IOSObjectArray_Get(GDCStateEnum_get_values__(), _webSocket.readyState);
+}
+
 - (void)sendWithNSString:(NSString *)data {
   NSLog(@"Websocket send \"%@\"", data);
   [_webSocket send:data];

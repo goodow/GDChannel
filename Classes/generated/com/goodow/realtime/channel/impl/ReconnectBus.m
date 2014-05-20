@@ -5,6 +5,7 @@
 //  Created by retechretech.
 //
 
+#include "IOSClass.h"
 #include "IOSObjectArray.h"
 #include "com/goodow/realtime/channel/BusHook.h"
 #include "com/goodow/realtime/channel/State.h"
@@ -12,7 +13,6 @@
 #include "com/goodow/realtime/channel/impl/SimpleBus.h"
 #include "com/goodow/realtime/channel/impl/WebSocketBus.h"
 #include "com/goodow/realtime/channel/util/FuzzingBackOffGenerator.h"
-#include "com/goodow/realtime/core/Handler.h"
 #include "com/goodow/realtime/core/Platform.h"
 #include "com/goodow/realtime/core/Scheduler.h"
 #include "com/goodow/realtime/core/WebSocket.h"
@@ -29,6 +29,8 @@ NSString * GDCReconnectBus_AUTO_RECONNECT_ = @"reconnect";
       withGDJsonObject:(id<GDJsonObject>)options {
   if (self = [super initWithNSString:url withGDJsonObject:options]) {
     queuedMessages_ = [GDJson createArray];
+    self->options_ = options;
+    reconnect__ = options == nil || ![options has:GDCReconnectBus_AUTO_RECONNECT_] ? YES : [options getBoolean:GDCReconnectBus_AUTO_RECONNECT_];
     backOffGenerator_ = [[ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator alloc] initWithInt:1 * 1000 withInt:30 * 60 * 1000 withDouble:0.5];
     (void) [super setHookWithGDCBusHook:[[GDCReconnectBus_$1 alloc] initWithGDCReconnectBus:self]];
   }
@@ -36,13 +38,13 @@ NSString * GDCReconnectBus_AUTO_RECONNECT_ = @"reconnect";
 }
 
 - (void)reconnect {
-  if (state_ == GDCStateEnum_get_OPEN()) {
+  if ([self getReadyState] == GDCStateEnum_get_OPEN() || [self getReadyState] == GDCStateEnum_get_CONNECTING()) {
     return;
   }
   if (webSocket_ != nil) {
     [webSocket_ close];
   }
-  [self connectWithNSString:url_ withGDJsonObject:[self getOptions]];
+  [self connectWithNSString:url_ withGDJsonObject:options_];
 }
 
 - (GDCSimpleBus *)setHookWithGDCBusHook:(id<GDCBusHook>)hook {
@@ -50,21 +52,33 @@ NSString * GDCReconnectBus_AUTO_RECONNECT_ = @"reconnect";
   return self;
 }
 
-- (void)setOptionsWithGDJsonObject:(id<GDJsonObject>)options {
-  [super setOptionsWithGDJsonObject:options];
-  reconnect__ = options == nil || ![options has:GDCReconnectBus_AUTO_RECONNECT_] ? YES : [options getBoolean:GDCReconnectBus_AUTO_RECONNECT_];
-}
-
 - (void)doClose {
   reconnect__ = NO;
+  [((ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator *) nil_chk(backOffGenerator_)) reset];
   (void) [((id<GDJsonArray>) nil_chk(queuedMessages_)) clear];
   [super doClose];
+}
+
+- (void)sendWithGDJsonObject:(id<GDJsonObject>)msg {
+  if ([self getReadyState] == GDCStateEnum_get_OPEN()) {
+    [super sendWithGDJsonObject:msg];
+    return;
+  }
+  if (reconnect__) {
+    [self reconnect];
+  }
+  NSString *type = [((id<GDJsonObject>) nil_chk(msg)) getString:GDCWebSocketBus_get_TYPE_()];
+  if ([@"ping" isEqual:type] || [@"register" isEqual:type]) {
+    return;
+  }
+  (void) [((id<GDJsonArray>) nil_chk(queuedMessages_)) push:msg];
 }
 
 - (void)copyAllFieldsTo:(GDCReconnectBus *)other {
   [super copyAllFieldsTo:other];
   other->backOffGenerator_ = backOffGenerator_;
   other->hook_ReconnectBus_ = hook_ReconnectBus_;
+  other->options_ = options_;
   other->queuedMessages_ = queuedMessages_;
   other->reconnect__ = reconnect__;
 }
@@ -74,8 +88,8 @@ NSString * GDCReconnectBus_AUTO_RECONNECT_ = @"reconnect";
     { "initWithNSString:withGDJsonObject:", "ReconnectBus", NULL, 0x1, NULL },
     { "reconnect", NULL, "V", 0x1, NULL },
     { "setHookWithGDCBusHook:", "setHook", "Lcom.goodow.realtime.channel.impl.SimpleBus;", 0x1, NULL },
-    { "setOptionsWithGDJsonObject:", "setOptions", "V", 0x1, NULL },
     { "doClose", NULL, "V", 0x4, NULL },
+    { "sendWithGDJsonObject:", "send", "V", 0x4, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
     { "AUTO_RECONNECT_", NULL, 0x19, "Ljava.lang.String;", &GDCReconnectBus_AUTO_RECONNECT_,  },
@@ -83,49 +97,10 @@ NSString * GDCReconnectBus_AUTO_RECONNECT_ = @"reconnect";
     { "hook_ReconnectBus_", "hook", 0x2, "Lcom.goodow.realtime.channel.BusHook;", NULL,  },
     { "reconnect__", "reconnect", 0x2, "Z", NULL,  },
     { "queuedMessages_", NULL, 0x12, "Lcom.goodow.realtime.json.JsonArray;", NULL,  },
+    { "options_", NULL, 0x12, "Lcom.goodow.realtime.json.JsonObject;", NULL,  },
   };
-  static J2ObjcClassInfo _GDCReconnectBus = { "ReconnectBus", "com.goodow.realtime.channel.impl", NULL, 0x1, 5, methods, 5, fields, 0, NULL};
+  static J2ObjcClassInfo _GDCReconnectBus = { "ReconnectBus", "com.goodow.realtime.channel.impl", NULL, 0x1, 5, methods, 6, fields, 0, NULL};
   return &_GDCReconnectBus;
-}
-
-@end
-
-@implementation GDCReconnectBus_QueuedMessage
-
-- (id)initWithGDCReconnectBus:(GDCReconnectBus *)outer$
-                  withBoolean:(BOOL)send
-                 withNSString:(NSString *)address
-                       withId:(id)msg
-withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler {
-  if (self = [super init]) {
-    self->send_ = send;
-    self->address_ = address;
-    self->msg_ = msg;
-    self->replyHandler_ = replyHandler;
-  }
-  return self;
-}
-
-- (void)copyAllFieldsTo:(GDCReconnectBus_QueuedMessage *)other {
-  [super copyAllFieldsTo:other];
-  other->address_ = address_;
-  other->msg_ = msg_;
-  other->replyHandler_ = replyHandler_;
-  other->send_ = send_;
-}
-
-+ (J2ObjcClassInfo *)__metadata {
-  static J2ObjcMethodInfo methods[] = {
-    { "initWithGDCReconnectBus:withBoolean:withNSString:withId:withComGoodowRealtimeCoreHandler:", "QueuedMessage", NULL, 0x0, NULL },
-  };
-  static J2ObjcFieldInfo fields[] = {
-    { "send_", NULL, 0x10, "Z", NULL,  },
-    { "address_", NULL, 0x10, "Ljava.lang.String;", NULL,  },
-    { "msg_", NULL, 0x10, "Ljava.lang.Object;", NULL,  },
-    { "replyHandler_", NULL, 0x10, "Lcom.goodow.realtime.core.Handler;", NULL,  },
-  };
-  static J2ObjcClassInfo _GDCReconnectBus_QueuedMessage = { "QueuedMessage", "com.goodow.realtime.channel.impl", "ReconnectBus", 0x2, 1, methods, 4, fields, 0, NULL};
-  return &_GDCReconnectBus_QueuedMessage;
 }
 
 @end
@@ -134,22 +109,23 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
 
 - (void)handleOpened {
   [((ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator *) nil_chk(this$0_->backOffGenerator_)) reset];
-  IOSObjectArray *addresses = [((id<GDJsonObject>) nil_chk(this$0_->handlerMap_)) keys];
+  [this$0_ login:nil token:nil replyHandler:nil];
+  IOSObjectArray *addresses = [((id<GDJsonObject>) nil_chk(this$0_->handlerCount_)) keys];
   {
     IOSObjectArray *a__ = addresses;
     NSString * const *b__ = ((IOSObjectArray *) nil_chk(a__))->buffer_;
     NSString * const *e__ = b__ + a__->size_;
     while (b__ < e__) {
       NSString *address = (*b__++);
-      NSAssert([((id<GDJsonArray>) nil_chk([this$0_->handlerMap_ getArray:address])) count] > 0, [[NSString stringWithFormat:@"Handlers registried on %@ shouldn't be empty" J2OBJC_COMMA() address] description]);
-      if (![this$0_ isLocalForkWithNSString:address]) {
-        [this$0_ sendRegisterWithNSString:address];
-      }
+      NSAssert([this$0_->handlerCount_ getNumber:address] > 0, [[NSString stringWithFormat:@"Handlers registried on %@ shouldn't be empty" J2OBJC_COMMA() address] description]);
+      [this$0_ sendUnregisterWithNSString:address];
+      [this$0_ sendRegisterWithNSString:address];
     }
   }
-  if ([((id<GDJsonArray>) nil_chk(this$0_->queuedMessages_)) count] != 0) {
-    [this$0_->queuedMessages_ forEach:[[GDCReconnectBus_$1_$1 alloc] initWithGDCReconnectBus_$1:self]];
+  if ([((id<GDJsonArray>) nil_chk(this$0_->queuedMessages_)) count] > 0) {
+    id<GDJsonArray> copy_ = [this$0_->queuedMessages_ copy__];
     (void) [this$0_->queuedMessages_ clear];
+    [((id<GDJsonArray>) nil_chk(copy_)) forEach:[[GDCReconnectBus_$1_$1 alloc] initWithGDCReconnectBus_$1:self]];
   }
   [super handleOpened];
 }
@@ -159,21 +135,6 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
     [((id<ComGoodowRealtimeCoreScheduler>) nil_chk([ComGoodowRealtimeCorePlatform scheduler])) scheduleDelayWithInt:((ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator_BackOffParameters *) nil_chk([((ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator *) nil_chk(this$0_->backOffGenerator_)) next]))->targetDelay_ withComGoodowRealtimeCoreHandler:[[GDCReconnectBus_$1_$2 alloc] initWithGDCReconnectBus_$1:self]];
   }
   [super handlePostClose];
-}
-
-- (BOOL)handleSendOrPubWithBoolean:(BOOL)send
-                      withNSString:(NSString *)address
-                            withId:(id)msg
-  withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler {
-  BOOL allow = [super handleSendOrPubWithBoolean:send withNSString:address withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
-  if (!allow || this$0_->state_ == GDCStateEnum_get_OPEN() || [this$0_ isLocalForkWithNSString:address]) {
-    return allow;
-  }
-  if (this$0_->reconnect__) {
-    [this$0_ reconnect];
-  }
-  (void) [((id<GDJsonArray>) nil_chk(this$0_->queuedMessages_)) push:[[GDCReconnectBus_QueuedMessage alloc] initWithGDCReconnectBus:this$0_ withBoolean:send withNSString:address withId:msg withComGoodowRealtimeCoreHandler:replyHandler]];
-  return NO;
 }
 
 - (id<GDCBusHook>)delegate {
@@ -189,14 +150,13 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
   static J2ObjcMethodInfo methods[] = {
     { "handleOpened", NULL, "V", 0x1, NULL },
     { "handlePostClose", NULL, "V", 0x1, NULL },
-    { "handleSendOrPubWithBoolean:withNSString:withId:withComGoodowRealtimeCoreHandler:", "handleSendOrPub", "Z", 0x1, NULL },
     { "delegate", NULL, "Lcom.goodow.realtime.channel.BusHook;", 0x4, NULL },
     { "initWithGDCReconnectBus:", "init", NULL, 0x0, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
     { "this$0_", NULL, 0x1012, "Lcom.goodow.realtime.channel.impl.ReconnectBus;", NULL,  },
   };
-  static J2ObjcClassInfo _GDCReconnectBus_$1 = { "$1", "com.goodow.realtime.channel.impl", "ReconnectBus", 0x8000, 5, methods, 1, fields, 0, NULL};
+  static J2ObjcClassInfo _GDCReconnectBus_$1 = { "$1", "com.goodow.realtime.channel.impl", "ReconnectBus", 0x8000, 4, methods, 1, fields, 0, NULL};
   return &_GDCReconnectBus_$1;
 }
 
@@ -205,8 +165,8 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
 @implementation GDCReconnectBus_$1_$1
 
 - (void)callWithInt:(int)index
-             withId:(GDCReconnectBus_QueuedMessage *)value {
-  [this$0_->this$0_ doSendOrPubWithBoolean:((GDCReconnectBus_QueuedMessage *) nil_chk(value))->send_ withNSString:value->address_ withId:value->msg_ withComGoodowRealtimeCoreHandler:value->replyHandler_];
+             withId:(id<GDJsonObject>)msg {
+  [this$0_->this$0_ sendWithGDJsonObject:msg];
 }
 
 - (id)initWithGDCReconnectBus_$1:(GDCReconnectBus_$1 *)outer$ {
@@ -216,7 +176,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
 
 + (J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {
-    { "callWithInt:withGDCReconnectBus_QueuedMessage:", "call", "V", 0x1, NULL },
+    { "callWithInt:withGDJsonObject:", "call", "V", 0x1, NULL },
     { "initWithGDCReconnectBus_$1:", "init", NULL, 0x0, NULL },
   };
   static J2ObjcFieldInfo fields[] = {

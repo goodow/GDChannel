@@ -9,11 +9,11 @@
 #import <XCTest/XCTest.h>
 #import "GDChannel.h"
 
-@interface GDCLocalEventBusTests : XCTestCase
+@interface GDCSimpleBusTests : XCTestCase
 
 @end
 
-@implementation GDCLocalEventBusTests
+@implementation GDCSimpleBusTests
 
 - (void)setUp
 {
@@ -32,7 +32,7 @@
   id<GDCBus> bus = [[GDCSimpleBus alloc] init];
   __block BOOL testComplete = NO;
   
-  __block id<GDCHandlerRegistration> handlerRegistration = [bus registerHandler:@"someaddress" handler:^(id<GDCMessage> message) {
+  __block id<GDCHandlerRegistration> handlerRegistration = [bus registerLocalHandler:@"someaddress" handler:^(id<GDCMessage> message) {
     XCTAssertTrue(self == [message body]);
     
     NSDictionary *msg = @{@"text": @"reply"};
@@ -42,7 +42,7 @@
     handlerRegistration = nil;
   }];
   
-  [bus send:@"someaddress" message:self replyHandler:^(id<GDCMessage> message) {
+  [bus sendLocal:@"someaddress" message:self replyHandler:^(id<GDCMessage> message) {
     NSMutableDictionary *body = [message body];
     XCTAssertTrue([@"reply" isEqualToString:[body objectForKey:@"text"]]);
     

@@ -21,9 +21,11 @@
   NSString *address__;
   NSString *replyAddress__;
   BOOL send_;
+  BOOL local_;
 }
 
-- (id)initWithBoolean:(BOOL)send
+- (id)initWithBoolean:(BOOL)local
+          withBoolean:(BOOL)send
            withGDCBus:(id<GDCBus>)bus
          withNSString:(NSString *)address
          withNSString:(NSString *)replyAddress

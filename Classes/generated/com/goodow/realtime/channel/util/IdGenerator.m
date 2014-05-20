@@ -14,7 +14,7 @@ BOOL ComGoodowRealtimeChannelUtilIdGenerator_initialized = NO;
 
 @implementation ComGoodowRealtimeChannelUtilIdGenerator
 
-IOSCharArray * ComGoodowRealtimeChannelUtilIdGenerator_ALPHABET_;
+IOSCharArray * ComGoodowRealtimeChannelUtilIdGenerator_WEB64_ALPHABET_;
 IOSCharArray * ComGoodowRealtimeChannelUtilIdGenerator_NUMBERS_;
 
 - (id)init {
@@ -35,7 +35,7 @@ IOSCharArray * ComGoodowRealtimeChannelUtilIdGenerator_NUMBERS_;
 - (NSString *)nextWithInt:(int)length {
   JavaLangStringBuilder *result = [[JavaLangStringBuilder alloc] initWithInt:length];
   for (int i = 0; i < length; i++) {
-    (void) [result appendWithChar:IOSCharArray_Get(nil_chk(ComGoodowRealtimeChannelUtilIdGenerator_ALPHABET_), [((JavaUtilRandom *) nil_chk(random_)) nextIntWithInt:36])];
+    (void) [result appendWithChar:IOSCharArray_Get(nil_chk(ComGoodowRealtimeChannelUtilIdGenerator_WEB64_ALPHABET_), [((JavaUtilRandom *) nil_chk(random_)) nextIntWithInt:64])];
   }
   return [result description];
 }
@@ -50,7 +50,7 @@ IOSCharArray * ComGoodowRealtimeChannelUtilIdGenerator_NUMBERS_;
 
 + (void)initialize {
   if (self == [ComGoodowRealtimeChannelUtilIdGenerator class]) {
-    ComGoodowRealtimeChannelUtilIdGenerator_ALPHABET_ = [@"abcdefghijklmnopqrstuvwxyz0123456789" toCharArray];
+    ComGoodowRealtimeChannelUtilIdGenerator_WEB64_ALPHABET_ = [@"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_" toCharArray];
     ComGoodowRealtimeChannelUtilIdGenerator_NUMBERS_ = [@"0123456789" toCharArray];
     ComGoodowRealtimeChannelUtilIdGenerator_initialized = YES;
   }
@@ -69,7 +69,7 @@ IOSCharArray * ComGoodowRealtimeChannelUtilIdGenerator_NUMBERS_;
     { "nextNumbersWithInt:", "nextNumbers", "Ljava.lang.String;", 0x1, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
-    { "ALPHABET_", NULL, 0x18, "[C", &ComGoodowRealtimeChannelUtilIdGenerator_ALPHABET_,  },
+    { "WEB64_ALPHABET_", NULL, 0x18, "[C", &ComGoodowRealtimeChannelUtilIdGenerator_WEB64_ALPHABET_,  },
     { "NUMBERS_", NULL, 0x18, "[C", &ComGoodowRealtimeChannelUtilIdGenerator_NUMBERS_,  },
     { "random_", NULL, 0x12, "Ljava.util.Random;", NULL,  },
   };

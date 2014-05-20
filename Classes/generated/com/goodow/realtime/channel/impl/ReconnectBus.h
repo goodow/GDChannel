@@ -16,7 +16,7 @@
 @protocol GDJsonObject;
 
 #import "JreEmulation.h"
-#include "com/goodow/realtime/channel/BusHook.h"
+#include "com/goodow/realtime/channel/impl/BusHookProxy.h"
 #include "com/goodow/realtime/channel/impl/WebSocketBus.h"
 #include "com/goodow/realtime/core/Handler.h"
 #include "com/goodow/realtime/json/JsonArray.h"
@@ -27,6 +27,7 @@
   id<GDCBusHook> hook_ReconnectBus_;
   BOOL reconnect__;
   id<GDJsonArray> queuedMessages_;
+  id<GDJsonObject> options_;
 }
 
 - (id)initWithNSString:(NSString *)url
@@ -36,9 +37,9 @@
 
 - (GDCSimpleBus *)setHookWithGDCBusHook:(id<GDCBusHook>)hook;
 
-- (void)setOptionsWithGDJsonObject:(id<GDJsonObject>)options;
-
 - (void)doClose;
+
+- (void)sendWithGDJsonObject:(id<GDJsonObject>)msg;
 
 - (void)copyAllFieldsTo:(GDCReconnectBus *)other;
 
@@ -49,37 +50,14 @@ __attribute__((always_inline)) inline void GDCReconnectBus_init() {}
 J2OBJC_FIELD_SETTER(GDCReconnectBus, backOffGenerator_, ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator *)
 J2OBJC_FIELD_SETTER(GDCReconnectBus, hook_ReconnectBus_, id<GDCBusHook>)
 J2OBJC_FIELD_SETTER(GDCReconnectBus, queuedMessages_, id<GDJsonArray>)
+J2OBJC_FIELD_SETTER(GDCReconnectBus, options_, id<GDJsonObject>)
 
 FOUNDATION_EXPORT NSString *GDCReconnectBus_AUTO_RECONNECT_;
 J2OBJC_STATIC_FIELD_GETTER(GDCReconnectBus, AUTO_RECONNECT_, NSString *)
 
 typedef GDCReconnectBus ComGoodowRealtimeChannelImplReconnectBus;
 
-@interface GDCReconnectBus_QueuedMessage : NSObject {
- @public
-  BOOL send_;
-  NSString *address_;
-  id msg_;
-  id<ComGoodowRealtimeCoreHandler> replyHandler_;
-}
-
-- (id)initWithGDCReconnectBus:(GDCReconnectBus *)outer$
-                  withBoolean:(BOOL)send
-                 withNSString:(NSString *)address
-                       withId:(id)msg
-withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
-
-- (void)copyAllFieldsTo:(GDCReconnectBus_QueuedMessage *)other;
-
-@end
-
-__attribute__((always_inline)) inline void GDCReconnectBus_QueuedMessage_init() {}
-
-J2OBJC_FIELD_SETTER(GDCReconnectBus_QueuedMessage, address_, NSString *)
-J2OBJC_FIELD_SETTER(GDCReconnectBus_QueuedMessage, msg_, id)
-J2OBJC_FIELD_SETTER(GDCReconnectBus_QueuedMessage, replyHandler_, id<ComGoodowRealtimeCoreHandler>)
-
-@interface GDCReconnectBus_$1 : GDCBusHook_BusHookProxy {
+@interface GDCReconnectBus_$1 : GDCBusHookProxy {
  @public
   GDCReconnectBus *this$0_;
 }
@@ -87,11 +65,6 @@ J2OBJC_FIELD_SETTER(GDCReconnectBus_QueuedMessage, replyHandler_, id<ComGoodowRe
 - (void)handleOpened;
 
 - (void)handlePostClose;
-
-- (BOOL)handleSendOrPubWithBoolean:(BOOL)send
-                      withNSString:(NSString *)address
-                            withId:(id)msg
-  withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
 - (id<GDCBusHook>)delegate;
 
@@ -109,7 +82,7 @@ J2OBJC_FIELD_SETTER(GDCReconnectBus_$1, this$0_, GDCReconnectBus *)
 }
 
 - (void)callWithInt:(int)index
-             withId:(GDCReconnectBus_QueuedMessage *)value;
+             withId:(id<GDJsonObject>)msg;
 
 - (id)initWithGDCReconnectBus_$1:(GDCReconnectBus_$1 *)outer$;
 

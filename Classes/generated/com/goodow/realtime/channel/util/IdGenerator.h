@@ -35,8 +35,8 @@ J2OBJC_STATIC_INIT(ComGoodowRealtimeChannelUtilIdGenerator)
 
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelUtilIdGenerator, random_, JavaUtilRandom *)
 
-FOUNDATION_EXPORT IOSCharArray *ComGoodowRealtimeChannelUtilIdGenerator_ALPHABET_;
-J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelUtilIdGenerator, ALPHABET_, IOSCharArray *)
+FOUNDATION_EXPORT IOSCharArray *ComGoodowRealtimeChannelUtilIdGenerator_WEB64_ALPHABET_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelUtilIdGenerator, WEB64_ALPHABET_, IOSCharArray *)
 
 FOUNDATION_EXPORT IOSCharArray *ComGoodowRealtimeChannelUtilIdGenerator_NUMBERS_;
 J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelUtilIdGenerator, NUMBERS_, IOSCharArray *)

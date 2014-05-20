@@ -26,11 +26,8 @@
  @public
   id<GDJsonObject> handlerMap_;
   id<GDJsonObject> replyHandlers_;
-  ComGoodowRealtimeChannelUtilIdGenerator *idGenerator_;
-  id<GDJsonObject> options_;
-  BOOL forkLocal_;
-  GDCStateEnum *state_;
   id<GDCBusHook> hook_;
+  ComGoodowRealtimeChannelUtilIdGenerator *idGenerator_;
 }
 
 + (void)checkNotNullWithNSString:(NSString *)paramName
@@ -38,55 +35,65 @@
 
 - (id)init;
 
-- (id)initWithGDJsonObject:(id<GDJsonObject>)options;
-
 - (void)close;
-
-- (id<GDJsonObject>)getOptions;
 
 - (GDCStateEnum *)getReadyState;
 
 - (GDCSimpleBus *)publish:(NSString *)address message:(id)msg;
 
+- (id<GDCBus>)publishLocalWithNSString:(NSString *)address
+                                withId:(id)msg;
+
 - (id<ComGoodowRealtimeCoreHandlerRegistration>)registerHandler:(NSString *)address handler:(id)handler;
+
+- (id<ComGoodowRealtimeCoreHandlerRegistration>)registerLocalHandler:(NSString *)address handler:(id)handler;
 
 - (GDCSimpleBus *)send:(NSString *)address message:(id)msg replyHandler:(id)replyHandler;
 
+- (id<GDCBus>)sendLocalWithNSString:(NSString *)address
+                             withId:(id)msg
+   withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
+
 - (GDCSimpleBus *)setHookWithGDCBusHook:(id<GDCBusHook>)hook;
-
-- (void)setOptionsWithGDJsonObject:(id<GDJsonObject>)options;
-
-- (void)clearHandlers;
 
 - (void)doClose;
 
-- (void)doReceiveMessageWithGDCMessage:(id<GDCMessage>)message;
+- (BOOL)doRegisterHandlerWithBoolean:(BOOL)local
+                        withNSString:(NSString *)address
+    withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
-- (BOOL)doRegisterHandlerWithNSString:(NSString *)address
-     withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
-
-- (void)doSendOrPubWithBoolean:(BOOL)send
+- (void)doSendOrPubWithBoolean:(BOOL)local
+                   withBoolean:(BOOL)send
                   withNSString:(NSString *)address
                         withId:(id)msg
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
-- (BOOL)doUnregisterHandlerWithNSString:(NSString *)address
-       withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+- (BOOL)doUnregisterHandlerWithBoolean:(BOOL)local
+                          withNSString:(NSString *)address
+      withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
-- (BOOL)internalHandleReceiveMessageWithGDCMessage:(id<GDCMessage>)message;
+- (void)clearHandlers;
 
-- (BOOL)isLocalForkWithNSString:(NSString *)address;
+- (BOOL)internalHandleReceiveMessageWithBoolean:(BOOL)local
+                                 withGDCMessage:(id<GDCMessage>)message;
+
+- (void)internalHandleSendOrPubWithBoolean:(BOOL)local
+                               withBoolean:(BOOL)send
+                              withNSString:(NSString *)address
+                                    withId:(id)msg
+          withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
 - (NSString *)makeUUID;
 
 - (void)scheduleHandleWithNSString:(NSString *)address
                             withId:(id)handler
-                            withId:(id)event;
+                            withId:(id)message;
 
-- (void)internalHandleSendOrPubWithBoolean:(BOOL)send
-                              withNSString:(NSString *)address
-                                    withId:(id)msg
-          withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
+- (void)doReceiveMessageWithGDCMessage:(id<GDCMessage>)message;
+
+- (id<ComGoodowRealtimeCoreHandlerRegistration>)registerHandlerImplWithBoolean:(BOOL)local
+                                                                  withNSString:(NSString *)address
+                                              withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
 - (void)copyAllFieldsTo:(GDCSimpleBus *)other;
 
@@ -97,68 +104,37 @@ J2OBJC_STATIC_INIT(GDCSimpleBus)
 
 J2OBJC_FIELD_SETTER(GDCSimpleBus, handlerMap_, id<GDJsonObject>)
 J2OBJC_FIELD_SETTER(GDCSimpleBus, replyHandlers_, id<GDJsonObject>)
-J2OBJC_FIELD_SETTER(GDCSimpleBus, idGenerator_, ComGoodowRealtimeChannelUtilIdGenerator *)
-J2OBJC_FIELD_SETTER(GDCSimpleBus, options_, id<GDJsonObject>)
-J2OBJC_FIELD_SETTER(GDCSimpleBus, state_, GDCStateEnum *)
 J2OBJC_FIELD_SETTER(GDCSimpleBus, hook_, id<GDCBusHook>)
-
-FOUNDATION_EXPORT NSString *GDCSimpleBus_MODE_MIX_;
-J2OBJC_STATIC_FIELD_GETTER(GDCSimpleBus, MODE_MIX_, NSString *)
+J2OBJC_FIELD_SETTER(GDCSimpleBus, idGenerator_, ComGoodowRealtimeChannelUtilIdGenerator *)
 
 FOUNDATION_EXPORT JavaUtilLoggingLogger *GDCSimpleBus_log_;
 J2OBJC_STATIC_FIELD_GETTER(GDCSimpleBus, log_, JavaUtilLoggingLogger *)
 
 typedef GDCSimpleBus ComGoodowRealtimeChannelImplSimpleBus;
 
-@interface GDCSimpleBus_BusProxy : NSObject < GDCBus > {
- @public
-  GDCSimpleBus *delegate_;
-  id<GDCBusHook> hook_;
-}
-
-- (id)initWithGDCSimpleBus:(GDCSimpleBus *)delegate;
-
-- (void)close;
-
-- (GDCStateEnum *)getReadyState;
-
-- (GDCSimpleBus *)publish:(NSString *)address message:(id)msg;
-
-- (id<ComGoodowRealtimeCoreHandlerRegistration>)registerHandler:(NSString *)address handler:(id)handler;
-
-- (GDCSimpleBus *)send:(NSString *)address message:(id)msg replyHandler:(id)replyHandler;
-
-- (id<GDCBus>)setHookWithGDCBusHook:(id<GDCBusHook>)hook;
-
-- (void)copyAllFieldsTo:(GDCSimpleBus_BusProxy *)other;
-
-@end
-
-__attribute__((always_inline)) inline void GDCSimpleBus_BusProxy_init() {}
-
-J2OBJC_FIELD_SETTER(GDCSimpleBus_BusProxy, delegate_, GDCSimpleBus *)
-J2OBJC_FIELD_SETTER(GDCSimpleBus_BusProxy, hook_, id<GDCBusHook>)
-
-@interface GDCSimpleBus_$1 : NSObject < ComGoodowRealtimeCoreHandlerRegistration > {
+@interface GDCSimpleBus_$1 : NSObject < ComGoodowRealtimeCoreHandler > {
  @public
   GDCSimpleBus *this$0_;
+  id val$handler_;
+  id val$message_;
   NSString *val$address_;
-  id<ComGoodowRealtimeCoreHandler> val$handler_;
 }
 
-- (void)unregisterHandler;
+- (void)handleWithId:(id)ignore;
 
 - (id)initWithGDCSimpleBus:(GDCSimpleBus *)outer$
-              withNSString:(NSString *)capture$0
-withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)capture$1;
+                    withId:(id)capture$0
+                    withId:(id)capture$1
+              withNSString:(NSString *)capture$2;
 
 @end
 
 __attribute__((always_inline)) inline void GDCSimpleBus_$1_init() {}
 
 J2OBJC_FIELD_SETTER(GDCSimpleBus_$1, this$0_, GDCSimpleBus *)
+J2OBJC_FIELD_SETTER(GDCSimpleBus_$1, val$handler_, id)
+J2OBJC_FIELD_SETTER(GDCSimpleBus_$1, val$message_, id)
 J2OBJC_FIELD_SETTER(GDCSimpleBus_$1, val$address_, NSString *)
-J2OBJC_FIELD_SETTER(GDCSimpleBus_$1, val$handler_, id<ComGoodowRealtimeCoreHandler>)
 
 @interface GDCSimpleBus_$2 : NSObject < GDJsonArray_ListIterator > {
  @public
@@ -182,28 +158,27 @@ J2OBJC_FIELD_SETTER(GDCSimpleBus_$2, this$0_, GDCSimpleBus *)
 J2OBJC_FIELD_SETTER(GDCSimpleBus_$2, val$address_, NSString *)
 J2OBJC_FIELD_SETTER(GDCSimpleBus_$2, val$message_, id<GDCMessage>)
 
-@interface GDCSimpleBus_$3 : NSObject < ComGoodowRealtimeCoreHandler > {
+@interface GDCSimpleBus_$3 : NSObject < ComGoodowRealtimeCoreHandlerRegistration > {
  @public
   GDCSimpleBus *this$0_;
-  id val$handler_;
-  id val$event_;
+  BOOL val$local_;
   NSString *val$address_;
+  id<ComGoodowRealtimeCoreHandler> val$handler_;
 }
 
-- (void)handleWithId:(id)ignore;
+- (void)unregisterHandler;
 
 - (id)initWithGDCSimpleBus:(GDCSimpleBus *)outer$
-                    withId:(id)capture$0
-                    withId:(id)capture$1
-              withNSString:(NSString *)capture$2;
+               withBoolean:(BOOL)capture$0
+              withNSString:(NSString *)capture$1
+withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)capture$2;
 
 @end
 
 __attribute__((always_inline)) inline void GDCSimpleBus_$3_init() {}
 
 J2OBJC_FIELD_SETTER(GDCSimpleBus_$3, this$0_, GDCSimpleBus *)
-J2OBJC_FIELD_SETTER(GDCSimpleBus_$3, val$handler_, id)
-J2OBJC_FIELD_SETTER(GDCSimpleBus_$3, val$event_, id)
 J2OBJC_FIELD_SETTER(GDCSimpleBus_$3, val$address_, NSString *)
+J2OBJC_FIELD_SETTER(GDCSimpleBus_$3, val$handler_, id<ComGoodowRealtimeCoreHandler>)
 
 #endif // _GDCSimpleBus_H_

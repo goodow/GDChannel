@@ -6,6 +6,7 @@
 //
 
 #include "IOSClass.h"
+#include "IOSObjectArray.h"
 #include "com/goodow/realtime/channel/State.h"
 #include "java/lang/IllegalArgumentException.h"
 
@@ -14,6 +15,8 @@ BOOL GDCStateEnum_initialized = NO;
 GDCStateEnum *GDCStateEnum_values[4];
 
 @implementation GDCStateEnum
+
+IOSObjectArray * GDCStateEnum_values__;
 
 - (id)copyWithZone:(NSZone *)zone {
   return self;
@@ -29,6 +32,7 @@ GDCStateEnum *GDCStateEnum_values[4];
     GDCStateEnum_OPEN = [[GDCStateEnum alloc] initWithNSString:@"OPEN" withInt:1];
     GDCStateEnum_CLOSING = [[GDCStateEnum alloc] initWithNSString:@"CLOSING" withInt:2];
     GDCStateEnum_CLOSED = [[GDCStateEnum alloc] initWithNSString:@"CLOSED" withInt:3];
+    GDCStateEnum_values__ = [GDCStateEnum values];
     GDCStateEnum_initialized = YES;
   }
 }

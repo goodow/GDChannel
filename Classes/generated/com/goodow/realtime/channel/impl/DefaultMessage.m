@@ -12,12 +12,14 @@
 
 @implementation GDCDefaultMessage
 
-- (id)initWithBoolean:(BOOL)send
+- (id)initWithBoolean:(BOOL)local
+          withBoolean:(BOOL)send
            withGDCBus:(id<GDCBus>)bus
          withNSString:(NSString *)address
          withNSString:(NSString *)replyAddress
                withId:(id)body {
   if (self = [super init]) {
+    self->local_ = local;
     self->send_ = send;
     self->bus_ = bus;
     self->address__ = address;
@@ -57,7 +59,12 @@
 - (void)sendReplyWithId:(id)msg
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler {
   if (bus_ != nil && replyAddress__ != nil) {
-    (void) [bus_ send:replyAddress__ message:msg replyHandler:replyHandler];
+    if (local_) {
+      (void) [bus_ sendLocal:replyAddress__ message:msg replyHandler:replyHandler];
+    }
+    else {
+      (void) [bus_ send:replyAddress__ message:msg replyHandler:replyHandler];
+    }
   }
 }
 
@@ -66,13 +73,14 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
   other->address__ = address__;
   other->body__ = body__;
   other->bus_ = bus_;
+  other->local_ = local_;
   other->replyAddress__ = replyAddress__;
   other->send_ = send_;
 }
 
 + (J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {
-    { "initWithBoolean:withGDCBus:withNSString:withNSString:withId:", "DefaultMessage", NULL, 0x1, NULL },
+    { "initWithBoolean:withBoolean:withGDCBus:withNSString:withNSString:withId:", "DefaultMessage", NULL, 0x1, NULL },
     { "address", NULL, "Ljava.lang.String;", 0x1, NULL },
     { "body", NULL, "TU;", 0x1, NULL },
     { "fail:message:", "fail", "V", 0x1, NULL },
@@ -88,8 +96,9 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
     { "address__", "address", 0x4, "Ljava.lang.String;", NULL,  },
     { "replyAddress__", "replyAddress", 0x4, "Ljava.lang.String;", NULL,  },
     { "send_", NULL, 0x4, "Z", NULL,  },
+    { "local_", NULL, 0x4, "Z", NULL,  },
   };
-  static J2ObjcClassInfo _GDCDefaultMessage = { "DefaultMessage", "com.goodow.realtime.channel.impl", NULL, 0x0, 9, methods, 5, fields, 0, NULL};
+  static J2ObjcClassInfo _GDCDefaultMessage = { "DefaultMessage", "com.goodow.realtime.channel.impl", NULL, 0x0, 9, methods, 6, fields, 0, NULL};
   return &_GDCDefaultMessage;
 }
 

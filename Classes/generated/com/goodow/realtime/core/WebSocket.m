@@ -5,6 +5,7 @@
 //  Created by retechretech.
 //
 
+#include "com/goodow/realtime/channel/State.h"
 #include "com/goodow/realtime/core/WebSocket.h"
 #include "com/goodow/realtime/json/JsonObject.h"
 
@@ -16,10 +17,11 @@
 + (J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {
     { "close", NULL, "V", 0x401, NULL },
+    { "getReadyState", NULL, "Lcom.goodow.realtime.channel.State;", 0x401, NULL },
     { "sendWithNSString:", "send", "V", 0x401, NULL },
     { "setListenWithComGoodowRealtimeCoreWebSocket_WebSocketHandler:", "setListen", "V", 0x401, NULL },
   };
-  static J2ObjcClassInfo _ComGoodowRealtimeCoreWebSocket = { "WebSocket", "com.goodow.realtime.core", NULL, 0x201, 3, methods, 0, NULL, 0, NULL};
+  static J2ObjcClassInfo _ComGoodowRealtimeCoreWebSocket = { "WebSocket", "com.goodow.realtime.core", NULL, 0x201, 4, methods, 0, NULL, 0, NULL};
   return &_ComGoodowRealtimeCoreWebSocket;
 }
 

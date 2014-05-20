@@ -23,24 +23,21 @@
 #include "com/goodow/realtime/json/JsonObject.h"
 #include "java/lang/IllegalStateException.h"
 #include "java/lang/Void.h"
-#include "java/util/logging/Logger.h"
-
-BOOL GDCWebSocketBus_initialized = NO;
 
 @implementation GDCWebSocketBus
 
 NSString * GDCWebSocketBus_PING_INTERVAL_ = @"vertxbus_ping_interval";
+NSString * GDCWebSocketBus_AUTH_ADDRESS_ = @"auth_address";
 NSString * GDCWebSocketBus_BODY_ = @"body";
 NSString * GDCWebSocketBus_ADDRESS_ = @"address";
 NSString * GDCWebSocketBus_REPLY_ADDRESS_ = @"replyAddress";
 NSString * GDCWebSocketBus_TYPE_ = @"type";
-JavaUtilLoggingLogger * GDCWebSocketBus_log_WebSocketBus_;
 
 - (id)initWithNSString:(NSString *)url
       withGDJsonObject:(id<GDJsonObject>)options {
   if (self = [super init]) {
     pingTimerID_ = -1;
-    state_ = GDCStateEnum_get_CONNECTING();
+    handlerCount_ = [GDJson createObject];
     webSocketHandler_ = [[GDCWebSocketBus_$1 alloc] initWithGDCWebSocketBus:self];
     [self connectWithNSString:url withGDJsonObject:options];
   }
@@ -50,104 +47,114 @@ JavaUtilLoggingLogger * GDCWebSocketBus_log_WebSocketBus_;
 - (void)connectWithNSString:(NSString *)url
            withGDJsonObject:(id<GDJsonObject>)options {
   self->url_ = url;
-  [self setOptionsWithGDJsonObject:options];
   pingInterval_ = options == nil || ![options has:GDCWebSocketBus_PING_INTERVAL_] ? 5 * 1000 : (int) [options getNumber:GDCWebSocketBus_PING_INTERVAL_];
-  state_ = GDCStateEnum_get_CONNECTING();
+  authAddress_ = options == nil || ![options has:GDCWebSocketBus_AUTH_ADDRESS_] ? @"realtime.auth" : [options getString:GDCWebSocketBus_AUTH_ADDRESS_];
   webSocket_ = [((id<ComGoodowRealtimeCoreNet>) nil_chk([ComGoodowRealtimeCorePlatform net])) createWebSocketWithNSString:url withGDJsonObject:options];
   [((id<ComGoodowRealtimeCoreWebSocket>) nil_chk(webSocket_)) setListenWithComGoodowRealtimeCoreWebSocket_WebSocketHandler:webSocketHandler_];
 }
 
-- (void)login:(NSString *)username password:(NSString *)password replyHandler:(id)replyHandler {
-  id<GDJsonObject> msg = [((id<GDJsonObject>) nil_chk([((id<GDJsonObject>) nil_chk([GDJson createObject])) set:@"username" value:username])) set:@"password" value:password];
-  NSString *addr = @"vertx.basicauthmanager.login";
-  [self doSendOrPubWithBoolean:YES withNSString:addr withId:msg withComGoodowRealtimeCoreHandler:[[GDCWebSocketBus_$2 alloc] initWithGDCWebSocketBus:self withComGoodowRealtimeCoreHandler:replyHandler]];
+- (GDCStateEnum *)getReadyState {
+  return [((id<ComGoodowRealtimeCoreWebSocket>) nil_chk(webSocket_)) getReadyState];
+}
+
+- (void)login:(NSString *)userId token:(NSString *)token replyHandler:(id)replyHandler {
+  id<GDJsonObject> msg = [((id<GDJsonObject>) nil_chk([((id<GDJsonObject>) nil_chk([GDJson createObject])) set:@"userId" value:userId])) set:@"token" value:token];
+  (void) [self send:[NSString stringWithFormat:@"%@.login", authAddress_] message:msg replyHandler:[[GDCWebSocketBus_$2 alloc] initWithGDCWebSocketBus:self withComGoodowRealtimeCoreHandler:replyHandler]];
 }
 
 - (void)doClose {
-  state_ = GDCStateEnum_get_CLOSING();
   [((id<ComGoodowRealtimeCoreWebSocket>) nil_chk(webSocket_)) close];
-  (void) [self registerHandler:GDCBus_get_LOCAL_ON_CLOSE_() handler:[[GDCWebSocketBus_$3 alloc] initWithGDCWebSocketBus:self]];
+  (void) [self registerLocalHandler:GDCBus_get_ON_CLOSE_() handler:[[GDCWebSocketBus_$3 alloc] initWithGDCWebSocketBus:self]];
 }
 
-- (BOOL)doRegisterHandlerWithNSString:(NSString *)address
-     withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
-  BOOL first = [super doRegisterHandlerWithNSString:address withComGoodowRealtimeCoreHandler:handler];
-  if (first && ![self isLocalForkWithNSString:address] && (hook_ == nil || [hook_ handlePreRegisterWithNSString:address withComGoodowRealtimeCoreHandler:handler])) {
-    [self sendRegisterWithNSString:address];
+- (BOOL)doRegisterHandlerWithBoolean:(BOOL)local
+                        withNSString:(NSString *)address
+    withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
+  BOOL registered = [super doRegisterHandlerWithBoolean:local withNSString:address withComGoodowRealtimeCoreHandler:handler];
+  if (local || !registered || (hook_ != nil && ![hook_ handlePreRegisterWithNSString:address withComGoodowRealtimeCoreHandler:handler])) {
+    return NO;
   }
-  return first;
+  if ([((id<GDJsonObject>) nil_chk(handlerCount_)) has:address]) {
+    (void) [handlerCount_ set:address number:[handlerCount_ getNumber:address] + 1];
+    return NO;
+  }
+  (void) [handlerCount_ set:address number:1];
+  [self sendRegisterWithNSString:address];
+  return YES;
 }
 
-- (void)doSendOrPubWithBoolean:(BOOL)send
+- (void)doSendOrPubWithBoolean:(BOOL)local
+                   withBoolean:(BOOL)send
                   withNSString:(NSString *)address
                         withId:(id)msg
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler {
   [GDCSimpleBus checkNotNullWithNSString:GDCWebSocketBus_ADDRESS_ withId:address];
-  if ([self isLocalForkWithNSString:address]) {
-    [super doSendOrPubWithBoolean:send withNSString:address withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
+  if (local) {
+    [super doSendOrPubWithBoolean:local withBoolean:send withNSString:address withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
     return;
-  }
-  if (state_ != GDCStateEnum_get_OPEN()) {
-    @throw [[JavaLangIllegalStateException alloc] initWithNSString:@"INVALID_STATE_ERR"];
   }
   id<GDJsonObject> envelope = [((id<GDJsonObject>) nil_chk([GDJson createObject])) set:GDCWebSocketBus_TYPE_ value:send ? @"send" : @"publish"];
   (void) [((id<GDJsonObject>) nil_chk([((id<GDJsonObject>) nil_chk(envelope)) set:GDCWebSocketBus_ADDRESS_ value:address])) set:GDCWebSocketBus_BODY_ value:msg];
-  if (sessionID_ != nil) {
-    (void) [envelope set:@"sessionID" value:sessionID_];
+  if (accessToken_ != nil) {
+    (void) [envelope set:@"sessionID" value:accessToken_];
+  }
+  if (sid_ != nil) {
+    (void) [envelope set:@"sid" value:accessToken_];
   }
   if (replyHandler != nil) {
     NSString *replyAddress = [self makeUUID];
     (void) [envelope set:GDCWebSocketBus_REPLY_ADDRESS_ value:replyAddress];
     (void) [((id<GDJsonObject>) nil_chk(replyHandlers_)) set:replyAddress value:replyHandler];
   }
-  [self sendWithNSString:[envelope toJsonString]];
+  [self sendWithGDJsonObject:envelope];
 }
 
-- (BOOL)doUnregisterHandlerWithNSString:(NSString *)address
-       withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
-  BOOL last = [super doUnregisterHandlerWithNSString:address withComGoodowRealtimeCoreHandler:handler];
-  if (last && ![self isLocalForkWithNSString:address] && (hook_ == nil || [hook_ handleUnregisterWithNSString:address])) {
+- (BOOL)doUnregisterHandlerWithBoolean:(BOOL)local
+                          withNSString:(NSString *)address
+      withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
+  BOOL unregistered = [super doUnregisterHandlerWithBoolean:local withNSString:address withComGoodowRealtimeCoreHandler:handler];
+  if (local || !unregistered || (hook_ != nil && ![hook_ handleUnregisterWithNSString:address])) {
+    return NO;
+  }
+  (void) [handlerCount_ set:address number:[((id<GDJsonObject>) nil_chk(handlerCount_)) getNumber:address] - 1];
+  if ([handlerCount_ getNumber:address] == 0) {
+    (void) [handlerCount_ removeWithNSString:address];
     [self sendUnregisterWithNSString:address];
+    return YES;
   }
-  return last;
+  return NO;
 }
 
-- (void)sendWithNSString:(NSString *)msg {
-  if (state_ == GDCStateEnum_get_OPEN()) {
-    [((id<ComGoodowRealtimeCoreWebSocket>) nil_chk(webSocket_)) sendWithNSString:msg];
+- (void)sendWithGDJsonObject:(id<GDJsonObject>)msg {
+  if ([self getReadyState] != GDCStateEnum_get_OPEN()) {
+    @throw [[JavaLangIllegalStateException alloc] initWithNSString:@"INVALID_STATE_ERR"];
   }
-  else {
-    [((JavaUtilLoggingLogger *) nil_chk(GDCWebSocketBus_log_WebSocketBus_)) warningWithNSString:[NSString stringWithFormat:@"WebSocket is in %@ state. Cannot send: %@", state_, msg]];
-  }
+  [((id<ComGoodowRealtimeCoreWebSocket>) nil_chk(webSocket_)) sendWithNSString:[((id<GDJsonObject>) nil_chk(msg)) toJsonString]];
 }
 
 - (void)sendPing {
-  [self sendWithNSString:[((id<GDJsonObject>) nil_chk([((id<GDJsonObject>) nil_chk([GDJson createObject])) set:GDCWebSocketBus_TYPE_ value:@"ping"])) toJsonString]];
+  [self sendWithGDJsonObject:[((id<GDJsonObject>) nil_chk([GDJson createObject])) set:GDCWebSocketBus_TYPE_ value:@"ping"]];
 }
 
 - (void)sendRegisterWithNSString:(NSString *)address {
   NSAssert(address != nil, @"address shouldn't be null");
   id<GDJsonObject> msg = [((id<GDJsonObject>) nil_chk([((id<GDJsonObject>) nil_chk([GDJson createObject])) set:GDCWebSocketBus_TYPE_ value:@"register"])) set:GDCWebSocketBus_ADDRESS_ value:address];
-  [self sendWithNSString:[((id<GDJsonObject>) nil_chk(msg)) toJsonString]];
+  [self sendWithGDJsonObject:msg];
 }
 
 - (void)sendUnregisterWithNSString:(NSString *)address {
   id<GDJsonObject> msg = [((id<GDJsonObject>) nil_chk([((id<GDJsonObject>) nil_chk([GDJson createObject])) set:GDCWebSocketBus_TYPE_ value:@"unregister"])) set:GDCWebSocketBus_ADDRESS_ value:address];
-  [self sendWithNSString:[((id<GDJsonObject>) nil_chk(msg)) toJsonString]];
-}
-
-+ (void)initialize {
-  if (self == [GDCWebSocketBus class]) {
-    GDCWebSocketBus_log_WebSocketBus_ = [JavaUtilLoggingLogger getLoggerWithNSString:[[IOSClass classWithClass:[GDCWebSocketBus class]] getName]];
-    GDCWebSocketBus_initialized = YES;
-  }
+  [self sendWithGDJsonObject:msg];
 }
 
 - (void)copyAllFieldsTo:(GDCWebSocketBus *)other {
   [super copyAllFieldsTo:other];
+  other->accessToken_ = accessToken_;
+  other->authAddress_ = authAddress_;
+  other->handlerCount_ = handlerCount_;
   other->pingInterval_ = pingInterval_;
   other->pingTimerID_ = pingTimerID_;
-  other->sessionID_ = sessionID_;
+  other->sid_ = sid_;
   other->url_ = url_;
   other->webSocket_ = webSocket_;
   other->webSocketHandler_ = webSocketHandler_;
@@ -157,31 +164,35 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
   static J2ObjcMethodInfo methods[] = {
     { "initWithNSString:withGDJsonObject:", "WebSocketBus", NULL, 0x1, NULL },
     { "connectWithNSString:withGDJsonObject:", "connect", "V", 0x1, NULL },
-    { "login:password:replyHandler:", "login", "V", 0x1, NULL },
+    { "getReadyState", NULL, "Lcom.goodow.realtime.channel.State;", 0x1, NULL },
+    { "login:token:replyHandler:", "login", "V", 0x1, NULL },
     { "doClose", NULL, "V", 0x4, NULL },
-    { "doRegisterHandlerWithNSString:withComGoodowRealtimeCoreHandler:", "doRegisterHandler", "Z", 0x4, NULL },
-    { "doSendOrPubWithBoolean:withNSString:withId:withComGoodowRealtimeCoreHandler:", "doSendOrPub", "V", 0x4, NULL },
-    { "doUnregisterHandlerWithNSString:withComGoodowRealtimeCoreHandler:", "doUnregisterHandler", "Z", 0x4, NULL },
-    { "sendWithNSString:", "send", "V", 0x4, NULL },
+    { "doRegisterHandlerWithBoolean:withNSString:withComGoodowRealtimeCoreHandler:", "doRegisterHandler", "Z", 0x4, NULL },
+    { "doSendOrPubWithBoolean:withBoolean:withNSString:withId:withComGoodowRealtimeCoreHandler:", "doSendOrPub", "V", 0x4, NULL },
+    { "doUnregisterHandlerWithBoolean:withNSString:withComGoodowRealtimeCoreHandler:", "doUnregisterHandler", "Z", 0x4, NULL },
+    { "sendWithGDJsonObject:", "send", "V", 0x4, NULL },
     { "sendPing", NULL, "V", 0x4, NULL },
     { "sendRegisterWithNSString:", "sendRegister", "V", 0x4, NULL },
     { "sendUnregisterWithNSString:", "sendUnregister", "V", 0x4, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
     { "PING_INTERVAL_", NULL, 0x19, "Ljava.lang.String;", &GDCWebSocketBus_PING_INTERVAL_,  },
+    { "AUTH_ADDRESS_", NULL, 0x19, "Ljava.lang.String;", &GDCWebSocketBus_AUTH_ADDRESS_,  },
     { "BODY_", NULL, 0x1c, "Ljava.lang.String;", &GDCWebSocketBus_BODY_,  },
     { "ADDRESS_", NULL, 0x1c, "Ljava.lang.String;", &GDCWebSocketBus_ADDRESS_,  },
     { "REPLY_ADDRESS_", NULL, 0x1c, "Ljava.lang.String;", &GDCWebSocketBus_REPLY_ADDRESS_,  },
     { "TYPE_", NULL, 0x1c, "Ljava.lang.String;", &GDCWebSocketBus_TYPE_,  },
-    { "log_WebSocketBus_", "log", 0x1a, "Ljava.util.logging.Logger;", &GDCWebSocketBus_log_WebSocketBus_,  },
-    { "webSocket_", NULL, 0x4, "Lcom.goodow.realtime.core.WebSocket;", NULL,  },
-    { "url_", NULL, 0x4, "Ljava.lang.String;", NULL,  },
     { "webSocketHandler_", NULL, 0x12, "Lcom.goodow.realtime.core.WebSocket$WebSocketHandler;", NULL,  },
+    { "url_", NULL, 0x0, "Ljava.lang.String;", NULL,  },
+    { "webSocket_", NULL, 0x0, "Lcom.goodow.realtime.core.WebSocket;", NULL,  },
     { "pingInterval_", NULL, 0x2, "I", NULL,  },
-    { "sessionID_", NULL, 0x2, "Ljava.lang.String;", NULL,  },
+    { "authAddress_", NULL, 0x2, "Ljava.lang.String;", NULL,  },
     { "pingTimerID_", NULL, 0x2, "I", NULL,  },
+    { "accessToken_", NULL, 0x2, "Ljava.lang.String;", NULL,  },
+    { "sid_", NULL, 0x2, "Ljava.lang.String;", NULL,  },
+    { "handlerCount_", NULL, 0x10, "Lcom.goodow.realtime.json.JsonObject;", NULL,  },
   };
-  static J2ObjcClassInfo _GDCWebSocketBus = { "WebSocketBus", "com.goodow.realtime.channel.impl", NULL, 0x1, 11, methods, 12, fields, 0, NULL};
+  static J2ObjcClassInfo _GDCWebSocketBus = { "WebSocketBus", "com.goodow.realtime.channel.impl", NULL, 0x1, 12, methods, 15, fields, 0, NULL};
   return &_GDCWebSocketBus;
 }
 
@@ -190,32 +201,30 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
 @implementation GDCWebSocketBus_$1
 
 - (void)onCloseWithGDJsonObject:(id<GDJsonObject>)reason {
-  this$0_->state_ = GDCStateEnum_get_CLOSED();
   [((id<ComGoodowRealtimeCoreScheduler>) nil_chk([ComGoodowRealtimeCorePlatform scheduler])) cancelTimerWithInt:this$0_->pingTimerID_];
-  [this$0_ doReceiveMessageWithGDCMessage:[[GDCDefaultMessage alloc] initWithBoolean:NO withGDCBus:nil withNSString:GDCBus_get_LOCAL_ON_CLOSE_() withNSString:nil withId:reason]];
+  (void) [this$0_ publishLocalWithNSString:GDCBus_get_ON_CLOSE_() withId:reason];
   if (this$0_->hook_ != nil) {
     [this$0_->hook_ handlePostClose];
   }
 }
 
 - (void)onErrorWithNSString:(NSString *)error {
-  [this$0_ doReceiveMessageWithGDCMessage:[[GDCDefaultMessage alloc] initWithBoolean:NO withGDCBus:nil withNSString:GDCBus_get_LOCAL_ON_ERROR_() withNSString:nil withId:[((id<GDJsonObject>) nil_chk([GDJson createObject])) set:@"message" value:error]]];
+  (void) [this$0_ publishLocalWithNSString:GDCBus_get_ON_ERROR_() withId:[((id<GDJsonObject>) nil_chk([GDJson createObject])) set:@"message" value:error]];
 }
 
 - (void)onMessageWithNSString:(NSString *)msg {
   id<GDJsonObject> json = [GDJson parseWithNSString:msg];
-  GDCDefaultMessage *message = [[GDCDefaultMessage alloc] initWithBoolean:NO withGDCBus:this$0_ withNSString:[((id<GDJsonObject>) nil_chk(json)) getString:GDCWebSocketBus_get_ADDRESS_()] withNSString:[json getString:GDCWebSocketBus_get_REPLY_ADDRESS_()] withId:[json getWithNSString:GDCWebSocketBus_get_BODY_()]];
-  [this$0_ internalHandleReceiveMessageWithGDCMessage:message];
+  GDCDefaultMessage *message = [[GDCDefaultMessage alloc] initWithBoolean:NO withBoolean:NO withGDCBus:this$0_ withNSString:[((id<GDJsonObject>) nil_chk(json)) getString:GDCWebSocketBus_get_ADDRESS_()] withNSString:[json getString:GDCWebSocketBus_get_REPLY_ADDRESS_()] withId:[json getWithNSString:GDCWebSocketBus_get_BODY_()]];
+  [this$0_ internalHandleReceiveMessageWithBoolean:NO withGDCMessage:message];
 }
 
 - (void)onOpen {
-  this$0_->state_ = GDCStateEnum_get_OPEN();
   [this$0_ sendPing];
   this$0_->pingTimerID_ = [((id<ComGoodowRealtimeCoreScheduler>) nil_chk([ComGoodowRealtimeCorePlatform scheduler])) schedulePeriodicWithInt:this$0_->pingInterval_ withComGoodowRealtimeCoreHandler:[[GDCWebSocketBus_$1_$1 alloc] initWithGDCWebSocketBus_$1:self]];
   if (this$0_->hook_ != nil) {
     [this$0_->hook_ handleOpened];
   }
-  [this$0_ doReceiveMessageWithGDCMessage:[[GDCDefaultMessage alloc] initWithBoolean:NO withGDCBus:nil withNSString:GDCBus_get_LOCAL_ON_OPEN_() withNSString:nil withId:nil]];
+  (void) [this$0_ publishLocalWithNSString:GDCBus_get_ON_OPEN_() withId:nil];
 }
 
 - (id)initWithGDCWebSocketBus:(GDCWebSocketBus *)outer$ {
@@ -270,10 +279,12 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
 - (void)handleWithId:(id<GDCMessage>)msg {
   id<GDJsonObject> body = [((id<GDCMessage>) nil_chk(msg)) body];
   if ([@"ok" isEqual:[((id<GDJsonObject>) nil_chk(body)) getString:@"status"]]) {
-    this$0_->sessionID_ = [body getString:@"sessionID"];
+    this$0_->accessToken_ = [body getString:@"access_token"];
+    this$0_->sid_ = [body getString:@"sid"];
   }
   if (val$replyHandler_ != nil) {
-    [this$0_ scheduleHandleWithNSString:@"vertx.basicauthmanager.login" withId:val$replyHandler_ withId:[body removeWithNSString:@"sessionID"]];
+    (void) [body removeWithNSString:@"access_token"];
+    [this$0_ scheduleHandleWithNSString:[NSString stringWithFormat:@"%@.login", this$0_->authAddress_] withId:val$replyHandler_ withId:body];
   }
 }
 
@@ -303,6 +314,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)capture$0 {
 
 - (void)handleWithId:(id<GDCMessage>)event {
   [this$0_ clearHandlers];
+  (void) [((id<GDJsonObject>) nil_chk(this$0_->handlerCount_)) clear];
 }
 
 - (id)initWithGDCWebSocketBus:(GDCWebSocketBus *)outer$ {
