@@ -8,17 +8,17 @@
 #include "com/goodow/realtime/channel/Message.h"
 #include "com/goodow/realtime/channel/MessageHandler.h"
 
-@interface GDCMessageHandler : NSObject
+@interface ComGoodowRealtimeChannelMessageHandler : NSObject
 @end
 
-@implementation GDCMessageHandler
+@implementation ComGoodowRealtimeChannelMessageHandler
 
 + (J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {
-    { "handleWithGDCMessage:", "handle", "V", 0x401, NULL },
+    { "handleWithComGoodowRealtimeChannelMessage:", "handle", "V", 0x401, NULL },
   };
-  static J2ObjcClassInfo _GDCMessageHandler = { "MessageHandler", "com.goodow.realtime.channel", NULL, 0x201, 1, methods, 0, NULL, 0, NULL};
-  return &_GDCMessageHandler;
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelMessageHandler = { "MessageHandler", "com.goodow.realtime.channel", NULL, 0x201, 1, methods, 0, NULL, 0, NULL};
+  return &_ComGoodowRealtimeChannelMessageHandler;
 }
 
 @end

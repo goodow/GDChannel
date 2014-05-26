@@ -20,7 +20,10 @@
 
 #import "com/goodow/realtime/objc/ObjCWebSocket.h"
 #import "SocketRocket/SRWebSocket.h"
-#import "GDChannel.h"
+#import "com/goodow/realtime/json/JsonObject.h"
+#import "com/goodow/realtime/json/JsonArray.h"
+#import "GDJson.h"
+#import "com/goodow/realtime/channel/State.h"
 
 @interface ComGoodowRealtimeObjcObjCWebSocket() <SRWebSocketDelegate> {
   SRWebSocket *_webSocket;
@@ -31,13 +34,13 @@
 @implementation ComGoodowRealtimeObjcObjCWebSocket
 
 - (id)initWithNSString:(NSString *)url
-      withGDJsonObject:(id<GDJsonObject>)options {
+    withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options {
   [_webSocket close];
-  
+
   _webSocket = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
   _webSocket.delegate = self;
   [_webSocket open];
-  
+
   return [super init];
 }
 
@@ -45,8 +48,8 @@
   [_webSocket close];
 }
 
--(GDCStateEnum *)getReadyState {
-  return IOSObjectArray_Get(GDCStateEnum_get_values__(), _webSocket.readyState);
+-(ComGoodowRealtimeChannelStateEnum *)getReadyState {
+  return IOSObjectArray_Get(ComGoodowRealtimeChannelStateEnum_get_values__(), _webSocket.readyState);
 }
 
 - (void)sendWithNSString:(NSString *)data {
@@ -66,7 +69,7 @@
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
   NSLog(@":( Websocket Failed With Error %@", error);
   [_handler onErrorWithNSString:[error description]];
-  
+
   _handler = nil;
   _webSocket.delegate = nil;
   _webSocket = nil;
@@ -83,8 +86,8 @@
 }
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {
   NSLog(@"WebSocket closed");
-  [_handler onCloseWithGDJsonObject:@{@"code":[NSNumber numberWithInteger:code], @"reason":reason, @"wasClean":[NSNumber numberWithBool:wasClean]}];
-  
+  [_handler onCloseWithComGoodowRealtimeJsonJsonObject:@{@"code":[NSNumber numberWithInteger:code], @"reason":reason, @"wasClean":[NSNumber numberWithBool:wasClean]}];
+
   _handler = nil;
   _webSocket.delegate = nil;
   _webSocket = nil;

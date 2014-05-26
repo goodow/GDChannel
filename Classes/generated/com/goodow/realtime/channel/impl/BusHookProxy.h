@@ -5,16 +5,16 @@
 //  Created by retechretech.
 //
 
-#ifndef _GDCBusHookProxy_H_
-#define _GDCBusHookProxy_H_
+#ifndef _ComGoodowRealtimeChannelImplBusHookProxy_H_
+#define _ComGoodowRealtimeChannelImplBusHookProxy_H_
 
+@protocol ComGoodowRealtimeChannelMessage;
 @protocol ComGoodowRealtimeCoreHandler;
-@protocol GDCMessage;
 
 #import "JreEmulation.h"
 #include "com/goodow/realtime/channel/BusHook.h"
 
-@interface GDCBusHookProxy : NSObject < GDCBusHook > {
+@interface ComGoodowRealtimeChannelImplBusHookProxy : NSObject < ComGoodowRealtimeChannelBusHook > {
 }
 
 - (void)handleOpened;
@@ -26,7 +26,7 @@
 - (BOOL)handlePreRegisterWithNSString:(NSString *)address
      withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
-- (BOOL)handleReceiveMessageWithGDCMessage:(id<GDCMessage>)message;
+- (BOOL)handleReceiveMessageWithComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)message;
 
 - (BOOL)handleSendOrPubWithBoolean:(BOOL)send
                       withNSString:(NSString *)address
@@ -35,14 +35,12 @@
 
 - (BOOL)handleUnregisterWithNSString:(NSString *)address;
 
-- (id<GDCBusHook>)delegate;
+- (id<ComGoodowRealtimeChannelBusHook>)delegate;
 
 - (id)init;
 
 @end
 
-__attribute__((always_inline)) inline void GDCBusHookProxy_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplBusHookProxy_init() {}
 
-typedef GDCBusHookProxy ComGoodowRealtimeChannelImplBusHookProxy;
-
-#endif // _GDCBusHookProxy_H_
+#endif // _ComGoodowRealtimeChannelImplBusHookProxy_H_

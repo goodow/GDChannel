@@ -8,9 +8,9 @@
 #ifndef _ComGoodowRealtimeCoreWebSocket_H_
 #define _ComGoodowRealtimeCoreWebSocket_H_
 
-@class GDCStateEnum;
+@class ComGoodowRealtimeChannelStateEnum;
 @protocol ComGoodowRealtimeCoreWebSocket_WebSocketHandler;
-@protocol GDJsonObject;
+@protocol ComGoodowRealtimeJsonJsonObject;
 
 #import "JreEmulation.h"
 
@@ -18,7 +18,7 @@
 
 - (void)close;
 
-- (GDCStateEnum *)getReadyState;
+- (ComGoodowRealtimeChannelStateEnum *)getReadyState;
 
 - (void)sendWithNSString:(NSString *)data;
 
@@ -30,7 +30,7 @@ __attribute__((always_inline)) inline void ComGoodowRealtimeCoreWebSocket_init()
 
 @protocol ComGoodowRealtimeCoreWebSocket_WebSocketHandler < NSObject, JavaObject >
 
-- (void)onCloseWithGDJsonObject:(id<GDJsonObject>)reason;
+- (void)onCloseWithComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)reason;
 
 - (void)onErrorWithNSString:(NSString *)error;
 

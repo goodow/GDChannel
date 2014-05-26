@@ -10,7 +10,7 @@
 
 @class JavaUtilConcurrentAtomicAtomicInteger;
 @protocol ComGoodowRealtimeCoreHandler;
-@protocol GDJsonObject;
+@protocol ComGoodowRealtimeJsonJsonObject;
 
 #import "JreEmulation.h"
 #include "com/goodow/realtime/core/Scheduler.h"
@@ -18,7 +18,7 @@
 @interface ComGoodowRealtimeObjcObjCScheduler : NSObject < ComGoodowRealtimeCoreScheduler > {
  @public
   JavaUtilConcurrentAtomicAtomicInteger *timerId_;
-  id<GDJsonObject> timers_;
+  id<ComGoodowRealtimeJsonJsonObject> timers_;
 }
 
 + (void)nativeCancelTimerWithId:(id)timer;
@@ -52,6 +52,6 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 __attribute__((always_inline)) inline void ComGoodowRealtimeObjcObjCScheduler_init() {}
 
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeObjcObjCScheduler, timerId_, JavaUtilConcurrentAtomicAtomicInteger *)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeObjcObjCScheduler, timers_, id<GDJsonObject>)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeObjcObjCScheduler, timers_, id<ComGoodowRealtimeJsonJsonObject>)
 
 #endif // _ComGoodowRealtimeObjcObjCScheduler_H_

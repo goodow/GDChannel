@@ -9,36 +9,36 @@
 #include "com/goodow/realtime/channel/BusHook.h"
 #include "com/goodow/realtime/channel/State.h"
 #include "com/goodow/realtime/core/Handler.h"
-#include "com/goodow/realtime/core/HandlerRegistration.h"
+#include "com/goodow/realtime/core/Registration.h"
 
-@interface GDCBus : NSObject
+@interface ComGoodowRealtimeChannelBus : NSObject
 @end
 
-NSString * GDCBus_ON_OPEN_ = @"@realtime.bus.onOpen";
-NSString * GDCBus_ON_CLOSE_ = @"@realtime.bus.onClose";
-NSString * GDCBus_ON_ERROR_ = @"@realtime.bus.onError";
+NSString * ComGoodowRealtimeChannelBus_ON_OPEN_ = @"@realtime.bus.onOpen";
+NSString * ComGoodowRealtimeChannelBus_ON_CLOSE_ = @"@realtime.bus.onClose";
+NSString * ComGoodowRealtimeChannelBus_ON_ERROR_ = @"@realtime.bus.onError";
 
-@implementation GDCBus
+@implementation ComGoodowRealtimeChannelBus
 
 + (J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {
     { "close", NULL, "V", 0x401, NULL },
     { "getReadyState", NULL, "Lcom.goodow.realtime.channel.State;", 0x401, NULL },
-    { "publish:message:", "publish", "Lcom.goodow.realtime.channel.Bus;", 0x401, NULL },
-    { "publishLocal:message:", "publishLocal", "Lcom.goodow.realtime.channel.Bus;", 0x401, NULL },
-    { "registerHandler:handler:", "registerHandler", "Lcom.goodow.realtime.core.HandlerRegistration;", 0x401, NULL },
-    { "registerLocalHandler:handler:", "registerLocalHandler", "Lcom.goodow.realtime.core.HandlerRegistration;", 0x401, NULL },
-    { "send:message:replyHandler:", "send", "Lcom.goodow.realtime.channel.Bus;", 0x401, NULL },
-    { "sendLocal:message:replyHandler:", "sendLocal", "Lcom.goodow.realtime.channel.Bus;", 0x401, NULL },
-    { "setHookWithGDCBusHook:", "setHook", "Lcom.goodow.realtime.channel.Bus;", 0x401, NULL },
+    { "publishWithNSString:withId:", "publish", "Lcom.goodow.realtime.channel.Bus;", 0x401, NULL },
+    { "publishLocalWithNSString:withId:", "publishLocal", "Lcom.goodow.realtime.channel.Bus;", 0x401, NULL },
+    { "registerHandlerWithNSString:withComGoodowRealtimeCoreHandler:", "registerHandler", "Lcom.goodow.realtime.core.Registration;", 0x401, NULL },
+    { "registerLocalHandlerWithNSString:withComGoodowRealtimeCoreHandler:", "registerLocalHandler", "Lcom.goodow.realtime.core.Registration;", 0x401, NULL },
+    { "sendWithNSString:withId:withComGoodowRealtimeCoreHandler:", "send", "Lcom.goodow.realtime.channel.Bus;", 0x401, NULL },
+    { "sendLocalWithNSString:withId:withComGoodowRealtimeCoreHandler:", "sendLocal", "Lcom.goodow.realtime.channel.Bus;", 0x401, NULL },
+    { "setHookWithComGoodowRealtimeChannelBusHook:", "setHook", "Lcom.goodow.realtime.channel.Bus;", 0x401, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
-    { "ON_OPEN_", NULL, 0x19, "Ljava.lang.String;", &GDCBus_ON_OPEN_,  },
-    { "ON_CLOSE_", NULL, 0x19, "Ljava.lang.String;", &GDCBus_ON_CLOSE_,  },
-    { "ON_ERROR_", NULL, 0x19, "Ljava.lang.String;", &GDCBus_ON_ERROR_,  },
+    { "ON_OPEN_", NULL, 0x19, "Ljava.lang.String;", &ComGoodowRealtimeChannelBus_ON_OPEN_,  },
+    { "ON_CLOSE_", NULL, 0x19, "Ljava.lang.String;", &ComGoodowRealtimeChannelBus_ON_CLOSE_,  },
+    { "ON_ERROR_", NULL, 0x19, "Ljava.lang.String;", &ComGoodowRealtimeChannelBus_ON_ERROR_,  },
   };
-  static J2ObjcClassInfo _GDCBus = { "Bus", "com.goodow.realtime.channel", NULL, 0x201, 9, methods, 3, fields, 0, NULL};
-  return &_GDCBus;
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelBus = { "Bus", "com.goodow.realtime.channel", NULL, 0x201, 9, methods, 3, fields, 0, NULL};
+  return &_ComGoodowRealtimeChannelBus;
 }
 
 @end

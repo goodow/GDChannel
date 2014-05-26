@@ -6,7 +6,7 @@ Event bus client over WebSocket for iOS and OS X
 
 ### Cocoapods
 
-[CocoaPods](http://cocoapods.org) is the recommended way to add GDJson to your project.
+[CocoaPods](http://cocoapods.org) is the recommended way to add GDChannel to your project.
 
 1. Add these pods to your Podfile:
 ```ruby

@@ -13,19 +13,15 @@
 // limitations under the License.
 
 //
-//  GDCWebSocketBus+OCNI.m
+//  ComGoodowRealtimeChannelImplDefaultMessage+Adapter.h
 //  GDChannel
 //
 //  Created by Larry Tin.
 //
 
-#import "GDCWebSocketBus+OCNI.h"
-#import "GDChannel.h"
+#import "com/goodow/realtime/channel/impl/DefaultMessage.h"
+#import "GDCMessage.h"
 
-@implementation GDCWebSocketBus (OCNI)
-
-- (id)initWithUrl:(NSString *)url options:(NSDictionary *)options {
-  return [self initWithNSString:url withGDJsonObject:options];
-}
+@interface ComGoodowRealtimeChannelImplDefaultMessage (Adapter) <GDCMessage>
 
 @end

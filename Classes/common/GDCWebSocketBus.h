@@ -1,4 +1,4 @@
-// Copyright 2013 Goodow.com. All Rights Reserved.
+// Copyright 2014 Goodow.com. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,16 +13,16 @@
 // limitations under the License.
 
 //
-//  GDChannel.h
+//  GDCWebSocketBus.h
 //  GDChannel
 //
 //  Created by Larry Tin.
 //
 
-#import "GDCBus.h"
-#import "GDCMessage.h"
-#import "GDCRegistration.h"
+#import "JavaToIOSBusAdapter.h"
 
-#import "GDCSimpleBus.h"
-#import "GDCWebSocketBus.h"
-#import "GDCReconnectWebSocketBus.h"
+@interface GDCWebSocketBus : JavaToIOSBusAdapter <GDCBus>
+
+- (id)initWithUrl:(NSString *)url options:(NSDictionary *)options;
+
+@end

@@ -10,11 +10,11 @@
 #include "com/goodow/realtime/channel/impl/DefaultMessage.h"
 #include "com/goodow/realtime/core/Handler.h"
 
-@implementation GDCDefaultMessage
+@implementation ComGoodowRealtimeChannelImplDefaultMessage
 
 - (id)initWithBoolean:(BOOL)local
           withBoolean:(BOOL)send
-           withGDCBus:(id<GDCBus>)bus
+withComGoodowRealtimeChannelBus:(id<ComGoodowRealtimeChannelBus>)bus
          withNSString:(NSString *)address
          withNSString:(NSString *)replyAddress
                withId:(id)body {
@@ -37,14 +37,16 @@
   return body__;
 }
 
-- (void)fail:(int)failureCode message:(NSString *)msg {
+- (void)failWithInt:(int)failureCode
+       withNSString:(NSString *)msg {
 }
 
-- (void)reply:(id)msg {
+- (void)replyWithId:(id)msg {
   [self sendReplyWithId:msg withComGoodowRealtimeCoreHandler:nil];
 }
 
-- (void)reply:(id)msg replyHandler:(id)replyHandler {
+- (void)replyWithId:(id)msg
+withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler {
   [self sendReplyWithId:msg withComGoodowRealtimeCoreHandler:replyHandler];
 }
 
@@ -60,15 +62,15 @@
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler {
   if (bus_ != nil && replyAddress__ != nil) {
     if (local_) {
-      (void) [bus_ sendLocal:replyAddress__ message:msg replyHandler:replyHandler];
+      (void) [bus_ sendLocalWithNSString:replyAddress__ withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
     }
     else {
-      (void) [bus_ send:replyAddress__ message:msg replyHandler:replyHandler];
+      (void) [bus_ sendWithNSString:replyAddress__ withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
     }
   }
 }
 
-- (void)copyAllFieldsTo:(GDCDefaultMessage *)other {
+- (void)copyAllFieldsTo:(ComGoodowRealtimeChannelImplDefaultMessage *)other {
   [super copyAllFieldsTo:other];
   other->address__ = address__;
   other->body__ = body__;
@@ -80,12 +82,12 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
 
 + (J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {
-    { "initWithBoolean:withBoolean:withGDCBus:withNSString:withNSString:withId:", "DefaultMessage", NULL, 0x1, NULL },
+    { "initWithBoolean:withBoolean:withComGoodowRealtimeChannelBus:withNSString:withNSString:withId:", "DefaultMessage", NULL, 0x1, NULL },
     { "address", NULL, "Ljava.lang.String;", 0x1, NULL },
     { "body", NULL, "TU;", 0x1, NULL },
-    { "fail:message:", "fail", "V", 0x1, NULL },
-    { "reply:", "reply", "V", 0x1, NULL },
-    { "reply:replyHandler:", "reply", "V", 0x1, NULL },
+    { "failWithInt:withNSString:", "fail", "V", 0x1, NULL },
+    { "replyWithId:", "reply", "V", 0x1, NULL },
+    { "replyWithId:withComGoodowRealtimeCoreHandler:", "reply", "V", 0x1, NULL },
     { "replyAddress", NULL, "Ljava.lang.String;", 0x1, NULL },
     { "description", "toString", "Ljava.lang.String;", 0x1, NULL },
     { "sendReplyWithId:withComGoodowRealtimeCoreHandler:", "sendReply", "V", 0x2, NULL },
@@ -98,8 +100,8 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
     { "send_", NULL, 0x4, "Z", NULL,  },
     { "local_", NULL, 0x4, "Z", NULL,  },
   };
-  static J2ObjcClassInfo _GDCDefaultMessage = { "DefaultMessage", "com.goodow.realtime.channel.impl", NULL, 0x0, 9, methods, 6, fields, 0, NULL};
-  return &_GDCDefaultMessage;
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplDefaultMessage = { "DefaultMessage", "com.goodow.realtime.channel.impl", NULL, 0x0, 9, methods, 6, fields, 0, NULL};
+  return &_ComGoodowRealtimeChannelImplDefaultMessage;
 }
 
 @end

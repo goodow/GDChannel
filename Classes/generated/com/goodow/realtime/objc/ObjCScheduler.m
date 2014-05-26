@@ -11,6 +11,7 @@
 #include "com/goodow/realtime/objc/ObjCScheduler.h"
 #include "java/util/concurrent/atomic/AtomicInteger.h"
 #import "GDChannel.h"
+ #import "ComGoodowRealtimeChannelImplDefaultMessage+Adapter.h"
 
 @implementation ComGoodowRealtimeObjcObjCScheduler
 
@@ -20,7 +21,7 @@
 
 + (void)nativeHandleWithId:(id)handler
                     withId:(id)event {
-  GDCBlock block = (GDCBlock)handler;
+  GDCMessageHandler block = (GDCMessageHandler)handler;
   block(event);
 }
 
@@ -37,7 +38,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
 
 - (BOOL)cancelTimerWithInt:(int)id_ {
   NSString *key = [NSString stringWithFormat:@"%d", id_];
-  if ([((id<GDJsonObject>) nil_chk(timers_)) has:key]) {
+  if ([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(timers_)) hasWithNSString:key]) {
     [ComGoodowRealtimeObjcObjCScheduler nativeCancelTimerWithId:[timers_ getWithNSString:key]];
     (void) [timers_ removeWithNSString:key];
     return YES;
@@ -62,21 +63,21 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
 - (int)scheduleDelayWithInt:(int)delayMs
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
   int id_ = [((JavaUtilConcurrentAtomicAtomicInteger *) nil_chk(timerId_)) getAndIncrement];
-  (void) [((id<GDJsonObject>) nil_chk(timers_)) set:[NSString stringWithFormat:@"%d", id_] value:[ComGoodowRealtimeObjcObjCScheduler nativeScheduleTimerWithInt:delayMs withBoolean:NO withComGoodowRealtimeCoreHandler:handler]];
+  (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(timers_)) setWithNSString:[NSString stringWithFormat:@"%d", id_] withId:[ComGoodowRealtimeObjcObjCScheduler nativeScheduleTimerWithInt:delayMs withBoolean:NO withComGoodowRealtimeCoreHandler:handler]];
   return id_;
 }
 
 - (int)schedulePeriodicWithInt:(int)delayMs
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
   int id_ = [((JavaUtilConcurrentAtomicAtomicInteger *) nil_chk(timerId_)) getAndIncrement];
-  (void) [((id<GDJsonObject>) nil_chk(timers_)) set:[NSString stringWithFormat:@"%d", id_] value:[ComGoodowRealtimeObjcObjCScheduler nativeScheduleTimerWithInt:delayMs withBoolean:YES withComGoodowRealtimeCoreHandler:handler]];
+  (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(timers_)) setWithNSString:[NSString stringWithFormat:@"%d", id_] withId:[ComGoodowRealtimeObjcObjCScheduler nativeScheduleTimerWithInt:delayMs withBoolean:YES withComGoodowRealtimeCoreHandler:handler]];
   return id_;
 }
 
 - (id)init {
   if (self = [super init]) {
     timerId_ = [[JavaUtilConcurrentAtomicAtomicInteger alloc] initWithInt:0];
-    timers_ = [GDJson createObject];
+    timers_ = [ComGoodowRealtimeJsonJson createObject];
   }
   return self;
 }

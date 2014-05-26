@@ -13,8 +13,8 @@
 @implementation ComGoodowRealtimeObjcObjCNet
 
 - (id<ComGoodowRealtimeCoreWebSocket>)createWebSocketWithNSString:(NSString *)url
-                                                 withGDJsonObject:(id<GDJsonObject>)options {
-  return [[ComGoodowRealtimeObjcObjCWebSocket alloc] initWithNSString:url withGDJsonObject:options];
+                              withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options {
+  return [[ComGoodowRealtimeObjcObjCWebSocket alloc] initWithNSString:url withComGoodowRealtimeJsonJsonObject:options];
 }
 
 - (id)init {
@@ -23,7 +23,7 @@
 
 + (J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {
-    { "createWebSocketWithNSString:withGDJsonObject:", "createWebSocket", "Lcom.goodow.realtime.core.WebSocket;", 0x1, NULL },
+    { "createWebSocketWithNSString:withComGoodowRealtimeJsonJsonObject:", "createWebSocket", "Lcom.goodow.realtime.core.WebSocket;", 0x1, NULL },
     { "init", NULL, NULL, 0x0, NULL },
   };
   static J2ObjcClassInfo _ComGoodowRealtimeObjcObjCNet = { "ObjCNet", "com.goodow.realtime.objc", NULL, 0x0, 2, methods, 0, NULL, 0, NULL};

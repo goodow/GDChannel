@@ -5,43 +5,43 @@
 //  Created by retechretech.
 //
 
-#ifndef _GDCReplyFailure_H_
-#define _GDCReplyFailure_H_
+#ifndef _ComGoodowRealtimeChannelReplyFailure_H_
+#define _ComGoodowRealtimeChannelReplyFailure_H_
 
 #import "JreEmulation.h"
 #include "java/lang/Enum.h"
 
 typedef enum {
-  GDCReplyFailure_TIMEOUT = 0,
-  GDCReplyFailure_NO_HANDLERS = 1,
-  GDCReplyFailure_RECIPIENT_FAILURE = 2,
-} GDCReplyFailure;
+  ComGoodowRealtimeChannelReplyFailure_TIMEOUT = 0,
+  ComGoodowRealtimeChannelReplyFailure_NO_HANDLERS = 1,
+  ComGoodowRealtimeChannelReplyFailure_RECIPIENT_FAILURE = 2,
+} ComGoodowRealtimeChannelReplyFailure;
 
-@interface GDCReplyFailureEnum : JavaLangEnum < NSCopying > {
+@interface ComGoodowRealtimeChannelReplyFailureEnum : JavaLangEnum < NSCopying > {
 }
 + (IOSObjectArray *)values;
-+ (GDCReplyFailureEnum *)valueOfWithNSString:(NSString *)name;
++ (ComGoodowRealtimeChannelReplyFailureEnum *)valueOfWithNSString:(NSString *)name;
 - (id)copyWithZone:(NSZone *)zone;
 
-+ (GDCReplyFailureEnum *)fromIntWithInt:(int)i;
++ (ComGoodowRealtimeChannelReplyFailureEnum *)fromIntWithInt:(int)i;
 
 - (int)toInt;
 
 - (id)initWithNSString:(NSString *)__name withInt:(int)__ordinal;
 @end
 
-FOUNDATION_EXPORT BOOL GDCReplyFailureEnum_initialized;
-J2OBJC_STATIC_INIT(GDCReplyFailureEnum)
+FOUNDATION_EXPORT BOOL ComGoodowRealtimeChannelReplyFailureEnum_initialized;
+J2OBJC_STATIC_INIT(ComGoodowRealtimeChannelReplyFailureEnum)
 
-FOUNDATION_EXPORT GDCReplyFailureEnum *GDCReplyFailureEnum_values[];
+FOUNDATION_EXPORT ComGoodowRealtimeChannelReplyFailureEnum *ComGoodowRealtimeChannelReplyFailureEnum_values[];
 
-#define GDCReplyFailureEnum_TIMEOUT GDCReplyFailureEnum_values[GDCReplyFailure_TIMEOUT]
-J2OBJC_STATIC_FIELD_GETTER(GDCReplyFailureEnum, TIMEOUT, GDCReplyFailureEnum *)
+#define ComGoodowRealtimeChannelReplyFailureEnum_TIMEOUT ComGoodowRealtimeChannelReplyFailureEnum_values[ComGoodowRealtimeChannelReplyFailure_TIMEOUT]
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelReplyFailureEnum, TIMEOUT, ComGoodowRealtimeChannelReplyFailureEnum *)
 
-#define GDCReplyFailureEnum_NO_HANDLERS GDCReplyFailureEnum_values[GDCReplyFailure_NO_HANDLERS]
-J2OBJC_STATIC_FIELD_GETTER(GDCReplyFailureEnum, NO_HANDLERS, GDCReplyFailureEnum *)
+#define ComGoodowRealtimeChannelReplyFailureEnum_NO_HANDLERS ComGoodowRealtimeChannelReplyFailureEnum_values[ComGoodowRealtimeChannelReplyFailure_NO_HANDLERS]
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelReplyFailureEnum, NO_HANDLERS, ComGoodowRealtimeChannelReplyFailureEnum *)
 
-#define GDCReplyFailureEnum_RECIPIENT_FAILURE GDCReplyFailureEnum_values[GDCReplyFailure_RECIPIENT_FAILURE]
-J2OBJC_STATIC_FIELD_GETTER(GDCReplyFailureEnum, RECIPIENT_FAILURE, GDCReplyFailureEnum *)
+#define ComGoodowRealtimeChannelReplyFailureEnum_RECIPIENT_FAILURE ComGoodowRealtimeChannelReplyFailureEnum_values[ComGoodowRealtimeChannelReplyFailure_RECIPIENT_FAILURE]
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelReplyFailureEnum, RECIPIENT_FAILURE, ComGoodowRealtimeChannelReplyFailureEnum *)
 
-#endif // _GDCReplyFailure_H_
+#endif // _ComGoodowRealtimeChannelReplyFailure_H_

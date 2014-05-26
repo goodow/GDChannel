@@ -9,10 +9,10 @@
 #include "com/goodow/realtime/channel/Message.h"
 #include "com/goodow/realtime/core/Handler.h"
 
-@interface GDCBusHook : NSObject
+@interface ComGoodowRealtimeChannelBusHook : NSObject
 @end
 
-@implementation GDCBusHook
+@implementation ComGoodowRealtimeChannelBusHook
 
 + (J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {
@@ -20,12 +20,12 @@
     { "handlePostClose", NULL, "V", 0x401, NULL },
     { "handlePreClose", NULL, "Z", 0x401, NULL },
     { "handlePreRegisterWithNSString:withComGoodowRealtimeCoreHandler:", "handlePreRegister", "Z", 0x401, NULL },
-    { "handleReceiveMessageWithGDCMessage:", "handleReceiveMessage", "Z", 0x401, NULL },
+    { "handleReceiveMessageWithComGoodowRealtimeChannelMessage:", "handleReceiveMessage", "Z", 0x401, NULL },
     { "handleSendOrPubWithBoolean:withNSString:withId:withComGoodowRealtimeCoreHandler:", "handleSendOrPub", "Z", 0x401, NULL },
     { "handleUnregisterWithNSString:", "handleUnregister", "Z", 0x401, NULL },
   };
-  static J2ObjcClassInfo _GDCBusHook = { "BusHook", "com.goodow.realtime.channel", NULL, 0x201, 7, methods, 0, NULL, 0, NULL};
-  return &_GDCBusHook;
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelBusHook = { "BusHook", "com.goodow.realtime.channel", NULL, 0x201, 7, methods, 0, NULL, 0, NULL};
+  return &_ComGoodowRealtimeChannelBusHook;
 }
 
 @end

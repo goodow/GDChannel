@@ -13,16 +13,22 @@
 // limitations under the License.
 
 //
-//  GDCWebSocketBus+OCNI.h
+//  GDCWebSocketBus.m
 //  GDChannel
 //
 //  Created by Larry Tin.
 //
 
+#import "GDCWebSocketBus.h"
 #import "com/goodow/realtime/channel/impl/WebSocketBus.h"
+#import "com/goodow/realtime/json/JsonObject.h"
+#import "GDJson.h"
 
-@interface GDCWebSocketBus (OCNI)
+@implementation GDCWebSocketBus
 
-- (id)initWithUrl:(NSString *)url options:(NSDictionary *)options;
+- (id)initWithUrl:(NSString *)url options:(NSDictionary *)options {
+  self = [super initWithJavaBus:[[ComGoodowRealtimeChannelImplWebSocketBus alloc] initWithNSString:url withComGoodowRealtimeJsonJsonObject:options]];
+  return self;
+}
 
 @end

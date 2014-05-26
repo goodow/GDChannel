@@ -12,7 +12,7 @@ PODS:
 DEPENDENCIES:
   - GDChannel (from `..`)
   - GDJson (from `https://github.com/goodow/GDJson.git`)
-  - J2ObjC (from `https://github.com/goodow/j2objc.git`)
+  - J2ObjC (from `https://github.com/goodow/j2objc.git`, commit `32284814b6352a8d8458d1b866c59f830a2dce42`)
 
 EXTERNAL SOURCES:
   GDChannel:
@@ -20,12 +20,13 @@ EXTERNAL SOURCES:
   GDJson:
     :git: https://github.com/goodow/GDJson.git
   J2ObjC:
+    :commit: 32284814b6352a8d8458d1b866c59f830a2dce42
     :git: https://github.com/goodow/j2objc.git
 
 SPEC CHECKSUMS:
   GDChannel: d6b489364ce308c361d7f60bbfc72f1ea23e63b7
   GDJson: 425eaa6e2f2df52486ea4e5dcaef8d54061f7eb8
   J2ObjC: 1a0ecde2fe9f624d076ef2aea16723ef2094e7fc
-  SocketRocket: 7ac946bcce46287a791dfff3c1f8daa692821dae
+  SocketRocket: 79a68ae186063c65e1fe6f638b1ae2927aa5f304
 
-COCOAPODS: 0.32.1
+COCOAPODS: 0.33.1

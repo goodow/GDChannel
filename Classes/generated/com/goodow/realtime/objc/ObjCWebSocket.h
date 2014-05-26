@@ -8,9 +8,9 @@
 #ifndef _ComGoodowRealtimeObjcObjCWebSocket_H_
 #define _ComGoodowRealtimeObjcObjCWebSocket_H_
 
-@class GDCStateEnum;
+@class ComGoodowRealtimeChannelStateEnum;
 @protocol ComGoodowRealtimeCoreWebSocket_WebSocketHandler;
-@protocol GDJsonObject;
+@protocol ComGoodowRealtimeJsonJsonObject;
 
 #import "JreEmulation.h"
 #include "com/goodow/realtime/core/WebSocket.h"
@@ -19,7 +19,7 @@
 }
 
 - (id)initWithNSString:(NSString *)url
-      withGDJsonObject:(id<GDJsonObject>)options;
+withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options;
 
 @end
 
@@ -27,7 +27,7 @@ __attribute__((always_inline)) inline void ComGoodowRealtimeObjcObjCWebSocket_in
 
 @interface ComGoodowRealtimeObjcObjCWebSocket (NativeMethods)
 - (void)close;
-- (GDCStateEnum *)getReadyState;
+- (ComGoodowRealtimeChannelStateEnum *)getReadyState;
 - (void)sendWithNSString:(NSString *)data;
 - (void)setListenWithComGoodowRealtimeCoreWebSocket_WebSocketHandler:(id<ComGoodowRealtimeCoreWebSocket_WebSocketHandler>)handler;
 @end

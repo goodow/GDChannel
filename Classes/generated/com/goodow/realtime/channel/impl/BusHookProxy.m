@@ -10,45 +10,45 @@
 #include "com/goodow/realtime/channel/impl/BusHookProxy.h"
 #include "com/goodow/realtime/core/Handler.h"
 
-@implementation GDCBusHookProxy
+@implementation ComGoodowRealtimeChannelImplBusHookProxy
 
 - (void)handleOpened {
   if ([self delegate] != nil) {
-    [((id<GDCBusHook>) nil_chk([self delegate])) handleOpened];
+    [((id<ComGoodowRealtimeChannelBusHook>) nil_chk([self delegate])) handleOpened];
   }
 }
 
 - (void)handlePostClose {
   if ([self delegate] != nil) {
-    [((id<GDCBusHook>) nil_chk([self delegate])) handlePostClose];
+    [((id<ComGoodowRealtimeChannelBusHook>) nil_chk([self delegate])) handlePostClose];
   }
 }
 
 - (BOOL)handlePreClose {
-  return [self delegate] == nil ? YES : [((id<GDCBusHook>) nil_chk([self delegate])) handlePreClose];
+  return [self delegate] == nil ? YES : [((id<ComGoodowRealtimeChannelBusHook>) nil_chk([self delegate])) handlePreClose];
 }
 
 - (BOOL)handlePreRegisterWithNSString:(NSString *)address
      withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
-  return [self delegate] == nil ? YES : [((id<GDCBusHook>) nil_chk([self delegate])) handlePreRegisterWithNSString:address withComGoodowRealtimeCoreHandler:handler];
+  return [self delegate] == nil ? YES : [((id<ComGoodowRealtimeChannelBusHook>) nil_chk([self delegate])) handlePreRegisterWithNSString:address withComGoodowRealtimeCoreHandler:handler];
 }
 
-- (BOOL)handleReceiveMessageWithGDCMessage:(id<GDCMessage>)message {
-  return [self delegate] == nil ? YES : [((id<GDCBusHook>) nil_chk([self delegate])) handleReceiveMessageWithGDCMessage:message];
+- (BOOL)handleReceiveMessageWithComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)message {
+  return [self delegate] == nil ? YES : [((id<ComGoodowRealtimeChannelBusHook>) nil_chk([self delegate])) handleReceiveMessageWithComGoodowRealtimeChannelMessage:message];
 }
 
 - (BOOL)handleSendOrPubWithBoolean:(BOOL)send
                       withNSString:(NSString *)address
                             withId:(id)msg
   withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler {
-  return [self delegate] == nil ? YES : [((id<GDCBusHook>) nil_chk([self delegate])) handleSendOrPubWithBoolean:send withNSString:address withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
+  return [self delegate] == nil ? YES : [((id<ComGoodowRealtimeChannelBusHook>) nil_chk([self delegate])) handleSendOrPubWithBoolean:send withNSString:address withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
 }
 
 - (BOOL)handleUnregisterWithNSString:(NSString *)address {
-  return [self delegate] == nil ? YES : [((id<GDCBusHook>) nil_chk([self delegate])) handleUnregisterWithNSString:address];
+  return [self delegate] == nil ? YES : [((id<ComGoodowRealtimeChannelBusHook>) nil_chk([self delegate])) handleUnregisterWithNSString:address];
 }
 
-- (id<GDCBusHook>)delegate {
+- (id<ComGoodowRealtimeChannelBusHook>)delegate {
   // can't call an abstract method
   [self doesNotRecognizeSelector:_cmd];
   return 0;
@@ -64,14 +64,14 @@
     { "handlePostClose", NULL, "V", 0x1, NULL },
     { "handlePreClose", NULL, "Z", 0x1, NULL },
     { "handlePreRegisterWithNSString:withComGoodowRealtimeCoreHandler:", "handlePreRegister", "Z", 0x1, NULL },
-    { "handleReceiveMessageWithGDCMessage:", "handleReceiveMessage", "Z", 0x1, NULL },
+    { "handleReceiveMessageWithComGoodowRealtimeChannelMessage:", "handleReceiveMessage", "Z", 0x1, NULL },
     { "handleSendOrPubWithBoolean:withNSString:withId:withComGoodowRealtimeCoreHandler:", "handleSendOrPub", "Z", 0x1, NULL },
     { "handleUnregisterWithNSString:", "handleUnregister", "Z", 0x1, NULL },
     { "delegate", NULL, "Lcom.goodow.realtime.channel.BusHook;", 0x404, NULL },
     { "init", NULL, NULL, 0x1, NULL },
   };
-  static J2ObjcClassInfo _GDCBusHookProxy = { "BusHookProxy", "com.goodow.realtime.channel.impl", NULL, 0x401, 9, methods, 0, NULL, 0, NULL};
-  return &_GDCBusHookProxy;
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplBusHookProxy = { "BusHookProxy", "com.goodow.realtime.channel.impl", NULL, 0x401, 9, methods, 0, NULL, 0, NULL};
+  return &_ComGoodowRealtimeChannelImplBusHookProxy;
 }
 
 @end

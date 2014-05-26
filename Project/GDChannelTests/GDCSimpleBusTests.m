@@ -1,5 +1,5 @@
 //
-//  GDCLocalEventBusTests.m
+//  GDCSimpleBusTests.m
 //  GDChannel
 //
 //  Created by Larry Tin.
@@ -32,13 +32,13 @@
   id<GDCBus> bus = [[GDCSimpleBus alloc] init];
   __block BOOL testComplete = NO;
   
-  __block id<GDCHandlerRegistration> handlerRegistration = [bus registerLocalHandler:@"someaddress" handler:^(id<GDCMessage> message) {
+  __block id<GDCRegistration> handlerRegistration = [bus registerLocalHandler:@"someaddress" handler:^(id<GDCMessage> message) {
     XCTAssertTrue(self == [message body]);
     
     NSDictionary *msg = @{@"text": @"reply"};
     [message reply:msg];
     
-    [handlerRegistration unregisterHandler];
+    [handlerRegistration unregister];
     handlerRegistration = nil;
   }];
   

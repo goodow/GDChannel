@@ -1,4 +1,4 @@
-// Copyright 2013 Goodow.com. All Rights Reserved.
+// Copyright 2014 Goodow.com. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,16 +13,20 @@
 // limitations under the License.
 
 //
-//  GDChannel.h
+//  GDCSimpleBus.m
 //  GDChannel
 //
 //  Created by Larry Tin.
 //
 
-#import "GDCBus.h"
-#import "GDCMessage.h"
-#import "GDCRegistration.h"
-
 #import "GDCSimpleBus.h"
-#import "GDCWebSocketBus.h"
-#import "GDCReconnectWebSocketBus.h"
+#import "com/goodow/realtime/channel/impl/SimpleBus.h"
+
+@implementation GDCSimpleBus
+
+-(id)init {
+  self = [super initWithJavaBus:[[ComGoodowRealtimeChannelImplSimpleBus alloc] init]];
+  return self;
+}
+
+@end

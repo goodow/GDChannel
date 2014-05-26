@@ -34,7 +34,7 @@
 
 + (J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {
-    { "onCloseWithGDJsonObject:", "onClose", "V", 0x401, NULL },
+    { "onCloseWithComGoodowRealtimeJsonJsonObject:", "onClose", "V", 0x401, NULL },
     { "onErrorWithNSString:", "onError", "V", 0x401, NULL },
     { "onMessageWithNSString:", "onMessage", "V", 0x401, NULL },
     { "onOpen", NULL, "V", 0x401, NULL },

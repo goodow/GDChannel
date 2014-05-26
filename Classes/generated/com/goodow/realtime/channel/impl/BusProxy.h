@@ -5,54 +5,60 @@
 //  Created by retechretech.
 //
 
-#ifndef _GDCBusProxy_H_
-#define _GDCBusProxy_H_
+#ifndef _ComGoodowRealtimeChannelImplBusProxy_H_
+#define _ComGoodowRealtimeChannelImplBusProxy_H_
 
-@class GDCStateEnum;
+@class ComGoodowRealtimeChannelStateEnum;
+@protocol ComGoodowRealtimeChannelBusHook;
 @protocol ComGoodowRealtimeCoreHandler;
-@protocol ComGoodowRealtimeCoreHandlerRegistration;
-@protocol GDCBusHook;
+@protocol ComGoodowRealtimeCoreRegistration;
 
 #import "JreEmulation.h"
 #include "com/goodow/realtime/channel/Bus.h"
 
-@interface GDCBusProxy : NSObject < GDCBus > {
+@interface ComGoodowRealtimeChannelImplBusProxy : NSObject < ComGoodowRealtimeChannelBus > {
  @public
-  id<GDCBus> delegate_;
-  id<GDCBusHook> hook_;
+  id<ComGoodowRealtimeChannelBus> delegate_;
+  id<ComGoodowRealtimeChannelBusHook> hook_;
 }
 
-- (id)initWithGDCBus:(id<GDCBus>)delegate;
+- (id)initWithComGoodowRealtimeChannelBus:(id<ComGoodowRealtimeChannelBus>)delegate;
 
 - (void)close;
 
-- (id<GDCBus>)getDelegate;
+- (id<ComGoodowRealtimeChannelBus>)getDelegate;
 
-- (GDCStateEnum *)getReadyState;
+- (ComGoodowRealtimeChannelStateEnum *)getReadyState;
 
-- (id<GDCBus>)publish:(NSString *)address message:(id)msg;
+- (id<ComGoodowRealtimeChannelBus>)publishWithNSString:(NSString *)address
+                                                withId:(id)msg;
 
-- (id<GDCBus>)publishLocal:(NSString *)address message:(id)msg;
+- (id<ComGoodowRealtimeChannelBus>)publishLocalWithNSString:(NSString *)address
+                                                     withId:(id)msg;
 
-- (id<ComGoodowRealtimeCoreHandlerRegistration>)registerHandler:(NSString *)address handler:(id)handler;
+- (id<ComGoodowRealtimeCoreRegistration>)registerHandlerWithNSString:(NSString *)address
+                                    withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
-- (id<ComGoodowRealtimeCoreHandlerRegistration>)registerLocalHandler:(NSString *)address handler:(id)handler;
+- (id<ComGoodowRealtimeCoreRegistration>)registerLocalHandlerWithNSString:(NSString *)address
+                                         withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
-- (id<GDCBus>)send:(NSString *)address message:(id)msg replyHandler:(id)replyHandler;
+- (id<ComGoodowRealtimeChannelBus>)sendWithNSString:(NSString *)address
+                                             withId:(id)msg
+                   withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
-- (id<GDCBus>)sendLocal:(NSString *)address message:(id)msg replyHandler:(id)replyHandler;
+- (id<ComGoodowRealtimeChannelBus>)sendLocalWithNSString:(NSString *)address
+                                                  withId:(id)msg
+                        withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
-- (id<GDCBus>)setHookWithGDCBusHook:(id<GDCBusHook>)hook;
+- (id<ComGoodowRealtimeChannelBus>)setHookWithComGoodowRealtimeChannelBusHook:(id<ComGoodowRealtimeChannelBusHook>)hook;
 
-- (void)copyAllFieldsTo:(GDCBusProxy *)other;
+- (void)copyAllFieldsTo:(ComGoodowRealtimeChannelImplBusProxy *)other;
 
 @end
 
-__attribute__((always_inline)) inline void GDCBusProxy_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplBusProxy_init() {}
 
-J2OBJC_FIELD_SETTER(GDCBusProxy, delegate_, id<GDCBus>)
-J2OBJC_FIELD_SETTER(GDCBusProxy, hook_, id<GDCBusHook>)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplBusProxy, delegate_, id<ComGoodowRealtimeChannelBus>)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplBusProxy, hook_, id<ComGoodowRealtimeChannelBusHook>)
 
-typedef GDCBusProxy ComGoodowRealtimeChannelImplBusProxy;
-
-#endif // _GDCBusProxy_H_
+#endif // _ComGoodowRealtimeChannelImplBusProxy_H_

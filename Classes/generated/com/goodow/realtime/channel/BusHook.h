@@ -5,15 +5,15 @@
 //  Created by retechretech.
 //
 
-#ifndef _GDCBusHook_H_
-#define _GDCBusHook_H_
+#ifndef _ComGoodowRealtimeChannelBusHook_H_
+#define _ComGoodowRealtimeChannelBusHook_H_
 
+@protocol ComGoodowRealtimeChannelMessage;
 @protocol ComGoodowRealtimeCoreHandler;
-@protocol GDCMessage;
 
 #import "JreEmulation.h"
 
-@protocol GDCBusHook < NSObject, JavaObject >
+@protocol ComGoodowRealtimeChannelBusHook < NSObject, JavaObject >
 
 - (void)handleOpened;
 
@@ -24,7 +24,7 @@
 - (BOOL)handlePreRegisterWithNSString:(NSString *)address
      withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
-- (BOOL)handleReceiveMessageWithGDCMessage:(id<GDCMessage>)message;
+- (BOOL)handleReceiveMessageWithComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)message;
 
 - (BOOL)handleSendOrPubWithBoolean:(BOOL)send
                       withNSString:(NSString *)address
@@ -35,8 +35,6 @@
 
 @end
 
-__attribute__((always_inline)) inline void GDCBusHook_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelBusHook_init() {}
 
-#define ComGoodowRealtimeChannelBusHook GDCBusHook
-
-#endif // _GDCBusHook_H_
+#endif // _ComGoodowRealtimeChannelBusHook_H_

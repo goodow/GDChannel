@@ -5,45 +5,43 @@
 //  Created by retechretech.
 //
 
-#ifndef _GDCReplyException_H_
-#define _GDCReplyException_H_
+#ifndef _ComGoodowRealtimeChannelReplyException_H_
+#define _ComGoodowRealtimeChannelReplyException_H_
 
-@class GDCReplyFailureEnum;
+@class ComGoodowRealtimeChannelReplyFailureEnum;
 
 #import "JreEmulation.h"
 #include "java/lang/RuntimeException.h"
 
-#define GDCReplyException_serialVersionUID -4441153344646081242LL
+#define ComGoodowRealtimeChannelReplyException_serialVersionUID -4441153344646081242LL
 
-@interface GDCReplyException : JavaLangRuntimeException {
+@interface ComGoodowRealtimeChannelReplyException : JavaLangRuntimeException {
  @public
-  GDCReplyFailureEnum *failureType__;
+  ComGoodowRealtimeChannelReplyFailureEnum *failureType__;
   int failureCode__;
 }
 
-- (id)initWithGDCReplyFailureEnum:(GDCReplyFailureEnum *)failureType;
+- (id)initWithComGoodowRealtimeChannelReplyFailureEnum:(ComGoodowRealtimeChannelReplyFailureEnum *)failureType;
 
-- (id)initWithGDCReplyFailureEnum:(GDCReplyFailureEnum *)failureType
-                          withInt:(int)failureCode
-                     withNSString:(NSString *)message;
+- (id)initWithComGoodowRealtimeChannelReplyFailureEnum:(ComGoodowRealtimeChannelReplyFailureEnum *)failureType
+                                               withInt:(int)failureCode
+                                          withNSString:(NSString *)message;
 
-- (id)initWithGDCReplyFailureEnum:(GDCReplyFailureEnum *)failureType
-                     withNSString:(NSString *)message;
+- (id)initWithComGoodowRealtimeChannelReplyFailureEnum:(ComGoodowRealtimeChannelReplyFailureEnum *)failureType
+                                          withNSString:(NSString *)message;
 
 - (int)failureCode;
 
-- (GDCReplyFailureEnum *)failureType;
+- (ComGoodowRealtimeChannelReplyFailureEnum *)failureType;
 
-- (void)copyAllFieldsTo:(GDCReplyException *)other;
+- (void)copyAllFieldsTo:(ComGoodowRealtimeChannelReplyException *)other;
 
 @end
 
-__attribute__((always_inline)) inline void GDCReplyException_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelReplyException_init() {}
 
-J2OBJC_FIELD_SETTER(GDCReplyException, failureType__, GDCReplyFailureEnum *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelReplyException, failureType__, ComGoodowRealtimeChannelReplyFailureEnum *)
 
-J2OBJC_STATIC_FIELD_GETTER(GDCReplyException, serialVersionUID, long long int)
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelReplyException, serialVersionUID, long long int)
 
-typedef GDCReplyException ComGoodowRealtimeChannelReplyException;
-
-#endif // _GDCReplyException_H_
+#endif // _ComGoodowRealtimeChannelReplyException_H_

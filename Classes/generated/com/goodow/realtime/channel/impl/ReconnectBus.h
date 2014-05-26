@@ -5,15 +5,15 @@
 //  Created by retechretech.
 //
 
-#ifndef _GDCReconnectBus_H_
-#define _GDCReconnectBus_H_
+#ifndef _ComGoodowRealtimeChannelImplReconnectBus_H_
+#define _ComGoodowRealtimeChannelImplReconnectBus_H_
 
 @class ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator;
-@class GDCSimpleBus;
 @class JavaLangVoid;
-@protocol GDCBusHook;
-@protocol GDJsonArray;
-@protocol GDJsonObject;
+@protocol ComGoodowRealtimeChannelBus;
+@protocol ComGoodowRealtimeChannelBusHook;
+@protocol ComGoodowRealtimeJsonJsonArray;
+@protocol ComGoodowRealtimeJsonJsonObject;
 
 #import "JreEmulation.h"
 #include "com/goodow/realtime/channel/impl/BusHookProxy.h"
@@ -21,90 +21,88 @@
 #include "com/goodow/realtime/core/Handler.h"
 #include "com/goodow/realtime/json/JsonArray.h"
 
-@interface GDCReconnectBus : GDCWebSocketBus {
+@interface ComGoodowRealtimeChannelImplReconnectBus : ComGoodowRealtimeChannelImplWebSocketBus {
  @public
   ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator *backOffGenerator_;
-  id<GDCBusHook> hook_ReconnectBus_;
+  id<ComGoodowRealtimeChannelBusHook> hook_ReconnectBus_;
   BOOL reconnect__;
-  id<GDJsonArray> queuedMessages_;
-  id<GDJsonObject> options_;
+  id<ComGoodowRealtimeJsonJsonArray> queuedMessages_;
+  id<ComGoodowRealtimeJsonJsonObject> options_;
 }
 
 - (id)initWithNSString:(NSString *)url
-      withGDJsonObject:(id<GDJsonObject>)options;
+withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options;
 
 - (void)reconnect;
 
-- (GDCSimpleBus *)setHookWithGDCBusHook:(id<GDCBusHook>)hook;
+- (id<ComGoodowRealtimeChannelBus>)setHookWithComGoodowRealtimeChannelBusHook:(id<ComGoodowRealtimeChannelBusHook>)hook;
 
 - (void)doClose;
 
-- (void)sendWithGDJsonObject:(id<GDJsonObject>)msg;
+- (void)sendWithComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)msg;
 
-- (void)copyAllFieldsTo:(GDCReconnectBus *)other;
+- (void)copyAllFieldsTo:(ComGoodowRealtimeChannelImplReconnectBus *)other;
 
 @end
 
-__attribute__((always_inline)) inline void GDCReconnectBus_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplReconnectBus_init() {}
 
-J2OBJC_FIELD_SETTER(GDCReconnectBus, backOffGenerator_, ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator *)
-J2OBJC_FIELD_SETTER(GDCReconnectBus, hook_ReconnectBus_, id<GDCBusHook>)
-J2OBJC_FIELD_SETTER(GDCReconnectBus, queuedMessages_, id<GDJsonArray>)
-J2OBJC_FIELD_SETTER(GDCReconnectBus, options_, id<GDJsonObject>)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReconnectBus, backOffGenerator_, ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReconnectBus, hook_ReconnectBus_, id<ComGoodowRealtimeChannelBusHook>)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReconnectBus, queuedMessages_, id<ComGoodowRealtimeJsonJsonArray>)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReconnectBus, options_, id<ComGoodowRealtimeJsonJsonObject>)
 
-FOUNDATION_EXPORT NSString *GDCReconnectBus_AUTO_RECONNECT_;
-J2OBJC_STATIC_FIELD_GETTER(GDCReconnectBus, AUTO_RECONNECT_, NSString *)
+FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplReconnectBus_AUTO_RECONNECT_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplReconnectBus, AUTO_RECONNECT_, NSString *)
 
-typedef GDCReconnectBus ComGoodowRealtimeChannelImplReconnectBus;
-
-@interface GDCReconnectBus_$1 : GDCBusHookProxy {
+@interface ComGoodowRealtimeChannelImplReconnectBus_$1 : ComGoodowRealtimeChannelImplBusHookProxy {
  @public
-  GDCReconnectBus *this$0_;
+  ComGoodowRealtimeChannelImplReconnectBus *this$0_;
 }
 
 - (void)handleOpened;
 
 - (void)handlePostClose;
 
-- (id<GDCBusHook>)delegate;
+- (id<ComGoodowRealtimeChannelBusHook>)delegate;
 
-- (id)initWithGDCReconnectBus:(GDCReconnectBus *)outer$;
+- (id)initWithComGoodowRealtimeChannelImplReconnectBus:(ComGoodowRealtimeChannelImplReconnectBus *)outer$;
 
 @end
 
-__attribute__((always_inline)) inline void GDCReconnectBus_$1_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplReconnectBus_$1_init() {}
 
-J2OBJC_FIELD_SETTER(GDCReconnectBus_$1, this$0_, GDCReconnectBus *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReconnectBus_$1, this$0_, ComGoodowRealtimeChannelImplReconnectBus *)
 
-@interface GDCReconnectBus_$1_$1 : NSObject < GDJsonArray_ListIterator > {
+@interface ComGoodowRealtimeChannelImplReconnectBus_$1_$1 : NSObject < ComGoodowRealtimeJsonJsonArray_ListIterator > {
  @public
-  GDCReconnectBus_$1 *this$0_;
+  ComGoodowRealtimeChannelImplReconnectBus_$1 *this$0_;
 }
 
 - (void)callWithInt:(int)index
-             withId:(id<GDJsonObject>)msg;
+             withId:(id<ComGoodowRealtimeJsonJsonObject>)msg;
 
-- (id)initWithGDCReconnectBus_$1:(GDCReconnectBus_$1 *)outer$;
+- (id)initWithComGoodowRealtimeChannelImplReconnectBus_$1:(ComGoodowRealtimeChannelImplReconnectBus_$1 *)outer$;
 
 @end
 
-__attribute__((always_inline)) inline void GDCReconnectBus_$1_$1_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplReconnectBus_$1_$1_init() {}
 
-J2OBJC_FIELD_SETTER(GDCReconnectBus_$1_$1, this$0_, GDCReconnectBus_$1 *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReconnectBus_$1_$1, this$0_, ComGoodowRealtimeChannelImplReconnectBus_$1 *)
 
-@interface GDCReconnectBus_$1_$2 : NSObject < ComGoodowRealtimeCoreHandler > {
+@interface ComGoodowRealtimeChannelImplReconnectBus_$1_$2 : NSObject < ComGoodowRealtimeCoreHandler > {
  @public
-  GDCReconnectBus_$1 *this$0_;
+  ComGoodowRealtimeChannelImplReconnectBus_$1 *this$0_;
 }
 
 - (void)handleWithId:(id)event;
 
-- (id)initWithGDCReconnectBus_$1:(GDCReconnectBus_$1 *)outer$;
+- (id)initWithComGoodowRealtimeChannelImplReconnectBus_$1:(ComGoodowRealtimeChannelImplReconnectBus_$1 *)outer$;
 
 @end
 
-__attribute__((always_inline)) inline void GDCReconnectBus_$1_$2_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplReconnectBus_$1_$2_init() {}
 
-J2OBJC_FIELD_SETTER(GDCReconnectBus_$1_$2, this$0_, GDCReconnectBus_$1 *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReconnectBus_$1_$2, this$0_, ComGoodowRealtimeChannelImplReconnectBus_$1 *)
 
-#endif // _GDCReconnectBus_H_
+#endif // _ComGoodowRealtimeChannelImplReconnectBus_H_

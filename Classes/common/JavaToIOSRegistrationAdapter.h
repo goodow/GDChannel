@@ -1,4 +1,4 @@
-// Copyright 2013 Goodow.com. All Rights Reserved.
+// Copyright 2014 Goodow.com. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,16 +13,21 @@
 // limitations under the License.
 
 //
-//  GDChannel.h
+//  JavaToIOSRegistrationAdapter.h
 //  GDChannel
 //
 //  Created by Larry Tin.
 //
 
-#import "GDCBus.h"
-#import "GDCMessage.h"
+#import <Foundation/Foundation.h>
 #import "GDCRegistration.h"
+@protocol ComGoodowRealtimeCoreRegistration;
 
-#import "GDCSimpleBus.h"
-#import "GDCWebSocketBus.h"
-#import "GDCReconnectWebSocketBus.h"
+@interface JavaToIOSRegistrationAdapter : NSObject <GDCRegistration> {
+@private
+  id<ComGoodowRealtimeCoreRegistration> delegate_;
+}
+
+- (id)initWithJavaRegistration:(id<ComGoodowRealtimeCoreRegistration>)registration;
+
+@end

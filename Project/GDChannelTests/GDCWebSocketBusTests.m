@@ -1,5 +1,5 @@
 //
-//  GDCEventBusTests.m
+//  GDCWebSocketBusTests.m
 //  GDChannel
 //
 //  Created by Larry Tin.
@@ -9,11 +9,11 @@
 #import <XCTest/XCTest.h>
 #import "GDChannel.h"
 
-@interface GDCEventBusTests : XCTestCase
+@interface GDCWebSocketBusTests : XCTestCase
 
 @end
 
-@implementation GDCEventBusTests
+@implementation GDCWebSocketBusTests
 
 - (void)setUp
 {
@@ -29,18 +29,18 @@
 
 - (void)testExample
 {
-  id<GDCBus> bus = [[GDCReconnectBus alloc] initWithUrl:@"ws://realtime.goodow.com:1986/channel/websocket" options:@{@"forkLocal":@YES}];
-  __block id<GDCHandlerRegistration> handlerRegistration;
+  id<GDCBus> bus = [[GDCReconnectWebSocketBus alloc] initWithUrl:@"ws://realtime.goodow.com:1986/channel/websocket" options:@{@"forkLocal":@YES}];
+  __block id<GDCRegistration> handlerRegistration;
   __block BOOL testComplete = NO;
   
-  [bus registerLocalHandler:GDCBus_get_ON_OPEN_() handler:^(id<GDCMessage> message) {
+  [bus registerLocalHandler:GDCBus_ON_OPEN handler:^(id<GDCMessage> message) {
     NSLog(@"%@", @"EventBus opend");
   }];
-  [bus registerLocalHandler:GDCBus_get_ON_CLOSE_() handler:^(id<GDCMessage> message) {
+  [bus registerLocalHandler:GDCBus_ON_CLOSE handler:^(id<GDCMessage> message) {
     NSLog(@"%@", @"EventBus closed");
     testComplete = YES;
   }];
-  [bus registerLocalHandler:GDCBus_get_ON_ERROR_() handler:^(id<GDCMessage> message) {
+  [bus registerLocalHandler:GDCBus_ON_ERROR handler:^(id<GDCMessage> message) {
     NSLog(@"%@", @"EventBus Error");
   }];
   
@@ -53,7 +53,7 @@
       NSMutableDictionary *body = [message body];
       XCTAssertTrue([@"reply2" isEqualToString:[body objectForKey:@"text"]]);
       
-      [handlerRegistration unregisterHandler];
+      [handlerRegistration unregister];
       handlerRegistration = nil;
       [bus close];
     }];

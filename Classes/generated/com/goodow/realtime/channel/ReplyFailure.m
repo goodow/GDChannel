@@ -10,24 +10,24 @@
 #include "java/lang/IllegalArgumentException.h"
 #include "java/lang/IllegalStateException.h"
 
-BOOL GDCReplyFailureEnum_initialized = NO;
+BOOL ComGoodowRealtimeChannelReplyFailureEnum_initialized = NO;
 
-GDCReplyFailureEnum *GDCReplyFailureEnum_values[3];
+ComGoodowRealtimeChannelReplyFailureEnum *ComGoodowRealtimeChannelReplyFailureEnum_values[3];
 
-@implementation GDCReplyFailureEnum
+@implementation ComGoodowRealtimeChannelReplyFailureEnum
 
 - (id)copyWithZone:(NSZone *)zone {
   return self;
 }
 
-+ (GDCReplyFailureEnum *)fromIntWithInt:(int)i {
++ (ComGoodowRealtimeChannelReplyFailureEnum *)fromIntWithInt:(int)i {
   switch (i) {
     case 0:
-    return GDCReplyFailureEnum_TIMEOUT;
+    return ComGoodowRealtimeChannelReplyFailureEnum_TIMEOUT;
     case 1:
-    return GDCReplyFailureEnum_NO_HANDLERS;
+    return ComGoodowRealtimeChannelReplyFailureEnum_NO_HANDLERS;
     case 2:
-    return GDCReplyFailureEnum_RECIPIENT_FAILURE;
+    return ComGoodowRealtimeChannelReplyFailureEnum_RECIPIENT_FAILURE;
     default:
     @throw [[JavaLangIllegalStateException alloc] initWithNSString:[NSString stringWithFormat:@"Invalid index %d", i]];
   }
@@ -35,11 +35,11 @@ GDCReplyFailureEnum *GDCReplyFailureEnum_values[3];
 
 - (int)toInt {
   switch ([self ordinal]) {
-    case GDCReplyFailure_TIMEOUT:
+    case ComGoodowRealtimeChannelReplyFailure_TIMEOUT:
     return 0;
-    case GDCReplyFailure_NO_HANDLERS:
+    case ComGoodowRealtimeChannelReplyFailure_NO_HANDLERS:
     return 1;
-    case GDCReplyFailure_RECIPIENT_FAILURE:
+    case ComGoodowRealtimeChannelReplyFailure_RECIPIENT_FAILURE:
     return 2;
     default:
     @throw [[JavaLangIllegalStateException alloc] initWithNSString:@"How did we get here?"];
@@ -51,21 +51,21 @@ GDCReplyFailureEnum *GDCReplyFailureEnum_values[3];
 }
 
 + (void)initialize {
-  if (self == [GDCReplyFailureEnum class]) {
-    GDCReplyFailureEnum_TIMEOUT = [[GDCReplyFailureEnum alloc] initWithNSString:@"TIMEOUT" withInt:0];
-    GDCReplyFailureEnum_NO_HANDLERS = [[GDCReplyFailureEnum alloc] initWithNSString:@"NO_HANDLERS" withInt:1];
-    GDCReplyFailureEnum_RECIPIENT_FAILURE = [[GDCReplyFailureEnum alloc] initWithNSString:@"RECIPIENT_FAILURE" withInt:2];
-    GDCReplyFailureEnum_initialized = YES;
+  if (self == [ComGoodowRealtimeChannelReplyFailureEnum class]) {
+    ComGoodowRealtimeChannelReplyFailureEnum_TIMEOUT = [[ComGoodowRealtimeChannelReplyFailureEnum alloc] initWithNSString:@"TIMEOUT" withInt:0];
+    ComGoodowRealtimeChannelReplyFailureEnum_NO_HANDLERS = [[ComGoodowRealtimeChannelReplyFailureEnum alloc] initWithNSString:@"NO_HANDLERS" withInt:1];
+    ComGoodowRealtimeChannelReplyFailureEnum_RECIPIENT_FAILURE = [[ComGoodowRealtimeChannelReplyFailureEnum alloc] initWithNSString:@"RECIPIENT_FAILURE" withInt:2];
+    ComGoodowRealtimeChannelReplyFailureEnum_initialized = YES;
   }
 }
 
 + (IOSObjectArray *)values {
-  return [IOSObjectArray arrayWithObjects:GDCReplyFailureEnum_values count:3 type:[IOSClass classWithClass:[GDCReplyFailureEnum class]]];
+  return [IOSObjectArray arrayWithObjects:ComGoodowRealtimeChannelReplyFailureEnum_values count:3 type:[IOSClass classWithClass:[ComGoodowRealtimeChannelReplyFailureEnum class]]];
 }
 
-+ (GDCReplyFailureEnum *)valueOfWithNSString:(NSString *)name {
++ (ComGoodowRealtimeChannelReplyFailureEnum *)valueOfWithNSString:(NSString *)name {
   for (int i = 0; i < 3; i++) {
-    GDCReplyFailureEnum *e = GDCReplyFailureEnum_values[i];
+    ComGoodowRealtimeChannelReplyFailureEnum *e = ComGoodowRealtimeChannelReplyFailureEnum_values[i];
     if ([name isEqual:[e name]]) {
       return e;
     }
@@ -81,8 +81,8 @@ GDCReplyFailureEnum *GDCReplyFailureEnum_values[3];
     { "init", NULL, NULL, 0x1, NULL },
   };
   static const char *superclass_type_args[] = {"Lcom.goodow.realtime.channel.ReplyFailure;"};
-  static J2ObjcClassInfo _GDCReplyFailureEnum = { "ReplyFailure", "com.goodow.realtime.channel", NULL, 0x4011, 3, methods, 0, NULL, 1, superclass_type_args};
-  return &_GDCReplyFailureEnum;
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelReplyFailureEnum = { "ReplyFailure", "com.goodow.realtime.channel", NULL, 0x4011, 3, methods, 0, NULL, 1, superclass_type_args};
+  return &_ComGoodowRealtimeChannelReplyFailureEnum;
 }
 
 @end

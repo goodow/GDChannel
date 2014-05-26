@@ -9,7 +9,7 @@
 #define _ComGoodowRealtimeObjcObjCNet_H_
 
 @protocol ComGoodowRealtimeCoreWebSocket;
-@protocol GDJsonObject;
+@protocol ComGoodowRealtimeJsonJsonObject;
 
 #import "JreEmulation.h"
 #include "com/goodow/realtime/core/Net.h"
@@ -18,7 +18,7 @@
 }
 
 - (id<ComGoodowRealtimeCoreWebSocket>)createWebSocketWithNSString:(NSString *)url
-                                                 withGDJsonObject:(id<GDJsonObject>)options;
+                              withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options;
 
 - (id)init;
 

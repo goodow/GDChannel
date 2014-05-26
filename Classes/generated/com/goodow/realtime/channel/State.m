@@ -10,13 +10,13 @@
 #include "com/goodow/realtime/channel/State.h"
 #include "java/lang/IllegalArgumentException.h"
 
-BOOL GDCStateEnum_initialized = NO;
+BOOL ComGoodowRealtimeChannelStateEnum_initialized = NO;
 
-GDCStateEnum *GDCStateEnum_values[4];
+ComGoodowRealtimeChannelStateEnum *ComGoodowRealtimeChannelStateEnum_values[4];
 
-@implementation GDCStateEnum
+@implementation ComGoodowRealtimeChannelStateEnum
 
-IOSObjectArray * GDCStateEnum_values__;
+IOSObjectArray * ComGoodowRealtimeChannelStateEnum_values__;
 
 - (id)copyWithZone:(NSZone *)zone {
   return self;
@@ -27,23 +27,23 @@ IOSObjectArray * GDCStateEnum_values__;
 }
 
 + (void)initialize {
-  if (self == [GDCStateEnum class]) {
-    GDCStateEnum_CONNECTING = [[GDCStateEnum alloc] initWithNSString:@"CONNECTING" withInt:0];
-    GDCStateEnum_OPEN = [[GDCStateEnum alloc] initWithNSString:@"OPEN" withInt:1];
-    GDCStateEnum_CLOSING = [[GDCStateEnum alloc] initWithNSString:@"CLOSING" withInt:2];
-    GDCStateEnum_CLOSED = [[GDCStateEnum alloc] initWithNSString:@"CLOSED" withInt:3];
-    GDCStateEnum_values__ = [GDCStateEnum values];
-    GDCStateEnum_initialized = YES;
+  if (self == [ComGoodowRealtimeChannelStateEnum class]) {
+    ComGoodowRealtimeChannelStateEnum_CONNECTING = [[ComGoodowRealtimeChannelStateEnum alloc] initWithNSString:@"CONNECTING" withInt:0];
+    ComGoodowRealtimeChannelStateEnum_OPEN = [[ComGoodowRealtimeChannelStateEnum alloc] initWithNSString:@"OPEN" withInt:1];
+    ComGoodowRealtimeChannelStateEnum_CLOSING = [[ComGoodowRealtimeChannelStateEnum alloc] initWithNSString:@"CLOSING" withInt:2];
+    ComGoodowRealtimeChannelStateEnum_CLOSED = [[ComGoodowRealtimeChannelStateEnum alloc] initWithNSString:@"CLOSED" withInt:3];
+    ComGoodowRealtimeChannelStateEnum_values__ = [ComGoodowRealtimeChannelStateEnum values];
+    ComGoodowRealtimeChannelStateEnum_initialized = YES;
   }
 }
 
 + (IOSObjectArray *)values {
-  return [IOSObjectArray arrayWithObjects:GDCStateEnum_values count:4 type:[IOSClass classWithClass:[GDCStateEnum class]]];
+  return [IOSObjectArray arrayWithObjects:ComGoodowRealtimeChannelStateEnum_values count:4 type:[IOSClass classWithClass:[ComGoodowRealtimeChannelStateEnum class]]];
 }
 
-+ (GDCStateEnum *)valueOfWithNSString:(NSString *)name {
++ (ComGoodowRealtimeChannelStateEnum *)valueOfWithNSString:(NSString *)name {
   for (int i = 0; i < 4; i++) {
-    GDCStateEnum *e = GDCStateEnum_values[i];
+    ComGoodowRealtimeChannelStateEnum *e = ComGoodowRealtimeChannelStateEnum_values[i];
     if ([name isEqual:[e name]]) {
       return e;
     }
@@ -57,8 +57,8 @@ IOSObjectArray * GDCStateEnum_values__;
     { "init", NULL, NULL, 0x1, NULL },
   };
   static const char *superclass_type_args[] = {"Lcom.goodow.realtime.channel.State;"};
-  static J2ObjcClassInfo _GDCStateEnum = { "State", "com.goodow.realtime.channel", NULL, 0x4011, 1, methods, 0, NULL, 1, superclass_type_args};
-  return &_GDCStateEnum;
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelStateEnum = { "State", "com.goodow.realtime.channel", NULL, 0x4011, 1, methods, 0, NULL, 1, superclass_type_args};
+  return &_ComGoodowRealtimeChannelStateEnum;
 }
 
 @end

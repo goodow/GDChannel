@@ -8,9 +8,9 @@
 #include "com/goodow/realtime/channel/ReplyException.h"
 #include "com/goodow/realtime/channel/ReplyFailure.h"
 
-@implementation GDCReplyException
+@implementation ComGoodowRealtimeChannelReplyException
 
-- (id)initWithGDCReplyFailureEnum:(GDCReplyFailureEnum *)failureType {
+- (id)initWithComGoodowRealtimeChannelReplyFailureEnum:(ComGoodowRealtimeChannelReplyFailureEnum *)failureType {
   if (self = [super initWithNSString:(NSString *) check_class_cast(nil, [NSString class])]) {
     self->failureType__ = failureType;
     self->failureCode__ = -1;
@@ -18,9 +18,9 @@
   return self;
 }
 
-- (id)initWithGDCReplyFailureEnum:(GDCReplyFailureEnum *)failureType
-                          withInt:(int)failureCode
-                     withNSString:(NSString *)message {
+- (id)initWithComGoodowRealtimeChannelReplyFailureEnum:(ComGoodowRealtimeChannelReplyFailureEnum *)failureType
+                                               withInt:(int)failureCode
+                                          withNSString:(NSString *)message {
   if (self = [super initWithNSString:message]) {
     self->failureType__ = failureType;
     self->failureCode__ = failureCode;
@@ -28,8 +28,8 @@
   return self;
 }
 
-- (id)initWithGDCReplyFailureEnum:(GDCReplyFailureEnum *)failureType
-                     withNSString:(NSString *)message {
+- (id)initWithComGoodowRealtimeChannelReplyFailureEnum:(ComGoodowRealtimeChannelReplyFailureEnum *)failureType
+                                          withNSString:(NSString *)message {
   if (self = [super initWithNSString:message]) {
     self->failureType__ = failureType;
     self->failureCode__ = -1;
@@ -41,11 +41,11 @@
   return failureCode__;
 }
 
-- (GDCReplyFailureEnum *)failureType {
+- (ComGoodowRealtimeChannelReplyFailureEnum *)failureType {
   return failureType__;
 }
 
-- (void)copyAllFieldsTo:(GDCReplyException *)other {
+- (void)copyAllFieldsTo:(ComGoodowRealtimeChannelReplyException *)other {
   [super copyAllFieldsTo:other];
   other->failureCode__ = failureCode__;
   other->failureType__ = failureType__;
@@ -53,19 +53,19 @@
 
 + (J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {
-    { "initWithGDCReplyFailureEnum:", "ReplyException", NULL, 0x1, NULL },
-    { "initWithGDCReplyFailureEnum:withInt:withNSString:", "ReplyException", NULL, 0x1, NULL },
-    { "initWithGDCReplyFailureEnum:withNSString:", "ReplyException", NULL, 0x1, NULL },
+    { "initWithComGoodowRealtimeChannelReplyFailureEnum:", "ReplyException", NULL, 0x1, NULL },
+    { "initWithComGoodowRealtimeChannelReplyFailureEnum:withInt:withNSString:", "ReplyException", NULL, 0x1, NULL },
+    { "initWithComGoodowRealtimeChannelReplyFailureEnum:withNSString:", "ReplyException", NULL, 0x1, NULL },
     { "failureCode", NULL, "I", 0x1, NULL },
     { "failureType", NULL, "Lcom.goodow.realtime.channel.ReplyFailure;", 0x1, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
-    { "serialVersionUID_ReplyException_", "serialVersionUID", 0x1a, "J", NULL, .constantValue.asLong = GDCReplyException_serialVersionUID },
+    { "serialVersionUID_ReplyException_", "serialVersionUID", 0x1a, "J", NULL, .constantValue.asLong = ComGoodowRealtimeChannelReplyException_serialVersionUID },
     { "failureType__", "failureType", 0x12, "Lcom.goodow.realtime.channel.ReplyFailure;", NULL,  },
     { "failureCode__", "failureCode", 0x12, "I", NULL,  },
   };
-  static J2ObjcClassInfo _GDCReplyException = { "ReplyException", "com.goodow.realtime.channel", NULL, 0x1, 5, methods, 3, fields, 0, NULL};
-  return &_GDCReplyException;
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelReplyException = { "ReplyException", "com.goodow.realtime.channel", NULL, 0x1, 5, methods, 3, fields, 0, NULL};
+  return &_ComGoodowRealtimeChannelReplyException;
 }
 
 @end

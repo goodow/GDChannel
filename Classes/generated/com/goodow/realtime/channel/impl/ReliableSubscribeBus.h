@@ -5,15 +5,15 @@
 //  Created by retechretech.
 //
 
-#ifndef _GDCReliableSubscribeBus_H_
-#define _GDCReliableSubscribeBus_H_
+#ifndef _ComGoodowRealtimeChannelImplReliableSubscribeBus_H_
+#define _ComGoodowRealtimeChannelImplReliableSubscribeBus_H_
 
 @class JavaLangVoid;
 @class JavaUtilLoggingLogger;
-@protocol GDCBus;
-@protocol GDCBusHook;
-@protocol GDCMessage;
-@protocol GDJsonObject;
+@protocol ComGoodowRealtimeChannelBus;
+@protocol ComGoodowRealtimeChannelBusHook;
+@protocol ComGoodowRealtimeChannelMessage;
+@protocol ComGoodowRealtimeJsonJsonObject;
 
 #import "JreEmulation.h"
 #include "com/goodow/realtime/channel/impl/BusHookProxy.h"
@@ -21,20 +21,20 @@
 #include "com/goodow/realtime/core/Handler.h"
 #include "com/goodow/realtime/json/JsonArray.h"
 
-@interface GDCReliableSubscribeBus : GDCBusProxy {
+@interface ComGoodowRealtimeChannelImplReliableSubscribeBus : ComGoodowRealtimeChannelImplBusProxy {
  @public
   NSString *sequenceNumberKey_;
   NSString *publishChannel_;
   int acknowledgeDelayMillis_;
-  id<GDJsonObject> pendings_;
-  id<GDJsonObject> currentSequences_;
-  id<GDJsonObject> knownHeadSequences_;
-  id<GDJsonObject> acknowledgeScheduled_;
-  id<GDJsonObject> acknowledgeNumbers_;
+  id<ComGoodowRealtimeJsonJsonObject> pendings_;
+  id<ComGoodowRealtimeJsonJsonObject> currentSequences_;
+  id<ComGoodowRealtimeJsonJsonObject> knownHeadSequences_;
+  id<ComGoodowRealtimeJsonJsonObject> acknowledgeScheduled_;
+  id<ComGoodowRealtimeJsonJsonObject> acknowledgeNumbers_;
 }
 
-- (id)initWithGDCBus:(id<GDCBus>)delegate
-    withGDJsonObject:(id<GDJsonObject>)options;
+- (id)initWithComGoodowRealtimeChannelBus:(id<ComGoodowRealtimeChannelBus>)delegate
+      withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options;
 
 - (void)close;
 
@@ -49,114 +49,112 @@
 
 - (BOOL)needProcessWithNSString:(NSString *)address;
 
-- (BOOL)onReceiveMessageWithGDCMessage:(id<GDCMessage>)message;
+- (BOOL)onReceiveMessageWithComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)message;
 
 - (void)initSequenceNumberWithNSString:(NSString *)address
                             withDouble:(double)initialSequenceNumber OBJC_METHOD_FAMILY_NONE;
 
 - (void)scheduleAcknowledgmentWithNSString:(NSString *)address;
 
-- (void)copyAllFieldsTo:(GDCReliableSubscribeBus *)other;
+- (void)copyAllFieldsTo:(ComGoodowRealtimeChannelImplReliableSubscribeBus *)other;
 
 @end
 
-FOUNDATION_EXPORT BOOL GDCReliableSubscribeBus_initialized;
-J2OBJC_STATIC_INIT(GDCReliableSubscribeBus)
+FOUNDATION_EXPORT BOOL ComGoodowRealtimeChannelImplReliableSubscribeBus_initialized;
+J2OBJC_STATIC_INIT(ComGoodowRealtimeChannelImplReliableSubscribeBus)
 
-J2OBJC_FIELD_SETTER(GDCReliableSubscribeBus, sequenceNumberKey_, NSString *)
-J2OBJC_FIELD_SETTER(GDCReliableSubscribeBus, publishChannel_, NSString *)
-J2OBJC_FIELD_SETTER(GDCReliableSubscribeBus, pendings_, id<GDJsonObject>)
-J2OBJC_FIELD_SETTER(GDCReliableSubscribeBus, currentSequences_, id<GDJsonObject>)
-J2OBJC_FIELD_SETTER(GDCReliableSubscribeBus, knownHeadSequences_, id<GDJsonObject>)
-J2OBJC_FIELD_SETTER(GDCReliableSubscribeBus, acknowledgeScheduled_, id<GDJsonObject>)
-J2OBJC_FIELD_SETTER(GDCReliableSubscribeBus, acknowledgeNumbers_, id<GDJsonObject>)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus, sequenceNumberKey_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus, publishChannel_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus, pendings_, id<ComGoodowRealtimeJsonJsonObject>)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus, currentSequences_, id<ComGoodowRealtimeJsonJsonObject>)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus, knownHeadSequences_, id<ComGoodowRealtimeJsonJsonObject>)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus, acknowledgeScheduled_, id<ComGoodowRealtimeJsonJsonObject>)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus, acknowledgeNumbers_, id<ComGoodowRealtimeJsonJsonObject>)
 
-FOUNDATION_EXPORT NSString *GDCReliableSubscribeBus_SEQUENCE_NUMBER_;
-J2OBJC_STATIC_FIELD_GETTER(GDCReliableSubscribeBus, SEQUENCE_NUMBER_, NSString *)
+FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplReliableSubscribeBus_SEQUENCE_NUMBER_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus, SEQUENCE_NUMBER_, NSString *)
 
-FOUNDATION_EXPORT NSString *GDCReliableSubscribeBus_PUBLISH_CHANNEL_;
-J2OBJC_STATIC_FIELD_GETTER(GDCReliableSubscribeBus, PUBLISH_CHANNEL_, NSString *)
+FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplReliableSubscribeBus_PUBLISH_CHANNEL_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus, PUBLISH_CHANNEL_, NSString *)
 
-FOUNDATION_EXPORT NSString *GDCReliableSubscribeBus_ACKNOWLEDGE_DELAY_MILLIS_;
-J2OBJC_STATIC_FIELD_GETTER(GDCReliableSubscribeBus, ACKNOWLEDGE_DELAY_MILLIS_, NSString *)
+FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplReliableSubscribeBus_ACKNOWLEDGE_DELAY_MILLIS_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus, ACKNOWLEDGE_DELAY_MILLIS_, NSString *)
 
-FOUNDATION_EXPORT JavaUtilLoggingLogger *GDCReliableSubscribeBus_log_;
-J2OBJC_STATIC_FIELD_GETTER(GDCReliableSubscribeBus, log_, JavaUtilLoggingLogger *)
+FOUNDATION_EXPORT JavaUtilLoggingLogger *ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus, log_, JavaUtilLoggingLogger *)
 
-typedef GDCReliableSubscribeBus ComGoodowRealtimeChannelImplReliableSubscribeBus;
-
-@interface GDCReliableSubscribeBus_$1 : GDCBusHookProxy {
+@interface ComGoodowRealtimeChannelImplReliableSubscribeBus_$1 : ComGoodowRealtimeChannelImplBusHookProxy {
  @public
-  GDCReliableSubscribeBus *this$0_;
+  ComGoodowRealtimeChannelImplReliableSubscribeBus *this$0_;
 }
 
-- (BOOL)handleReceiveMessageWithGDCMessage:(id<GDCMessage>)message;
+- (BOOL)handleReceiveMessageWithComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)message;
 
 - (BOOL)handleUnregisterWithNSString:(NSString *)address;
 
-- (id<GDCBusHook>)delegate;
+- (id<ComGoodowRealtimeChannelBusHook>)delegate;
 
-- (id)initWithGDCReliableSubscribeBus:(GDCReliableSubscribeBus *)outer$;
+- (id)initWithComGoodowRealtimeChannelImplReliableSubscribeBus:(ComGoodowRealtimeChannelImplReliableSubscribeBus *)outer$;
 
 @end
 
-__attribute__((always_inline)) inline void GDCReliableSubscribeBus_$1_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplReliableSubscribeBus_$1_init() {}
 
-J2OBJC_FIELD_SETTER(GDCReliableSubscribeBus_$1, this$0_, GDCReliableSubscribeBus *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$1, this$0_, ComGoodowRealtimeChannelImplReliableSubscribeBus *)
 
-@interface GDCReliableSubscribeBus_$2 : NSObject < ComGoodowRealtimeCoreHandler > {
+@interface ComGoodowRealtimeChannelImplReliableSubscribeBus_$2 : NSObject < ComGoodowRealtimeCoreHandler > {
  @public
-  GDCReliableSubscribeBus *this$0_;
+  ComGoodowRealtimeChannelImplReliableSubscribeBus *this$0_;
   NSString *val$address_;
 }
 
-- (void)handleWithId:(id<GDCMessage>)message;
+- (void)handleWithId:(id<ComGoodowRealtimeChannelMessage>)message;
 
-- (id)initWithGDCReliableSubscribeBus:(GDCReliableSubscribeBus *)outer$
-                         withNSString:(NSString *)capture$0;
+- (id)initWithComGoodowRealtimeChannelImplReliableSubscribeBus:(ComGoodowRealtimeChannelImplReliableSubscribeBus *)outer$
+                                                  withNSString:(NSString *)capture$0;
 
 @end
 
-__attribute__((always_inline)) inline void GDCReliableSubscribeBus_$2_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplReliableSubscribeBus_$2_init() {}
 
-J2OBJC_FIELD_SETTER(GDCReliableSubscribeBus_$2, this$0_, GDCReliableSubscribeBus *)
-J2OBJC_FIELD_SETTER(GDCReliableSubscribeBus_$2, val$address_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$2, this$0_, ComGoodowRealtimeChannelImplReliableSubscribeBus *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$2, val$address_, NSString *)
 
-@interface GDCReliableSubscribeBus_$2_$1 : NSObject < GDJsonArray_ListIterator > {
+@interface ComGoodowRealtimeChannelImplReliableSubscribeBus_$2_$1 : NSObject < ComGoodowRealtimeJsonJsonArray_ListIterator > {
  @public
-  GDCReliableSubscribeBus_$2 *this$0_;
+  ComGoodowRealtimeChannelImplReliableSubscribeBus_$2 *this$0_;
   NSString *val$replyAddress_;
 }
 
 - (void)callWithInt:(int)index
              withId:(id)value;
 
-- (id)initWithGDCReliableSubscribeBus_$2:(GDCReliableSubscribeBus_$2 *)outer$
-                            withNSString:(NSString *)capture$0;
+- (id)initWithComGoodowRealtimeChannelImplReliableSubscribeBus_$2:(ComGoodowRealtimeChannelImplReliableSubscribeBus_$2 *)outer$
+                                                     withNSString:(NSString *)capture$0;
 
 @end
 
-__attribute__((always_inline)) inline void GDCReliableSubscribeBus_$2_$1_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplReliableSubscribeBus_$2_$1_init() {}
 
-J2OBJC_FIELD_SETTER(GDCReliableSubscribeBus_$2_$1, this$0_, GDCReliableSubscribeBus_$2 *)
-J2OBJC_FIELD_SETTER(GDCReliableSubscribeBus_$2_$1, val$replyAddress_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$2_$1, this$0_, ComGoodowRealtimeChannelImplReliableSubscribeBus_$2 *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$2_$1, val$replyAddress_, NSString *)
 
-@interface GDCReliableSubscribeBus_$3 : NSObject < ComGoodowRealtimeCoreHandler > {
+@interface ComGoodowRealtimeChannelImplReliableSubscribeBus_$3 : NSObject < ComGoodowRealtimeCoreHandler > {
  @public
-  GDCReliableSubscribeBus *this$0_;
+  ComGoodowRealtimeChannelImplReliableSubscribeBus *this$0_;
   NSString *val$address_;
 }
 
 - (void)handleWithId:(id)event;
 
-- (id)initWithGDCReliableSubscribeBus:(GDCReliableSubscribeBus *)outer$
-                         withNSString:(NSString *)capture$0;
+- (id)initWithComGoodowRealtimeChannelImplReliableSubscribeBus:(ComGoodowRealtimeChannelImplReliableSubscribeBus *)outer$
+                                                  withNSString:(NSString *)capture$0;
 
 @end
 
-__attribute__((always_inline)) inline void GDCReliableSubscribeBus_$3_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplReliableSubscribeBus_$3_init() {}
 
-J2OBJC_FIELD_SETTER(GDCReliableSubscribeBus_$3, this$0_, GDCReliableSubscribeBus *)
-J2OBJC_FIELD_SETTER(GDCReliableSubscribeBus_$3, val$address_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$3, this$0_, ComGoodowRealtimeChannelImplReliableSubscribeBus *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$3, val$address_, NSString *)
 
-#endif // _GDCReliableSubscribeBus_H_
+#endif // _ComGoodowRealtimeChannelImplReliableSubscribeBus_H_

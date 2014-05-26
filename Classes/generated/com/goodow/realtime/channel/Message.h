@@ -5,31 +5,31 @@
 //  Created by retechretech.
 //
 
-#ifndef _GDCMessage_H_
-#define _GDCMessage_H_
+#ifndef _ComGoodowRealtimeChannelMessage_H_
+#define _ComGoodowRealtimeChannelMessage_H_
 
 @protocol ComGoodowRealtimeCoreHandler;
 
 #import "JreEmulation.h"
 
-@protocol GDCMessage < NSObject, JavaObject >
+@protocol ComGoodowRealtimeChannelMessage < NSObject, JavaObject >
 
 - (NSString *)address;
 
 - (id)body;
 
-- (void)fail:(int)failureCode message:(NSString *)msg;
+- (void)failWithInt:(int)failureCode
+       withNSString:(NSString *)msg;
 
-- (void)reply:(id)msg;
+- (void)replyWithId:(id)msg;
 
-- (void)reply:(id)msg replyHandler:(id)replyHandler;
+- (void)replyWithId:(id)msg
+withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
 - (NSString *)replyAddress;
 
 @end
 
-__attribute__((always_inline)) inline void GDCMessage_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelMessage_init() {}
 
-#define ComGoodowRealtimeChannelMessage GDCMessage
-
-#endif // _GDCMessage_H_
+#endif // _ComGoodowRealtimeChannelMessage_H_

@@ -5,21 +5,21 @@
 //  Created by retechretech.
 //
 
-#ifndef _GDCWebSocketBus_H_
-#define _GDCWebSocketBus_H_
+#ifndef _ComGoodowRealtimeChannelImplWebSocketBus_H_
+#define _ComGoodowRealtimeChannelImplWebSocketBus_H_
 
-@class GDCStateEnum;
+@class ComGoodowRealtimeChannelStateEnum;
 @class JavaLangVoid;
+@protocol ComGoodowRealtimeChannelMessage;
 @protocol ComGoodowRealtimeCoreWebSocket;
-@protocol GDCMessage;
-@protocol GDJsonObject;
+@protocol ComGoodowRealtimeJsonJsonObject;
 
 #import "JreEmulation.h"
 #include "com/goodow/realtime/channel/impl/SimpleBus.h"
 #include "com/goodow/realtime/core/Handler.h"
 #include "com/goodow/realtime/core/WebSocket.h"
 
-@interface GDCWebSocketBus : GDCSimpleBus {
+@interface ComGoodowRealtimeChannelImplWebSocketBus : ComGoodowRealtimeChannelImplSimpleBus {
  @public
   id<ComGoodowRealtimeCoreWebSocket_WebSocketHandler> webSocketHandler_;
   NSString *url_;
@@ -29,18 +29,20 @@
   int pingTimerID_;
   NSString *accessToken_;
   NSString *sid_;
-  id<GDJsonObject> handlerCount_;
+  id<ComGoodowRealtimeJsonJsonObject> handlerCount_;
 }
 
 - (id)initWithNSString:(NSString *)url
-      withGDJsonObject:(id<GDJsonObject>)options;
+withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options;
 
 - (void)connectWithNSString:(NSString *)url
-           withGDJsonObject:(id<GDJsonObject>)options;
+withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options;
 
-- (GDCStateEnum *)getReadyState;
+- (ComGoodowRealtimeChannelStateEnum *)getReadyState;
 
-- (void)login:(NSString *)userId token:(NSString *)token replyHandler:(id)replyHandler;
+- (void)loginWithNSString:(NSString *)userId
+             withNSString:(NSString *)token
+withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
 - (void)doClose;
 
@@ -58,7 +60,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
                           withNSString:(NSString *)address
       withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
-- (void)sendWithGDJsonObject:(id<GDJsonObject>)msg;
+- (void)sendWithComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)msg;
 
 - (void)sendPing;
 
@@ -66,46 +68,44 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
 - (void)sendUnregisterWithNSString:(NSString *)address;
 
-- (void)copyAllFieldsTo:(GDCWebSocketBus *)other;
+- (void)copyAllFieldsTo:(ComGoodowRealtimeChannelImplWebSocketBus *)other;
 
 @end
 
-__attribute__((always_inline)) inline void GDCWebSocketBus_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplWebSocketBus_init() {}
 
-J2OBJC_FIELD_SETTER(GDCWebSocketBus, webSocketHandler_, id<ComGoodowRealtimeCoreWebSocket_WebSocketHandler>)
-J2OBJC_FIELD_SETTER(GDCWebSocketBus, url_, NSString *)
-J2OBJC_FIELD_SETTER(GDCWebSocketBus, webSocket_, id<ComGoodowRealtimeCoreWebSocket>)
-J2OBJC_FIELD_SETTER(GDCWebSocketBus, authAddress_, NSString *)
-J2OBJC_FIELD_SETTER(GDCWebSocketBus, accessToken_, NSString *)
-J2OBJC_FIELD_SETTER(GDCWebSocketBus, sid_, NSString *)
-J2OBJC_FIELD_SETTER(GDCWebSocketBus, handlerCount_, id<GDJsonObject>)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, webSocketHandler_, id<ComGoodowRealtimeCoreWebSocket_WebSocketHandler>)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, url_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, webSocket_, id<ComGoodowRealtimeCoreWebSocket>)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, authAddress_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, accessToken_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, sid_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, handlerCount_, id<ComGoodowRealtimeJsonJsonObject>)
 
-FOUNDATION_EXPORT NSString *GDCWebSocketBus_PING_INTERVAL_;
-J2OBJC_STATIC_FIELD_GETTER(GDCWebSocketBus, PING_INTERVAL_, NSString *)
+FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_PING_INTERVAL_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, PING_INTERVAL_, NSString *)
 
-FOUNDATION_EXPORT NSString *GDCWebSocketBus_AUTH_ADDRESS_;
-J2OBJC_STATIC_FIELD_GETTER(GDCWebSocketBus, AUTH_ADDRESS_, NSString *)
+FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_AUTH_ADDRESS_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, AUTH_ADDRESS_, NSString *)
 
-FOUNDATION_EXPORT NSString *GDCWebSocketBus_BODY_;
-J2OBJC_STATIC_FIELD_GETTER(GDCWebSocketBus, BODY_, NSString *)
+FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_BODY_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, BODY_, NSString *)
 
-FOUNDATION_EXPORT NSString *GDCWebSocketBus_ADDRESS_;
-J2OBJC_STATIC_FIELD_GETTER(GDCWebSocketBus, ADDRESS_, NSString *)
+FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_ADDRESS_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, ADDRESS_, NSString *)
 
-FOUNDATION_EXPORT NSString *GDCWebSocketBus_REPLY_ADDRESS_;
-J2OBJC_STATIC_FIELD_GETTER(GDCWebSocketBus, REPLY_ADDRESS_, NSString *)
+FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_REPLY_ADDRESS_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, REPLY_ADDRESS_, NSString *)
 
-FOUNDATION_EXPORT NSString *GDCWebSocketBus_TYPE_;
-J2OBJC_STATIC_FIELD_GETTER(GDCWebSocketBus, TYPE_, NSString *)
+FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_TYPE_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, TYPE_, NSString *)
 
-typedef GDCWebSocketBus ComGoodowRealtimeChannelImplWebSocketBus;
-
-@interface GDCWebSocketBus_$1 : NSObject < ComGoodowRealtimeCoreWebSocket_WebSocketHandler > {
+@interface ComGoodowRealtimeChannelImplWebSocketBus_$1 : NSObject < ComGoodowRealtimeCoreWebSocket_WebSocketHandler > {
  @public
-  GDCWebSocketBus *this$0_;
+  ComGoodowRealtimeChannelImplWebSocketBus *this$0_;
 }
 
-- (void)onCloseWithGDJsonObject:(id<GDJsonObject>)reason;
+- (void)onCloseWithComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)reason;
 
 - (void)onErrorWithNSString:(NSString *)error;
 
@@ -113,60 +113,60 @@ typedef GDCWebSocketBus ComGoodowRealtimeChannelImplWebSocketBus;
 
 - (void)onOpen;
 
-- (id)initWithGDCWebSocketBus:(GDCWebSocketBus *)outer$;
+- (id)initWithComGoodowRealtimeChannelImplWebSocketBus:(ComGoodowRealtimeChannelImplWebSocketBus *)outer$;
 
 @end
 
-__attribute__((always_inline)) inline void GDCWebSocketBus_$1_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplWebSocketBus_$1_init() {}
 
-J2OBJC_FIELD_SETTER(GDCWebSocketBus_$1, this$0_, GDCWebSocketBus *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus_$1, this$0_, ComGoodowRealtimeChannelImplWebSocketBus *)
 
-@interface GDCWebSocketBus_$1_$1 : NSObject < ComGoodowRealtimeCoreHandler > {
+@interface ComGoodowRealtimeChannelImplWebSocketBus_$1_$1 : NSObject < ComGoodowRealtimeCoreHandler > {
  @public
-  GDCWebSocketBus_$1 *this$0_;
+  ComGoodowRealtimeChannelImplWebSocketBus_$1 *this$0_;
 }
 
 - (void)handleWithId:(id)ignore;
 
-- (id)initWithGDCWebSocketBus_$1:(GDCWebSocketBus_$1 *)outer$;
+- (id)initWithComGoodowRealtimeChannelImplWebSocketBus_$1:(ComGoodowRealtimeChannelImplWebSocketBus_$1 *)outer$;
 
 @end
 
-__attribute__((always_inline)) inline void GDCWebSocketBus_$1_$1_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplWebSocketBus_$1_$1_init() {}
 
-J2OBJC_FIELD_SETTER(GDCWebSocketBus_$1_$1, this$0_, GDCWebSocketBus_$1 *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus_$1_$1, this$0_, ComGoodowRealtimeChannelImplWebSocketBus_$1 *)
 
-@interface GDCWebSocketBus_$2 : NSObject < ComGoodowRealtimeCoreHandler > {
+@interface ComGoodowRealtimeChannelImplWebSocketBus_$2 : NSObject < ComGoodowRealtimeCoreHandler > {
  @public
-  GDCWebSocketBus *this$0_;
+  ComGoodowRealtimeChannelImplWebSocketBus *this$0_;
   id<ComGoodowRealtimeCoreHandler> val$replyHandler_;
 }
 
-- (void)handleWithId:(id<GDCMessage>)msg;
+- (void)handleWithId:(id<ComGoodowRealtimeChannelMessage>)msg;
 
-- (id)initWithGDCWebSocketBus:(GDCWebSocketBus *)outer$
-withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)capture$0;
+- (id)initWithComGoodowRealtimeChannelImplWebSocketBus:(ComGoodowRealtimeChannelImplWebSocketBus *)outer$
+                      withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)capture$0;
 
 @end
 
-__attribute__((always_inline)) inline void GDCWebSocketBus_$2_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplWebSocketBus_$2_init() {}
 
-J2OBJC_FIELD_SETTER(GDCWebSocketBus_$2, this$0_, GDCWebSocketBus *)
-J2OBJC_FIELD_SETTER(GDCWebSocketBus_$2, val$replyHandler_, id<ComGoodowRealtimeCoreHandler>)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus_$2, this$0_, ComGoodowRealtimeChannelImplWebSocketBus *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus_$2, val$replyHandler_, id<ComGoodowRealtimeCoreHandler>)
 
-@interface GDCWebSocketBus_$3 : NSObject < ComGoodowRealtimeCoreHandler > {
+@interface ComGoodowRealtimeChannelImplWebSocketBus_$3 : NSObject < ComGoodowRealtimeCoreHandler > {
  @public
-  GDCWebSocketBus *this$0_;
+  ComGoodowRealtimeChannelImplWebSocketBus *this$0_;
 }
 
-- (void)handleWithId:(id<GDCMessage>)event;
+- (void)handleWithId:(id<ComGoodowRealtimeChannelMessage>)event;
 
-- (id)initWithGDCWebSocketBus:(GDCWebSocketBus *)outer$;
+- (id)initWithComGoodowRealtimeChannelImplWebSocketBus:(ComGoodowRealtimeChannelImplWebSocketBus *)outer$;
 
 @end
 
-__attribute__((always_inline)) inline void GDCWebSocketBus_$3_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplWebSocketBus_$3_init() {}
 
-J2OBJC_FIELD_SETTER(GDCWebSocketBus_$3, this$0_, GDCWebSocketBus *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus_$3, this$0_, ComGoodowRealtimeChannelImplWebSocketBus *)
 
-#endif // _GDCWebSocketBus_H_
+#endif // _ComGoodowRealtimeChannelImplWebSocketBus_H_
