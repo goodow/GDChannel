@@ -21,8 +21,6 @@
 - (void)failWithInt:(int)failureCode
        withNSString:(NSString *)msg;
 
-- (void)replyWithId:(id)msg;
-
 - (void)replyWithId:(id)msg
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 

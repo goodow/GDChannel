@@ -9,12 +9,15 @@
 #define _ComGoodowRealtimeCorePlatformFactory_H_
 
 @class ComGoodowRealtimeCorePlatform_TypeEnum;
+@protocol ComGoodowRealtimeCoreDiff;
 @protocol ComGoodowRealtimeCoreNet;
 @protocol ComGoodowRealtimeCoreScheduler;
 
 #import "JreEmulation.h"
 
 @protocol ComGoodowRealtimeCorePlatformFactory < NSObject, JavaObject >
+
+- (id<ComGoodowRealtimeCoreDiff>)diff;
 
 - (id<ComGoodowRealtimeCoreNet>)net;
 

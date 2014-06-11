@@ -80,7 +80,7 @@ J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReconnectBus_$1, this$0_, ComGoo
 }
 
 - (void)callWithInt:(int)index
-             withId:(id<ComGoodowRealtimeJsonJsonObject>)msg;
+             withId:(NSString *)address;
 
 - (id)initWithComGoodowRealtimeChannelImplReconnectBus_$1:(ComGoodowRealtimeChannelImplReconnectBus_$1 *)outer$;
 
@@ -90,7 +90,23 @@ __attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplReconnect
 
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReconnectBus_$1_$1, this$0_, ComGoodowRealtimeChannelImplReconnectBus_$1 *)
 
-@interface ComGoodowRealtimeChannelImplReconnectBus_$1_$2 : NSObject < ComGoodowRealtimeCoreHandler > {
+@interface ComGoodowRealtimeChannelImplReconnectBus_$1_$2 : NSObject < ComGoodowRealtimeJsonJsonArray_ListIterator > {
+ @public
+  ComGoodowRealtimeChannelImplReconnectBus_$1 *this$0_;
+}
+
+- (void)callWithInt:(int)index
+             withId:(id<ComGoodowRealtimeJsonJsonObject>)msg;
+
+- (id)initWithComGoodowRealtimeChannelImplReconnectBus_$1:(ComGoodowRealtimeChannelImplReconnectBus_$1 *)outer$;
+
+@end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplReconnectBus_$1_$2_init() {}
+
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReconnectBus_$1_$2, this$0_, ComGoodowRealtimeChannelImplReconnectBus_$1 *)
+
+@interface ComGoodowRealtimeChannelImplReconnectBus_$1_$3 : NSObject < ComGoodowRealtimeCoreHandler > {
  @public
   ComGoodowRealtimeChannelImplReconnectBus_$1 *this$0_;
 }
@@ -101,8 +117,8 @@ J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReconnectBus_$1_$1, this$0_, Com
 
 @end
 
-__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplReconnectBus_$1_$2_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplReconnectBus_$1_$3_init() {}
 
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReconnectBus_$1_$2, this$0_, ComGoodowRealtimeChannelImplReconnectBus_$1 *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReconnectBus_$1_$3, this$0_, ComGoodowRealtimeChannelImplReconnectBus_$1 *)
 
 #endif // _ComGoodowRealtimeChannelImplReconnectBus_H_

@@ -22,6 +22,7 @@
 #import "GDCBus.h"
 #import "GDCMessage.h"
 #import "GDCRegistration.h"
+#import "GDCState.h"
 
 #import "GDCSimpleBus.h"
 #import "GDCWebSocketBus.h"

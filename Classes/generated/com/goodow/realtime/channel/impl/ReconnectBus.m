@@ -6,7 +6,6 @@
 //
 
 #include "IOSClass.h"
-#include "IOSObjectArray.h"
 #include "com/goodow/realtime/channel/Bus.h"
 #include "com/goodow/realtime/channel/BusHook.h"
 #include "com/goodow/realtime/channel/State.h"
@@ -19,6 +18,7 @@
 #include "com/goodow/realtime/json/Json.h"
 #include "com/goodow/realtime/json/JsonArray.h"
 #include "com/goodow/realtime/json/JsonObject.h"
+#include "com/google/gwt/core/client/js/JsExport.h"
 #include "java/lang/Void.h"
 
 @implementation ComGoodowRealtimeChannelImplReconnectBus
@@ -82,6 +82,10 @@ withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options
   other->queuedMessages_ = queuedMessages_;
   other->reconnect__ = reconnect__;
 }
++ (IOSObjectArray *)__annotations_ComGoodowRealtimeChannelImplReconnectBusWithNSString_withComGoodowRealtimeJsonJsonObject_ {
+  return [IOSObjectArray arrayWithObjects:(id[]) { [[ComGoogleGwtCoreClientJsJsExport alloc] initWithValue:@"$wnd.realtime.channel.WebSocketBus"] } count:1 type:[IOSClass classWithProtocol:@protocol(JavaLangAnnotationAnnotation)]];
+}
+
 
 + (J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {
@@ -110,29 +114,18 @@ withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options
 - (void)handleOpened {
   [((ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator *) nil_chk(this$0_->backOffGenerator_)) reset];
   [this$0_ loginWithNSString:nil withNSString:nil withComGoodowRealtimeCoreHandler:nil];
-  IOSObjectArray *addresses = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->handlerCount_)) keys];
-  {
-    IOSObjectArray *a__ = addresses;
-    NSString * const *b__ = ((IOSObjectArray *) nil_chk(a__))->buffer_;
-    NSString * const *e__ = b__ + a__->size_;
-    while (b__ < e__) {
-      NSString *address = (*b__++);
-      NSAssert([this$0_->handlerCount_ getNumberWithNSString:address] > 0, [[NSString stringWithFormat:@"Handlers registried on %@ shouldn't be empty" J2OBJC_COMMA() address] description]);
-      [this$0_ sendUnregisterWithNSString:address];
-      [this$0_ sendRegisterWithNSString:address];
-    }
-  }
+  [((id<ComGoodowRealtimeJsonJsonArray>) nil_chk([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->handlerCount_)) keys])) forEachWithComGoodowRealtimeJsonJsonArray_ListIterator:[[ComGoodowRealtimeChannelImplReconnectBus_$1_$1 alloc] initWithComGoodowRealtimeChannelImplReconnectBus_$1:self]];
   if ([((id<ComGoodowRealtimeJsonJsonArray>) nil_chk(this$0_->queuedMessages_)) length] > 0) {
     id<ComGoodowRealtimeJsonJsonArray> copy_ = [this$0_->queuedMessages_ copy__];
     (void) [this$0_->queuedMessages_ clear];
-    [((id<ComGoodowRealtimeJsonJsonArray>) nil_chk(copy_)) forEachWithComGoodowRealtimeJsonJsonArray_ListIterator:[[ComGoodowRealtimeChannelImplReconnectBus_$1_$1 alloc] initWithComGoodowRealtimeChannelImplReconnectBus_$1:self]];
+    [((id<ComGoodowRealtimeJsonJsonArray>) nil_chk(copy_)) forEachWithComGoodowRealtimeJsonJsonArray_ListIterator:[[ComGoodowRealtimeChannelImplReconnectBus_$1_$2 alloc] initWithComGoodowRealtimeChannelImplReconnectBus_$1:self]];
   }
   [super handleOpened];
 }
 
 - (void)handlePostClose {
   if (this$0_->reconnect__) {
-    [((id<ComGoodowRealtimeCoreScheduler>) nil_chk([ComGoodowRealtimeCorePlatform scheduler])) scheduleDelayWithInt:((ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator_BackOffParameters *) nil_chk([((ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator *) nil_chk(this$0_->backOffGenerator_)) next]))->targetDelay_ withComGoodowRealtimeCoreHandler:[[ComGoodowRealtimeChannelImplReconnectBus_$1_$2 alloc] initWithComGoodowRealtimeChannelImplReconnectBus_$1:self]];
+    [((id<ComGoodowRealtimeCoreScheduler>) nil_chk([ComGoodowRealtimeCorePlatform scheduler])) scheduleDelayWithInt:((ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator_BackOffParameters *) nil_chk([((ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator *) nil_chk(this$0_->backOffGenerator_)) next]))->targetDelay_ withComGoodowRealtimeCoreHandler:[[ComGoodowRealtimeChannelImplReconnectBus_$1_$3 alloc] initWithComGoodowRealtimeChannelImplReconnectBus_$1:self]];
   }
   [super handlePostClose];
 }
@@ -165,6 +158,34 @@ withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options
 @implementation ComGoodowRealtimeChannelImplReconnectBus_$1_$1
 
 - (void)callWithInt:(int)index
+             withId:(NSString *)address {
+  NSAssert([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->this$0_->handlerCount_)) getNumberWithNSString:address] > 0, [[NSString stringWithFormat:@"Handlers registried on %@ shouldn't be empty" J2OBJC_COMMA() address] description]);
+  [this$0_->this$0_ sendUnregisterWithNSString:address];
+  [this$0_->this$0_ sendRegisterWithNSString:address];
+}
+
+- (id)initWithComGoodowRealtimeChannelImplReconnectBus_$1:(ComGoodowRealtimeChannelImplReconnectBus_$1 *)outer$ {
+  this$0_ = outer$;
+  return [super init];
+}
+
++ (J2ObjcClassInfo *)__metadata {
+  static J2ObjcMethodInfo methods[] = {
+    { "callWithInt:withNSString:", "call", "V", 0x1, NULL },
+    { "initWithComGoodowRealtimeChannelImplReconnectBus_$1:", "init", NULL, 0x0, NULL },
+  };
+  static J2ObjcFieldInfo fields[] = {
+    { "this$0_", NULL, 0x1012, "Lcom.goodow.realtime.channel.impl.ReconnectBus$1;", NULL,  },
+  };
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplReconnectBus_$1_$1 = { "$1", "com.goodow.realtime.channel.impl", "ReconnectBus$$1", 0x8000, 2, methods, 1, fields, 0, NULL};
+  return &_ComGoodowRealtimeChannelImplReconnectBus_$1_$1;
+}
+
+@end
+
+@implementation ComGoodowRealtimeChannelImplReconnectBus_$1_$2
+
+- (void)callWithInt:(int)index
              withId:(id<ComGoodowRealtimeJsonJsonObject>)msg {
   [this$0_->this$0_ sendWithComGoodowRealtimeJsonJsonObject:msg];
 }
@@ -182,13 +203,13 @@ withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options
   static J2ObjcFieldInfo fields[] = {
     { "this$0_", NULL, 0x1012, "Lcom.goodow.realtime.channel.impl.ReconnectBus$1;", NULL,  },
   };
-  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplReconnectBus_$1_$1 = { "$1", "com.goodow.realtime.channel.impl", "ReconnectBus$$1", 0x8000, 2, methods, 1, fields, 0, NULL};
-  return &_ComGoodowRealtimeChannelImplReconnectBus_$1_$1;
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplReconnectBus_$1_$2 = { "$2", "com.goodow.realtime.channel.impl", "ReconnectBus$$1", 0x8000, 2, methods, 1, fields, 0, NULL};
+  return &_ComGoodowRealtimeChannelImplReconnectBus_$1_$2;
 }
 
 @end
 
-@implementation ComGoodowRealtimeChannelImplReconnectBus_$1_$2
+@implementation ComGoodowRealtimeChannelImplReconnectBus_$1_$3
 
 - (void)handleWithId:(id)event {
   if (this$0_->this$0_->reconnect__) {
@@ -209,8 +230,8 @@ withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options
   static J2ObjcFieldInfo fields[] = {
     { "this$0_", NULL, 0x1012, "Lcom.goodow.realtime.channel.impl.ReconnectBus$1;", NULL,  },
   };
-  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplReconnectBus_$1_$2 = { "$2", "com.goodow.realtime.channel.impl", "ReconnectBus$$1", 0x8000, 2, methods, 1, fields, 0, NULL};
-  return &_ComGoodowRealtimeChannelImplReconnectBus_$1_$2;
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplReconnectBus_$1_$3 = { "$3", "com.goodow.realtime.channel.impl", "ReconnectBus$$1", 0x8000, 2, methods, 1, fields, 0, NULL};
+  return &_ComGoodowRealtimeChannelImplReconnectBus_$1_$3;
 }
 
 @end

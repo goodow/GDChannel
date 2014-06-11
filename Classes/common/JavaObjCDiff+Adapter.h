@@ -13,15 +13,16 @@
 // limitations under the License.
 
 //
-//  ComGoodowRealtimeChannelImplDefaultMessage+Adapter.h
+//  JavaObjCDiff+Adapter.h
 //  GDChannel
 //
 //  Created by Larry Tin.
 //
 
-#import "com/goodow/realtime/channel/impl/DefaultMessage.h"
-#import "GDCMessage.h"
+#import "ObjCDiff.h"
 
-@interface ComGoodowRealtimeChannelImplDefaultMessage (Adapter) <GDCMessage>
+@interface ComGoodowRealtimeObjcObjCDiff (Adapter)
+
+- (void)diff:(NSString *)before after:(NSString *)after target:(id<ComGoodowRealtimeCoreDiff_ListTarget>)target;
 
 @end

@@ -8,18 +8,44 @@
 #ifndef _ComGoodowRealtimeCoreDiff_H_
 #define _ComGoodowRealtimeCoreDiff_H_
 
-@protocol ComGoodowRealtimeCoreWebSocket;
-@protocol ComGoodowRealtimeJsonJsonObject;
+@protocol ComGoodowRealtimeCoreDiff_ListTarget;
+@protocol ComGoodowRealtimeJsonJsonArray;
+@protocol JavaUtilComparator;
 
 #import "JreEmulation.h"
 
 @protocol ComGoodowRealtimeCoreDiff < NSObject, JavaObject >
 
-- (id<ComGoodowRealtimeCoreWebSocket>)createWebSocketWithNSString:(NSString *)url
-                              withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options;
+- (void)diffWithNSString:(NSString *)before
+            withNSString:(NSString *)after
+withComGoodowRealtimeCoreDiff_ListTarget:(id<ComGoodowRealtimeCoreDiff_ListTarget>)target;
+
+- (void)diffWithComGoodowRealtimeJsonJsonArray:(id<ComGoodowRealtimeJsonJsonArray>)before
+            withComGoodowRealtimeJsonJsonArray:(id<ComGoodowRealtimeJsonJsonArray>)after
+      withComGoodowRealtimeCoreDiff_ListTarget:(id<ComGoodowRealtimeCoreDiff_ListTarget>)target
+                        withJavaUtilComparator:(id<JavaUtilComparator>)comparator;
 
 @end
 
 __attribute__((always_inline)) inline void ComGoodowRealtimeCoreDiff_init() {}
+
+@protocol ComGoodowRealtimeCoreDiff_ListTarget < NSObject, JavaObject >
+
+- (void)insertWithInt:(int)startIndex
+               withId:(id)values;
+
+- (void)removeWithInt:(int)startIndex
+              withInt:(int)length;
+
+- (void)replaceWithInt:(int)startIndex
+                withId:(id)values;
+
+- (void)moveWithInt:(int)fromIndex
+            withInt:(int)toIndex
+            withInt:(int)length;
+
+@end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeCoreDiff_ListTarget_init() {}
 
 #endif // _ComGoodowRealtimeCoreDiff_H_

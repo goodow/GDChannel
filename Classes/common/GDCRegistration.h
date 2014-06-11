@@ -19,8 +19,17 @@
 //  Created by Larry Tin.
 //
 
+/**
+ * Registration objects returned when an event handler is bound (e.g. via
+ * {@link GDCBus#registerHandler}), used to deregister.
+ */
 @protocol GDCRegistration
 
+/**
+ * Deregisters the handler associated with this registration object if the handler is still
+ * attached to the event bus. If the handler is no longer attached to the event bus, this is a
+ * no-op.
+ */
 - (void)unregister;
 
 @end

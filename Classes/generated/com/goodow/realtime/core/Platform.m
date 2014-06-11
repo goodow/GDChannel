@@ -6,6 +6,7 @@
 //
 
 #include "IOSClass.h"
+#include "com/goodow/realtime/core/Diff.h"
 #include "com/goodow/realtime/core/Net.h"
 #include "com/goodow/realtime/core/Platform.h"
 #include "com/goodow/realtime/core/PlatformFactory.h"
@@ -15,6 +16,10 @@
 @implementation ComGoodowRealtimeCorePlatform
 
 id<ComGoodowRealtimeCorePlatformFactory> ComGoodowRealtimeCorePlatform_FACTORY_;
+
++ (id<ComGoodowRealtimeCoreDiff>)diff {
+  return [((id<ComGoodowRealtimeCorePlatformFactory>) nil_chk([ComGoodowRealtimeCorePlatform get])) diff];
+}
 
 + (id<ComGoodowRealtimeCoreNet>)net {
   return [((id<ComGoodowRealtimeCorePlatformFactory>) nil_chk([ComGoodowRealtimeCorePlatform get])) net];
@@ -43,6 +48,7 @@ id<ComGoodowRealtimeCorePlatformFactory> ComGoodowRealtimeCorePlatform_FACTORY_;
 
 + (J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {
+    { "diff", NULL, "Lcom.goodow.realtime.core.Diff;", 0x9, NULL },
     { "net", NULL, "Lcom.goodow.realtime.core.Net;", 0x9, NULL },
     { "scheduler", NULL, "Lcom.goodow.realtime.core.Scheduler;", 0x9, NULL },
     { "setFactoryWithComGoodowRealtimeCorePlatformFactory:", "setFactory", "V", 0x9, NULL },
@@ -53,7 +59,7 @@ id<ComGoodowRealtimeCorePlatformFactory> ComGoodowRealtimeCorePlatform_FACTORY_;
   static J2ObjcFieldInfo fields[] = {
     { "FACTORY_", NULL, 0xa, "Lcom.goodow.realtime.core.PlatformFactory;", &ComGoodowRealtimeCorePlatform_FACTORY_,  },
   };
-  static J2ObjcClassInfo _ComGoodowRealtimeCorePlatform = { "Platform", "com.goodow.realtime.core", NULL, 0x1, 6, methods, 1, fields, 0, NULL};
+  static J2ObjcClassInfo _ComGoodowRealtimeCorePlatform = { "Platform", "com.goodow.realtime.core", NULL, 0x1, 7, methods, 1, fields, 0, NULL};
   return &_ComGoodowRealtimeCorePlatform;
 }
 

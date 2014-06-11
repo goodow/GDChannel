@@ -13,26 +13,15 @@
 // limitations under the License.
 
 //
-//  ComGoodowRealtimeChannelImplDefaultMessage+Adapter.m
+//  GDCState.h
 //  GDChannel
 //
 //  Created by Larry Tin.
 //
 
-#import "ComGoodowRealtimeChannelImplDefaultMessage+Adapter.h"
-
-@implementation ComGoodowRealtimeChannelImplDefaultMessage (Adapter)
-
-- (void)fail:(int)failureCode message:(NSString *)msg {
-  [self failWithInt:failureCode withNSString:msg];
-}
-
-- (void)reply:(id)msg {
-  [self replyWithId:msg];
-}
-
-- (void)reply:(id)msg replyHandler:(GDCMessageHandler)replyHandler {
-  [self replyWithId:msg withComGoodowRealtimeCoreHandler:replyHandler];
-}
-
-@end
+typedef enum {
+  GDC_CONNECTING   = 0,
+  GDC_OPEN         = 1,
+  GDC_CLOSING      = 2,
+  GDC_CLOSED       = 3,
+} GDCState;

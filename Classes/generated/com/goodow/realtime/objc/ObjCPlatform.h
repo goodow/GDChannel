@@ -9,7 +9,9 @@
 #define _ComGoodowRealtimeObjcObjCPlatform_H_
 
 @class ComGoodowRealtimeCorePlatform_TypeEnum;
+@class ComGoodowRealtimeObjcObjCDiff;
 @class ComGoodowRealtimeObjcObjCScheduler;
+@protocol ComGoodowRealtimeCoreDiff;
 @protocol ComGoodowRealtimeCoreNet;
 @protocol ComGoodowRealtimeCoreScheduler;
 
@@ -20,9 +22,12 @@
  @public
   id<ComGoodowRealtimeCoreNet> net__;
   ComGoodowRealtimeObjcObjCScheduler *scheduler__;
+  ComGoodowRealtimeObjcObjCDiff *diff__;
 }
 
 + (void)register__;
+
+- (id<ComGoodowRealtimeCoreDiff>)diff;
 
 - (id<ComGoodowRealtimeCoreNet>)net;
 
@@ -40,5 +45,6 @@ __attribute__((always_inline)) inline void ComGoodowRealtimeObjcObjCPlatform_ini
 
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeObjcObjCPlatform, net__, id<ComGoodowRealtimeCoreNet>)
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeObjcObjCPlatform, scheduler__, ComGoodowRealtimeObjcObjCScheduler *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeObjcObjCPlatform, diff__, ComGoodowRealtimeObjcObjCDiff *)
 
 #endif // _ComGoodowRealtimeObjcObjCPlatform_H_

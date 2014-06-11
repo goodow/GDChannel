@@ -21,18 +21,45 @@
 
 #import "GDCBus.h"
 
+/**
+ * Represents a message on the event bus.
+ */
 @protocol GDCMessage
 
+/**
+ * The address the message was sent to
+ */
 - (NSString *)address;
 
+/**
+ * The body of the message
+ */
 - (id)body;
 
+/**
+ * Signal that processing of this message failed. If the message was sent specifying a result handler
+ * the handler will be called with a failure corresponding to the failure code and message specified here
+ * @param failureCode A failure code to pass back to the sender
+ * @param msg A message to pass back to the sender
+ */
 - (void)fail:(int)failureCode message:(NSString *)msg;
 
+/**
+ * Reply to this message. If the message was sent specifying a reply handler, that handler will be
+ * called when it has received a reply. If the message wasn't sent specifying a receipt handler
+ * this method does nothing.
+ */
 - (void)reply:(id)msg;
 
+/**
+ * The same as {@code reply:(id)msg)} but you can specify handler for the reply - i.e.
+ * to receive the reply to the reply.
+ */
 - (void)reply:(id)msg replyHandler:(GDCMessageHandler)replyHandler;
 
+/**
+ * The reply address (if any)
+ */
 - (NSString *)replyAddress;
 
 @end

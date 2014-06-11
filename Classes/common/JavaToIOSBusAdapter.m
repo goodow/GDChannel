@@ -20,7 +20,6 @@
 //
 
 #import "JavaToIOSBusAdapter.h"
-#import "JavaToIOSRegistrationAdapter.h"
 #import "com/goodow/realtime/channel/Bus.h"
 #import "com/goodow/realtime/channel/State.h"
 
@@ -56,11 +55,11 @@
 }
 
 - (id<GDCRegistration>)registerHandler:(NSString *)address handler:(GDCMessageHandler)handler {
-  return [[JavaToIOSRegistrationAdapter alloc] initWithJavaRegistration:[delegate_ registerHandlerWithNSString:address withComGoodowRealtimeCoreHandler:handler]];
+  return (id<GDCRegistration>)[delegate_ registerHandlerWithNSString:address withComGoodowRealtimeCoreHandler:handler];
 }
 
 - (id<GDCRegistration>)registerLocalHandler:(NSString *)address handler:(GDCMessageHandler)handler {
-  return [[JavaToIOSRegistrationAdapter alloc] initWithJavaRegistration:[delegate_ registerLocalHandlerWithNSString:address withComGoodowRealtimeCoreHandler:handler]];;
+  return (id<GDCRegistration>)[delegate_ registerLocalHandlerWithNSString:address withComGoodowRealtimeCoreHandler:handler];;
 }
 
 - (id<GDCBus>)send:(NSString *)address message:(id)msg replyHandler:(GDCMessageHandler)replyHandler {

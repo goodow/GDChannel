@@ -1,6 +1,6 @@
 GDChannel [![Build Status](https://travis-ci.org/goodow/GDChannel.svg?branch=master)](https://travis-ci.org/goodow/GDChannel)
 =========
-Event bus client over WebSocket for iOS and OS X
+iOS and Mac OS X client for realtime-channel
 
 ## Adding GDChannel to your project
 

@@ -13,21 +13,15 @@
 // limitations under the License.
 
 //
-//  JavaToIOSRegistrationAdapter.h
+//  JavaDefaultMessage+Adapter.h
 //  GDChannel
 //
 //  Created by Larry Tin.
 //
 
-#import <Foundation/Foundation.h>
-#import "GDCRegistration.h"
-@protocol ComGoodowRealtimeCoreRegistration;
+#import "com/goodow/realtime/channel/impl/DefaultMessage.h"
+#import "GDCMessage.h"
 
-@interface JavaToIOSRegistrationAdapter : NSObject <GDCRegistration> {
-@private
-  id<ComGoodowRealtimeCoreRegistration> delegate_;
-}
-
-- (id)initWithJavaRegistration:(id<ComGoodowRealtimeCoreRegistration>)registration;
+@interface ComGoodowRealtimeChannelImplDefaultMessage (Adapter) <GDCMessage>
 
 @end

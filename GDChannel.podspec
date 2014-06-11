@@ -14,6 +14,8 @@ Pod::Spec.new do |s|
   s.source_files = 'Classes/common', 'Classes/generated/**/*.{h,m}'
   s.dependency 'GDJson', '~> 0.5'
   s.dependency 'SocketRocket', '~> 0.3.1-beta2'
+  s.dependency 'Google-Diff-Match-Patch', '~> 0.0.1'
+
   # Pods-GDChannel target need the next line.
   s.xcconfig = { 'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/J2ObjC/dist/include"' }
 end

@@ -6,8 +6,8 @@
 //
 
 #include "com/goodow/realtime/core/Diff.h"
-#include "com/goodow/realtime/core/WebSocket.h"
-#include "com/goodow/realtime/json/JsonObject.h"
+#include "com/goodow/realtime/json/JsonArray.h"
+#include "java/util/Comparator.h"
 
 @interface ComGoodowRealtimeCoreDiff : NSObject
 @end
@@ -16,10 +16,29 @@
 
 + (J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {
-    { "createWebSocketWithNSString:withComGoodowRealtimeJsonJsonObject:", "createWebSocket", "Lcom.goodow.realtime.core.WebSocket;", 0x401, NULL },
+    { "diffWithNSString:withNSString:withComGoodowRealtimeCoreDiff_ListTarget:", "diff", "V", 0x401, NULL },
+    { "diffWithComGoodowRealtimeJsonJsonArray:withComGoodowRealtimeJsonJsonArray:withComGoodowRealtimeCoreDiff_ListTarget:withJavaUtilComparator:", "diff", "V", 0x401, NULL },
   };
-  static J2ObjcClassInfo _ComGoodowRealtimeCoreDiff = { "Diff", "com.goodow.realtime.core", NULL, 0x201, 1, methods, 0, NULL, 0, NULL};
+  static J2ObjcClassInfo _ComGoodowRealtimeCoreDiff = { "Diff", "com.goodow.realtime.core", NULL, 0x201, 2, methods, 0, NULL, 0, NULL};
   return &_ComGoodowRealtimeCoreDiff;
+}
+
+@end
+
+@interface ComGoodowRealtimeCoreDiff_ListTarget : NSObject
+@end
+
+@implementation ComGoodowRealtimeCoreDiff_ListTarget
+
++ (J2ObjcClassInfo *)__metadata {
+  static J2ObjcMethodInfo methods[] = {
+    { "insertWithInt:withId:", "insert", "V", 0x401, NULL },
+    { "removeWithInt:withInt:", "remove", "V", 0x401, NULL },
+    { "replaceWithInt:withId:", "replace", "V", 0x401, NULL },
+    { "moveWithInt:withInt:withInt:", "move", "V", 0x401, NULL },
+  };
+  static J2ObjcClassInfo _ComGoodowRealtimeCoreDiff_ListTarget = { "ListTarget", "com.goodow.realtime.core", "Diff", 0x209, 4, methods, 0, NULL, 0, NULL};
+  return &_ComGoodowRealtimeCoreDiff_ListTarget;
 }
 
 @end

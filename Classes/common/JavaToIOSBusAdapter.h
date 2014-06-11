@@ -21,6 +21,7 @@
 
 #import <Foundation/Foundation.h>
 #import "GDCBus.h"
+
 @protocol ComGoodowRealtimeChannelBus;
 
 @interface JavaToIOSBusAdapter : NSObject <GDCBus> {

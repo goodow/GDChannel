@@ -9,6 +9,7 @@
 #define _ComGoodowRealtimeCorePlatform_H_
 
 @class ComGoodowRealtimeCorePlatform_TypeEnum;
+@protocol ComGoodowRealtimeCoreDiff;
 @protocol ComGoodowRealtimeCoreNet;
 @protocol ComGoodowRealtimeCorePlatformFactory;
 @protocol ComGoodowRealtimeCoreScheduler;
@@ -18,6 +19,8 @@
 
 @interface ComGoodowRealtimeCorePlatform : NSObject {
 }
+
++ (id<ComGoodowRealtimeCoreDiff>)diff;
 
 + (id<ComGoodowRealtimeCoreNet>)net;
 

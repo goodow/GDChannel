@@ -11,7 +11,6 @@
 #include "com/goodow/realtime/objc/ObjCScheduler.h"
 #include "java/util/concurrent/atomic/AtomicInteger.h"
 #import "GDChannel.h"
- #import "ComGoodowRealtimeChannelImplDefaultMessage+Adapter.h"
 
 @implementation ComGoodowRealtimeObjcObjCScheduler
 

@@ -33,14 +33,14 @@
   __block id<GDCRegistration> handlerRegistration;
   __block BOOL testComplete = NO;
   
-  [bus registerLocalHandler:GDCBus_ON_OPEN handler:^(id<GDCMessage> message) {
+  [bus registerLocalHandler:GDC_BUS_ON_OPEN handler:^(id<GDCMessage> message) {
     NSLog(@"%@", @"EventBus opend");
   }];
-  [bus registerLocalHandler:GDCBus_ON_CLOSE handler:^(id<GDCMessage> message) {
+  [bus registerLocalHandler:GDC_BUS_ON_CLOSE handler:^(id<GDCMessage> message) {
     NSLog(@"%@", @"EventBus closed");
     testComplete = YES;
   }];
-  [bus registerLocalHandler:GDCBus_ON_ERROR handler:^(id<GDCMessage> message) {
+  [bus registerLocalHandler:GDC_BUS_ON_ERROR handler:^(id<GDCMessage> message) {
     NSLog(@"%@", @"EventBus Error");
   }];
   
