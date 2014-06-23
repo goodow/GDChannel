@@ -33,6 +33,10 @@
   return [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) getReadyState];
 }
 
+- (NSString *)getSessionId {
+  return [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) getSessionId];
+}
+
 - (id<ComGoodowRealtimeChannelBus>)publishWithNSString:(NSString *)address
                                                 withId:(id)msg {
   return [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) publishWithNSString:address withId:msg];
@@ -82,6 +86,7 @@
     { "close", NULL, "V", 0x1, NULL },
     { "getDelegate", NULL, "Lcom.goodow.realtime.channel.Bus;", 0x1, NULL },
     { "getReadyState", NULL, "Lcom.goodow.realtime.channel.State;", 0x1, NULL },
+    { "getSessionId", NULL, "Ljava.lang.String;", 0x1, NULL },
     { "publishWithNSString:withId:", "publish", "Lcom.goodow.realtime.channel.Bus;", 0x1, NULL },
     { "publishLocalWithNSString:withId:", "publishLocal", "Lcom.goodow.realtime.channel.Bus;", 0x1, NULL },
     { "registerHandlerWithNSString:withComGoodowRealtimeCoreHandler:", "registerHandler", "Lcom.goodow.realtime.core.Registration;", 0x1, NULL },
@@ -94,7 +99,7 @@
     { "delegate_", NULL, 0x14, "Lcom.goodow.realtime.channel.Bus;", NULL,  },
     { "hook_", NULL, 0x4, "Lcom.goodow.realtime.channel.BusHook;", NULL,  },
   };
-  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplBusProxy = { "BusProxy", "com.goodow.realtime.channel.impl", NULL, 0x401, 11, methods, 2, fields, 0, NULL};
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplBusProxy = { "BusProxy", "com.goodow.realtime.channel.impl", NULL, 0x401, 12, methods, 2, fields, 0, NULL};
   return &_ComGoodowRealtimeChannelImplBusProxy;
 }
 

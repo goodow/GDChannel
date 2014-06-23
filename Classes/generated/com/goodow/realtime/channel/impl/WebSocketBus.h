@@ -25,10 +25,10 @@
   NSString *url_;
   id<ComGoodowRealtimeCoreWebSocket> webSocket_;
   int pingInterval_;
-  NSString *authAddress_;
   int pingTimerID_;
-  NSString *accessToken_;
-  NSString *sid_;
+  NSString *sessionId_;
+  NSString *username_;
+  NSString *password_;
   id<ComGoodowRealtimeJsonJsonObject> handlerCount_;
 }
 
@@ -40,9 +40,7 @@ withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options
 
 - (ComGoodowRealtimeChannelStateEnum *)getReadyState;
 
-- (void)loginWithNSString:(NSString *)userId
-             withNSString:(NSString *)token
-withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
+- (NSString *)getSessionId;
 
 - (void)doClose;
 
@@ -62,6 +60,8 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
 - (void)sendWithComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)msg;
 
+- (void)sendConnect;
+
 - (void)sendPing;
 
 - (void)sendRegisterWithNSString:(NSString *)address;
@@ -77,16 +77,25 @@ __attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplWebSocket
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, webSocketHandler_, id<ComGoodowRealtimeCoreWebSocket_WebSocketHandler>)
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, url_, NSString *)
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, webSocket_, id<ComGoodowRealtimeCoreWebSocket>)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, authAddress_, NSString *)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, accessToken_, NSString *)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, sid_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, sessionId_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, username_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, password_, NSString *)
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, handlerCount_, id<ComGoodowRealtimeJsonJsonObject>)
+
+FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_SESSION_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, SESSION_, NSString *)
+
+FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_USERNAME_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, USERNAME_, NSString *)
+
+FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_PASSWORD_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, PASSWORD_, NSString *)
 
 FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_PING_INTERVAL_;
 J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, PING_INTERVAL_, NSString *)
 
-FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_AUTH_ADDRESS_;
-J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, AUTH_ADDRESS_, NSString *)
+FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_ADDR_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, ADDR_, NSString *)
 
 FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_BODY_;
 J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, BODY_, NSString *)
@@ -139,24 +148,6 @@ J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus_$1_$1, this$0_, Com
 @interface ComGoodowRealtimeChannelImplWebSocketBus_$2 : NSObject < ComGoodowRealtimeCoreHandler > {
  @public
   ComGoodowRealtimeChannelImplWebSocketBus *this$0_;
-  id<ComGoodowRealtimeCoreHandler> val$replyHandler_;
-}
-
-- (void)handleWithId:(id<ComGoodowRealtimeChannelMessage>)msg;
-
-- (id)initWithComGoodowRealtimeChannelImplWebSocketBus:(ComGoodowRealtimeChannelImplWebSocketBus *)outer$
-                      withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)capture$0;
-
-@end
-
-__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplWebSocketBus_$2_init() {}
-
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus_$2, this$0_, ComGoodowRealtimeChannelImplWebSocketBus *)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus_$2, val$replyHandler_, id<ComGoodowRealtimeCoreHandler>)
-
-@interface ComGoodowRealtimeChannelImplWebSocketBus_$3 : NSObject < ComGoodowRealtimeCoreHandler > {
- @public
-  ComGoodowRealtimeChannelImplWebSocketBus *this$0_;
 }
 
 - (void)handleWithId:(id<ComGoodowRealtimeChannelMessage>)event;
@@ -165,8 +156,19 @@ J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus_$2, val$replyHandle
 
 @end
 
-__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplWebSocketBus_$3_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplWebSocketBus_$2_init() {}
 
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus_$3, this$0_, ComGoodowRealtimeChannelImplWebSocketBus *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus_$2, this$0_, ComGoodowRealtimeChannelImplWebSocketBus *)
+
+@interface ComGoodowRealtimeChannelImplWebSocketBus_$3 : NSObject < ComGoodowRealtimeCoreHandler > {
+}
+
+- (void)handleWithId:(id<ComGoodowRealtimeChannelMessage>)message;
+
+- (id)init;
+
+@end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplWebSocketBus_$3_init() {}
 
 #endif // _ComGoodowRealtimeChannelImplWebSocketBus_H_

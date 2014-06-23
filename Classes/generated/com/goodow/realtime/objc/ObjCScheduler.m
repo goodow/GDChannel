@@ -56,7 +56,11 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
 }
 
 - (void)scheduleDeferredWithComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
-  [[NSRunLoop mainRunLoop] performSelector:@selector(handleWithId:) target:handler argument:nil order:0 modes:@[NSDefaultRunLoopMode]];
+  [[NSRunLoop mainRunLoop] performSelector:@selector(handleWithId:)
+  target:handler
+  argument:nil
+  order:0
+  modes:@[NSDefaultRunLoopMode]];
 }
 
 - (int)scheduleDelayWithInt:(int)delayMs

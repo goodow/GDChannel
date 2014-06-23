@@ -13,26 +13,15 @@
 // limitations under the License.
 
 //
-//  JavaDefaultMessage+Adapter.m
+//  JavaMessageImpl+Adapter.h
 //  GDChannel
 //
 //  Created by Larry Tin.
 //
 
-#import "JavaDefaultMessage+Adapter.h"
+#import "com/goodow/realtime/channel/impl/MessageImpl.h"
+#import "GDCMessage.h"
 
-@implementation ComGoodowRealtimeChannelImplDefaultMessage (Adapter)
-
-- (void)fail:(int)failureCode message:(NSString *)msg {
-  [self failWithInt:failureCode withNSString:msg];
-}
-
-- (void)reply:(id)msg {
-  [self replyWithId:msg];
-}
-
-- (void)reply:(id)msg replyHandler:(GDCMessageHandler)replyHandler {
-  [self replyWithId:msg withComGoodowRealtimeCoreHandler:replyHandler];
-}
+@interface ComGoodowRealtimeChannelImplMessageImpl (Adapter) <GDCMessage>
 
 @end

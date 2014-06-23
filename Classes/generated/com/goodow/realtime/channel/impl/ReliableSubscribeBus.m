@@ -9,7 +9,7 @@
 #include "com/goodow/realtime/channel/Bus.h"
 #include "com/goodow/realtime/channel/BusHook.h"
 #include "com/goodow/realtime/channel/Message.h"
-#include "com/goodow/realtime/channel/impl/DefaultMessage.h"
+#include "com/goodow/realtime/channel/impl/MessageImpl.h"
 #include "com/goodow/realtime/channel/impl/ReliableSubscribeBus.h"
 #include "com/goodow/realtime/core/Platform.h"
 #include "com/goodow/realtime/core/Scheduler.h"
@@ -34,7 +34,7 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
       withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options {
   if (self = [super initWithComGoodowRealtimeChannelBus:delegate]) {
     sequenceNumberKey_ = options == nil || ![options hasWithNSString:ComGoodowRealtimeChannelImplReliableSubscribeBus_SEQUENCE_NUMBER_] ? @"v" : [options getStringWithNSString:ComGoodowRealtimeChannelImplReliableSubscribeBus_SEQUENCE_NUMBER_];
-    publishChannel_ = options == nil || ![options hasWithNSString:ComGoodowRealtimeChannelImplReliableSubscribeBus_PUBLISH_CHANNEL_] ? @"realtime.store" : [options getStringWithNSString:ComGoodowRealtimeChannelImplReliableSubscribeBus_PUBLISH_CHANNEL_];
+    publishChannel_ = options == nil || ![options hasWithNSString:ComGoodowRealtimeChannelImplReliableSubscribeBus_PUBLISH_CHANNEL_] ? @"realtime/store" : [options getStringWithNSString:ComGoodowRealtimeChannelImplReliableSubscribeBus_PUBLISH_CHANNEL_];
     acknowledgeDelayMillis_ = options == nil || ![options hasWithNSString:ComGoodowRealtimeChannelImplReliableSubscribeBus_ACKNOWLEDGE_DELAY_MILLIS_] ? 3 * 1000 : (int) [options getNumberWithNSString:ComGoodowRealtimeChannelImplReliableSubscribeBus_ACKNOWLEDGE_DELAY_MILLIS_];
     pendings_ = [ComGoodowRealtimeJsonJson createObject];
     currentSequences_ = [ComGoodowRealtimeJsonJson createObject];
@@ -64,7 +64,9 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
 
 - (void)catchupWithNSString:(NSString *)address
                  withDouble:(double)currentSequence {
-  (void) [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) sendWithNSString:[NSString stringWithFormat:@"%@.ops", publishChannel_] withId:[((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([ComGoodowRealtimeJsonJson createObject])) setWithNSString:@"id" withId:[address substring:[((NSString *) nil_chk(address)) lastIndexOfString:@":"] + 1]])) setWithNSString:@"from" withDouble:currentSequence + 1] withComGoodowRealtimeCoreHandler:[[ComGoodowRealtimeChannelImplReliableSubscribeBus_$2 alloc] initWithComGoodowRealtimeChannelImplReliableSubscribeBus:self withNSString:address]];
+  NSString *id_ = [((NSString *) nil_chk(address)) substring:((int) [((NSString *) nil_chk(publishChannel_)) length]) + 1];
+  id_ = [id_ substring:0 endIndex:[((NSString *) nil_chk(id_)) lastIndexOfString:@"/_watch"]];
+  (void) [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) sendWithNSString:[NSString stringWithFormat:@"%@/_ops", publishChannel_] withId:[((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([ComGoodowRealtimeJsonJson createObject])) setWithNSString:@"id" withId:id_])) setWithNSString:@"from" withDouble:currentSequence + 1] withComGoodowRealtimeCoreHandler:[[ComGoodowRealtimeChannelImplReliableSubscribeBus_$2 alloc] initWithComGoodowRealtimeChannelImplReliableSubscribeBus:self withNSString:address]];
 }
 
 - (double)getSequenceNumberWithNSString:(NSString *)address
@@ -73,7 +75,7 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
 }
 
 - (BOOL)needProcessWithNSString:(NSString *)address {
-  return [((NSString *) nil_chk(address)) hasPrefix:[NSString stringWithFormat:@"%@:", publishChannel_]];
+  return [((NSString *) nil_chk(address)) hasPrefix:[NSString stringWithFormat:@"%@/", publishChannel_]] && [address hasSuffix:@"/_watch"] && ![address contains:@"/_presence/"];
 }
 
 - (BOOL)onReceiveMessageWithComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)message {
@@ -120,7 +122,7 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
       break;
     }
   }
-  NSAssert(![pending hasWithNSString:next], @"/Users/retechretech/dev/workspace/realtime/realtime-channel/src/main/java/com/goodow/realtime/channel/impl/ReliableSubscribeBus.java:190 condition failed: assert !pending.has(next);");
+  NSAssert(![pending hasWithNSString:next], @"/Users/retechretech/dev/workspace/realtime/realtime-channel/src/main/java/com/goodow/realtime/channel/impl/ReliableSubscribeBus.java:193 condition failed: assert !pending.has(next);");
   return NO;
 }
 
@@ -267,7 +269,7 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
 
 - (void)callWithInt:(int)index
              withId:(id)value {
-  [this$0_->this$0_ onReceiveMessageWithComGoodowRealtimeChannelMessage:[[ComGoodowRealtimeChannelImplDefaultMessage alloc] initWithBoolean:NO withBoolean:NO withComGoodowRealtimeChannelBus:this$0_->this$0_ withNSString:this$0_->val$address_ withNSString:val$replyAddress_ withId:value]];
+  [this$0_->this$0_ onReceiveMessageWithComGoodowRealtimeChannelMessage:[[ComGoodowRealtimeChannelImplMessageImpl alloc] initWithBoolean:NO withBoolean:NO withComGoodowRealtimeChannelBus:this$0_->this$0_ withNSString:this$0_->val$address_ withNSString:val$replyAddress_ withId:value]];
 }
 
 - (id)initWithComGoodowRealtimeChannelImplReliableSubscribeBus_$2:(ComGoodowRealtimeChannelImplReliableSubscribeBus_$2 *)outer$

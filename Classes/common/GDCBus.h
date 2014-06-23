@@ -24,9 +24,9 @@
 @protocol GDCMessage;
 @protocol GDCRegistration;
 
-#define GDC_BUS_ON_OPEN @"@realtime.bus.onOpen"
-#define GDC_BUS_ON_CLOSE @"@realtime.bus.onClose"
-#define GDC_BUS_ON_ERROR @"@realtime.bus.onError"
+#define GDC_BUS_ON_OPEN @"@realtime/bus/onOpen"
+#define GDC_BUS_ON_CLOSE @"@realtime/bus/onClose"
+#define GDC_BUS_ON_ERROR @"@realtime/bus/onError"
 
 typedef void (^GDCMessageHandler)(id<GDCMessage> message);
 
@@ -60,56 +60,59 @@ typedef void (^GDCMessageHandler)(id<GDCMessage> message);
 /* The state of the Bus. */
 - (GDCState)getReadyState;
 
+/* Returns the session ID used by this bus. */
+- (NSString *)getSessionId;
+
 /**
  * Publish a message
  *
- * @param address The address to publish it to
+ * @param topic The topic to publish it to
  * @param msg The message
  */
-- (id<GDCBus>)publish:(NSString *)address message:(id)msg;
+- (id<GDCBus>)publish:(NSString *)topic message:(id)msg;
 
 /**
  * Publish a local message
  *
- * @param address The address to publish it to
+ * @param topic The topic to publish it to
  * @param msg The message
  */
-- (id<GDCBus>)publishLocal:(NSString *)address message:(id)msg;
+- (id<GDCBus>)publishLocal:(NSString *)topic message:(id)msg;
 
 /**
- * Registers a handler against the specified address
+ * Registers a handler against the specified topic
  *
- * @param address The address to register it at
+ * @param topic The topic to register it at
  * @param handler The handler
  * @return the handler registration, can be stored in order to unregister the handler later
  */
-- (id<GDCRegistration>)registerHandler:(NSString *)address handler:(GDCMessageHandler)handler;
+- (id<GDCRegistration>)registerHandler:(NSString *)topic handler:(GDCMessageHandler)handler;
 
 /**
- * Registers a local handler against the specified address. The handler info won't be propagated
+ * Registers a local handler against the specified topic. The handler info won't be propagated
  * across the cluster
  *
- * @param address The address to register it at
+ * @param topic The topic to register it at
  * @param handler The handler
  */
-- (id<GDCRegistration>)registerLocalHandler:(NSString *)address handler:(GDCMessageHandler)handler;
+- (id<GDCRegistration>)registerLocalHandler:(NSString *)topic handler:(GDCMessageHandler)handler;
 
 /**
  * Send a message
  *
- * @param address The address to send it to
+ * @param topic The topic to send it to
  * @param msg The message
  * @param replyHandler Reply handler will be called when any reply from the recipient is received
  */
-- (id<GDCBus>)send:(NSString *)address message:(id)msg replyHandler:(GDCMessageHandler)replyHandler;
+- (id<GDCBus>)send:(NSString *)topic message:(id)msg replyHandler:(GDCMessageHandler)replyHandler;
 
 /**
  * Send a local message
  *
- * @param address The address to send it to
+ * @param topic The topic to send it to
  * @param msg The message
  * @param replyHandler Reply handler will be called when any reply from the recipient is received
  */
-- (id<GDCBus>)sendLocal:(NSString *)address message:(id)msg replyHandler:(GDCMessageHandler)replyHandler;
+- (id<GDCBus>)sendLocal:(NSString *)topic message:(id)msg replyHandler:(GDCMessageHandler)replyHandler;
 
 @end

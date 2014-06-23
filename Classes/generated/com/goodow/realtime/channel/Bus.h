@@ -21,6 +21,8 @@
 
 - (ComGoodowRealtimeChannelStateEnum *)getReadyState;
 
+- (NSString *)getSessionId;
+
 - (id<ComGoodowRealtimeChannelBus>)publishWithNSString:(NSString *)address
                                                 withId:(id)msg;
 

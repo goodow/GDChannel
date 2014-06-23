@@ -23,6 +23,6 @@
 
 @interface GDCWebSocketBus : JavaToIOSBusAdapter <GDCBus>
 
-- (id)initWithUrl:(NSString *)url options:(NSDictionary *)options;
+- (id)initWithServerUri:(NSString *)serverUri options:(NSDictionary *)options;
 
 @end

@@ -5,8 +5,11 @@
 //  Created by retechretech.
 //
 
+#include "IOSClass.h"
 #include "com/goodow/realtime/channel/Message.h"
 #include "com/goodow/realtime/core/Handler.h"
+#include "com/google/gwt/core/client/js/JsNoExport.h"
+#include "com/google/gwt/core/client/js/JsType.h"
 
 @interface ComGoodowRealtimeChannelMessage : NSObject
 @end
@@ -18,10 +21,11 @@
     { "address", NULL, "Ljava.lang.String;", 0x401, NULL },
     { "body", NULL, "TT;", 0x401, NULL },
     { "failWithInt:withNSString:", "fail", "V", 0x401, NULL },
+    { "replyWithId:", "reply", "V", 0x401, NULL },
     { "replyWithId:withComGoodowRealtimeCoreHandler:", "reply", "V", 0x401, NULL },
     { "replyAddress", NULL, "Ljava.lang.String;", 0x401, NULL },
   };
-  static J2ObjcClassInfo _ComGoodowRealtimeChannelMessage = { "Message", "com.goodow.realtime.channel", NULL, 0x201, 5, methods, 0, NULL, 0, NULL};
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelMessage = { "Message", "com.goodow.realtime.channel", NULL, 0x201, 6, methods, 0, NULL, 0, NULL};
   return &_ComGoodowRealtimeChannelMessage;
 }
 

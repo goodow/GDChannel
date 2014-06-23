@@ -26,8 +26,8 @@
 
 @implementation GDCWebSocketBus
 
-- (id)initWithUrl:(NSString *)url options:(NSDictionary *)options {
-  self = [super initWithJavaBus:[[ComGoodowRealtimeChannelImplWebSocketBus alloc] initWithNSString:url withComGoodowRealtimeJsonJsonObject:options]];
+- (id)initWithServerUri:(NSString *)serverUri options:(NSDictionary *)options {
+  self = [super initWithJavaBus:[[ComGoodowRealtimeChannelImplWebSocketBus alloc] initWithNSString:serverUri withComGoodowRealtimeJsonJsonObject:options]];
   return self;
 }
 

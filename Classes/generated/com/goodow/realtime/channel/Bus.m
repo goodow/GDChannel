@@ -5,18 +5,20 @@
 //  Created by retechretech.
 //
 
+#include "IOSClass.h"
 #include "com/goodow/realtime/channel/Bus.h"
 #include "com/goodow/realtime/channel/BusHook.h"
 #include "com/goodow/realtime/channel/State.h"
 #include "com/goodow/realtime/core/Handler.h"
 #include "com/goodow/realtime/core/Registration.h"
+#include "com/google/gwt/core/client/js/JsType.h"
 
 @interface ComGoodowRealtimeChannelBus : NSObject
 @end
 
-NSString * ComGoodowRealtimeChannelBus_ON_OPEN_ = @"@realtime.bus.onOpen";
-NSString * ComGoodowRealtimeChannelBus_ON_CLOSE_ = @"@realtime.bus.onClose";
-NSString * ComGoodowRealtimeChannelBus_ON_ERROR_ = @"@realtime.bus.onError";
+NSString * ComGoodowRealtimeChannelBus_ON_OPEN_ = @"@realtime/bus/onOpen";
+NSString * ComGoodowRealtimeChannelBus_ON_CLOSE_ = @"@realtime/bus/onClose";
+NSString * ComGoodowRealtimeChannelBus_ON_ERROR_ = @"@realtime/bus/onError";
 
 @implementation ComGoodowRealtimeChannelBus
 
@@ -24,6 +26,7 @@ NSString * ComGoodowRealtimeChannelBus_ON_ERROR_ = @"@realtime.bus.onError";
   static J2ObjcMethodInfo methods[] = {
     { "close", NULL, "V", 0x401, NULL },
     { "getReadyState", NULL, "Lcom.goodow.realtime.channel.State;", 0x401, NULL },
+    { "getSessionId", NULL, "Ljava.lang.String;", 0x401, NULL },
     { "publishWithNSString:withId:", "publish", "Lcom.goodow.realtime.channel.Bus;", 0x401, NULL },
     { "publishLocalWithNSString:withId:", "publishLocal", "Lcom.goodow.realtime.channel.Bus;", 0x401, NULL },
     { "registerHandlerWithNSString:withComGoodowRealtimeCoreHandler:", "registerHandler", "Lcom.goodow.realtime.core.Registration;", 0x401, NULL },
@@ -37,7 +40,7 @@ NSString * ComGoodowRealtimeChannelBus_ON_ERROR_ = @"@realtime.bus.onError";
     { "ON_CLOSE_", NULL, 0x19, "Ljava.lang.String;", &ComGoodowRealtimeChannelBus_ON_CLOSE_,  },
     { "ON_ERROR_", NULL, 0x19, "Ljava.lang.String;", &ComGoodowRealtimeChannelBus_ON_ERROR_,  },
   };
-  static J2ObjcClassInfo _ComGoodowRealtimeChannelBus = { "Bus", "com.goodow.realtime.channel", NULL, 0x201, 9, methods, 3, fields, 0, NULL};
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelBus = { "Bus", "com.goodow.realtime.channel", NULL, 0x201, 10, methods, 3, fields, 0, NULL};
   return &_ComGoodowRealtimeChannelBus;
 }
 

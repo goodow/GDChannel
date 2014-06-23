@@ -19,6 +19,7 @@
 #include "com/goodow/realtime/json/JsonArray.h"
 #include "com/goodow/realtime/json/JsonObject.h"
 #include "com/google/gwt/core/client/js/JsExport.h"
+#include "com/google/gwt/core/client/js/JsNamespace.h"
 #include "java/lang/Void.h"
 
 @implementation ComGoodowRealtimeChannelImplReconnectBus
@@ -82,8 +83,12 @@ withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options
   other->queuedMessages_ = queuedMessages_;
   other->reconnect__ = reconnect__;
 }
++ (IOSObjectArray *)__annotations {
+  return [IOSObjectArray arrayWithObjects:(id[]) { [[ComGoogleGwtCoreClientJsJsNamespace alloc] initWithValue:@"$wnd.realtime.channel"] } count:1 type:[IOSClass classWithProtocol:@protocol(JavaLangAnnotationAnnotation)]];
+}
+
 + (IOSObjectArray *)__annotations_ComGoodowRealtimeChannelImplReconnectBusWithNSString_withComGoodowRealtimeJsonJsonObject_ {
-  return [IOSObjectArray arrayWithObjects:(id[]) { [[ComGoogleGwtCoreClientJsJsExport alloc] initWithValue:@"$wnd.realtime.channel.WebSocketBus"] } count:1 type:[IOSClass classWithProtocol:@protocol(JavaLangAnnotationAnnotation)]];
+  return [IOSObjectArray arrayWithObjects:(id[]) { [[ComGoogleGwtCoreClientJsJsExport alloc] initWithValue:@""] } count:1 type:[IOSClass classWithProtocol:@protocol(JavaLangAnnotationAnnotation)]];
 }
 
 
@@ -113,7 +118,6 @@ withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options
 
 - (void)handleOpened {
   [((ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator *) nil_chk(this$0_->backOffGenerator_)) reset];
-  [this$0_ loginWithNSString:nil withNSString:nil withComGoodowRealtimeCoreHandler:nil];
   [((id<ComGoodowRealtimeJsonJsonArray>) nil_chk([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->handlerCount_)) keys])) forEachWithComGoodowRealtimeJsonJsonArray_ListIterator:[[ComGoodowRealtimeChannelImplReconnectBus_$1_$1 alloc] initWithComGoodowRealtimeChannelImplReconnectBus_$1:self]];
   if ([((id<ComGoodowRealtimeJsonJsonArray>) nil_chk(this$0_->queuedMessages_)) length] > 0) {
     id<ComGoodowRealtimeJsonJsonArray> copy_ = [this$0_->queuedMessages_ copy__];

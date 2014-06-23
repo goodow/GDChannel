@@ -5,7 +5,9 @@
 //  Created by retechretech.
 //
 
+#include "IOSClass.h"
 #include "com/goodow/realtime/core/Registration.h"
+#include "com/google/gwt/core/client/js/JsType.h"
 
 BOOL ComGoodowRealtimeCoreRegistration_initialized = NO;
 

@@ -8,6 +8,8 @@
 #include "IOSClass.h"
 #include "IOSObjectArray.h"
 #include "com/goodow/realtime/channel/State.h"
+#include "com/google/gwt/core/client/js/JsExport.h"
+#include "com/google/gwt/core/client/js/JsType.h"
 #include "java/lang/IllegalArgumentException.h"
 
 BOOL ComGoodowRealtimeChannelStateEnum_initialized = NO;
@@ -51,6 +53,10 @@ IOSObjectArray * ComGoodowRealtimeChannelStateEnum_values__;
   @throw [[JavaLangIllegalArgumentException alloc] initWithNSString:name];
   return nil;
 }
++ (IOSObjectArray *)__annotations {
+  return [IOSObjectArray arrayWithObjects:(id[]) { [[ComGoogleGwtCoreClientJsJsExport alloc] initWithValue:@""], [[ComGoogleGwtCoreClientJsJsType alloc] initWithIsNative:false withPrototype:@""] } count:2 type:[IOSClass classWithProtocol:@protocol(JavaLangAnnotationAnnotation)]];
+}
+
 
 + (J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {

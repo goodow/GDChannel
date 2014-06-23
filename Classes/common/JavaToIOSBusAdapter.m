@@ -44,31 +44,35 @@
   return [[delegate_ getReadyState] ordinal];
 }
 
-- (id<GDCBus>)publish:(NSString *)address message:(id)msg {
-  [delegate_ publishWithNSString:address withId:msg];
+- (NSString *)getSessionId {
+  return [delegate_ getSessionId];
+}
+
+- (id<GDCBus>)publish:(NSString *)topic message:(id)msg {
+  [delegate_ publishWithNSString:topic withId:msg];
   return self;
 }
 
-- (id<GDCBus>)publishLocal:(NSString *)address message:(id)msg {
-  [delegate_ publishLocalWithNSString:address withId:msg];
+- (id<GDCBus>)publishLocal:(NSString *)topic message:(id)msg {
+  [delegate_ publishLocalWithNSString:topic withId:msg];
   return self;
 }
 
-- (id<GDCRegistration>)registerHandler:(NSString *)address handler:(GDCMessageHandler)handler {
-  return (id<GDCRegistration>)[delegate_ registerHandlerWithNSString:address withComGoodowRealtimeCoreHandler:handler];
+- (id<GDCRegistration>)registerHandler:(NSString *)topic handler:(GDCMessageHandler)handler {
+  return (id<GDCRegistration>) [delegate_ registerHandlerWithNSString:topic withComGoodowRealtimeCoreHandler:handler];
 }
 
-- (id<GDCRegistration>)registerLocalHandler:(NSString *)address handler:(GDCMessageHandler)handler {
-  return (id<GDCRegistration>)[delegate_ registerLocalHandlerWithNSString:address withComGoodowRealtimeCoreHandler:handler];;
+- (id<GDCRegistration>)registerLocalHandler:(NSString *)topic handler:(GDCMessageHandler)handler {
+  return (id<GDCRegistration>) [delegate_ registerLocalHandlerWithNSString:topic withComGoodowRealtimeCoreHandler:handler];;
 }
 
-- (id<GDCBus>)send:(NSString *)address message:(id)msg replyHandler:(GDCMessageHandler)replyHandler {
-  [delegate_ sendWithNSString:address withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
+- (id<GDCBus>)send:(NSString *)topic message:(id)msg replyHandler:(GDCMessageHandler)replyHandler {
+  [delegate_ sendWithNSString:topic withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
   return self;
 }
 
-- (id<GDCBus>)sendLocal:(NSString *)address message:(id)msg replyHandler:(GDCMessageHandler)replyHandler {
-  [delegate_ sendLocalWithNSString:address withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
+- (id<GDCBus>)sendLocal:(NSString *)topic message:(id)msg replyHandler:(GDCMessageHandler)replyHandler {
+  [delegate_ sendLocalWithNSString:topic withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
   return self;
 }
 

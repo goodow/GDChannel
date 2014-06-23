@@ -12,8 +12,8 @@
 		8D82AA901861BE3A00447D50 /* GDCSimpleBusTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D82AA8F1861BE3A00447D50 /* GDCSimpleBusTests.m */; };
 		8D8E1FD119304B7A00D39B44 /* JavaToIOSBusAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8D8E1FCF19304B7A00D39B44 /* JavaToIOSBusAdapter.h */; };
 		8D8E1FD219304B7A00D39B44 /* JavaToIOSBusAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8E1FD019304B7A00D39B44 /* JavaToIOSBusAdapter.m */; };
-		8D8E1FD91930869B00D39B44 /* JavaDefaultMessage+Adapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8D8E1FD71930869B00D39B44 /* JavaDefaultMessage+Adapter.h */; };
-		8D8E1FDA1930869B00D39B44 /* JavaDefaultMessage+Adapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8E1FD81930869B00D39B44 /* JavaDefaultMessage+Adapter.m */; };
+		8D8E1FD91930869B00D39B44 /* JavaMessageImpl+Adapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8D8E1FD71930869B00D39B44 /* JavaMessageImpl+Adapter.h */; };
+		8D8E1FDA1930869B00D39B44 /* JavaMessageImpl+Adapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8E1FD81930869B00D39B44 /* JavaMessageImpl+Adapter.m */; };
 		8D9420761861D6C400C6C33A /* GDCWebSocketBusTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D9420751861D6C400C6C33A /* GDCWebSocketBusTests.m */; };
 		8D9420791863157400C6C33A /* ObjCWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D9420781863157400C6C33A /* ObjCWebSocket.m */; };
 		8DA48002185AA9290029CA8D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DA48001185AA9290029CA8D /* Cocoa.framework */; };
@@ -41,8 +41,8 @@
 		8D82AA8F1861BE3A00447D50 /* GDCSimpleBusTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GDCSimpleBusTests.m; sourceTree = "<group>"; };
 		8D8E1FCF19304B7A00D39B44 /* JavaToIOSBusAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaToIOSBusAdapter.h; sourceTree = "<group>"; };
 		8D8E1FD019304B7A00D39B44 /* JavaToIOSBusAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JavaToIOSBusAdapter.m; sourceTree = "<group>"; };
-		8D8E1FD71930869B00D39B44 /* JavaDefaultMessage+Adapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JavaDefaultMessage+Adapter.h"; sourceTree = "<group>"; };
-		8D8E1FD81930869B00D39B44 /* JavaDefaultMessage+Adapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "JavaDefaultMessage+Adapter.m"; sourceTree = "<group>"; };
+		8D8E1FD71930869B00D39B44 /* JavaMessageImpl+Adapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JavaMessageImpl+Adapter.h"; sourceTree = "<group>"; };
+		8D8E1FD81930869B00D39B44 /* JavaMessageImpl+Adapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "JavaMessageImpl+Adapter.m"; sourceTree = "<group>"; };
 		8D9420751861D6C400C6C33A /* GDCWebSocketBusTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GDCWebSocketBusTests.m; sourceTree = "<group>"; };
 		8D9420781863157400C6C33A /* ObjCWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjCWebSocket.m; sourceTree = "<group>"; };
 		8DA47FFE185AA9290029CA8D /* libGDChannel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libGDChannel.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -117,8 +117,8 @@
 				8DABF993192D9A2B00987DF3 /* GDCReconnectWebSocketBus.m */,
 				8D8E1FCF19304B7A00D39B44 /* JavaToIOSBusAdapter.h */,
 				8D8E1FD019304B7A00D39B44 /* JavaToIOSBusAdapter.m */,
-				8D8E1FD71930869B00D39B44 /* JavaDefaultMessage+Adapter.h */,
-				8D8E1FD81930869B00D39B44 /* JavaDefaultMessage+Adapter.m */,
+				8D8E1FD71930869B00D39B44 /* JavaMessageImpl+Adapter.h */,
+				8D8E1FD81930869B00D39B44 /* JavaMessageImpl+Adapter.m */,
 				CD87AA1484DFA7D32CE57CEA /* JavaObjCDiff+Adapter.m */,
 				CD87A54724F60F6BD49FF451 /* JavaObjCDiff+Adapter.h */,
 				CD87A8BE5CBC18963257AEA1 /* GDCState.h */,
@@ -239,7 +239,7 @@
 				8DABF990192D99F100987DF3 /* GDCWebSocketBus.h in Headers */,
 				8DABF985192D919700987DF3 /* GDCBus.h in Headers */,
 				8DABF98C192D973000987DF3 /* GDCSimpleBus.h in Headers */,
-				8D8E1FD91930869B00D39B44 /* JavaDefaultMessage+Adapter.h in Headers */,
+				8D8E1FD91930869B00D39B44 /* JavaMessageImpl+Adapter.h in Headers */,
 				8D8E1FD119304B7A00D39B44 /* JavaToIOSBusAdapter.h in Headers */,
 				8D82AA7D186139C100447D50 /* GDChannel.h in Headers */,
 				CD87A59CDAAFF478D6FAB670 /* JavaObjCDiff+Adapter.h in Headers */,
@@ -397,7 +397,7 @@
 				8D9420791863157400C6C33A /* ObjCWebSocket.m in Sources */,
 				8DABF995192D9A2B00987DF3 /* GDCReconnectWebSocketBus.m in Sources */,
 				8D8E1FD219304B7A00D39B44 /* JavaToIOSBusAdapter.m in Sources */,
-				8D8E1FDA1930869B00D39B44 /* JavaDefaultMessage+Adapter.m in Sources */,
+				8D8E1FDA1930869B00D39B44 /* JavaMessageImpl+Adapter.m in Sources */,
 				8DABF98D192D973000987DF3 /* GDCSimpleBus.m in Sources */,
 				8DABF991192D99F100987DF3 /* GDCWebSocketBus.m in Sources */,
 				CD87AEA333A4FF4C81E89507 /* JavaObjCDiff+Adapter.m in Sources */,
@@ -534,6 +534,7 @@
 				);
 				INFOPLIST_FILE = "GDChannelTests/GDChannelTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/Pods\"/**";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
@@ -551,6 +552,7 @@
 				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = "GDChannelTests/GDChannelTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/Pods\"/**";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;

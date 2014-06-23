@@ -10,7 +10,7 @@
 #include "com/goodow/realtime/channel/BusHook.h"
 #include "com/goodow/realtime/channel/Message.h"
 #include "com/goodow/realtime/channel/State.h"
-#include "com/goodow/realtime/channel/impl/DefaultMessage.h"
+#include "com/goodow/realtime/channel/impl/MessageImpl.h"
 #include "com/goodow/realtime/channel/impl/SimpleBus.h"
 #include "com/goodow/realtime/channel/util/IdGenerator.h"
 #include "com/goodow/realtime/core/Handler.h"
@@ -56,6 +56,10 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplSimpleBus_log_;
 
 - (ComGoodowRealtimeChannelStateEnum *)getReadyState {
   return handlerMap_ == nil ? ComGoodowRealtimeChannelStateEnum_get_CLOSED() : ComGoodowRealtimeChannelStateEnum_get_OPEN();
+}
+
+- (NSString *)getSessionId {
+  return @"@";
 }
 
 - (id<ComGoodowRealtimeChannelBus>)publishWithNSString:(NSString *)address
@@ -134,7 +138,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
   if (replyHandler != nil) {
     replyAddress = [self makeUUID];
   }
-  ComGoodowRealtimeChannelImplDefaultMessage *message = [[ComGoodowRealtimeChannelImplDefaultMessage alloc] initWithBoolean:local withBoolean:send withComGoodowRealtimeChannelBus:self withNSString:address withNSString:replyAddress withId:msg];
+  ComGoodowRealtimeChannelImplMessageImpl *message = [[ComGoodowRealtimeChannelImplMessageImpl alloc] initWithBoolean:local withBoolean:send withComGoodowRealtimeChannelBus:self withNSString:address withNSString:replyAddress withId:msg];
   if ([self internalHandleReceiveMessageWithBoolean:local withComGoodowRealtimeChannelMessage:message] && replyHandler != nil) {
     (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(replyHandlers_)) setWithNSString:replyAddress withId:replyHandler];
   }
@@ -234,6 +238,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
     { "init", "SimpleBus", NULL, 0x1, NULL },
     { "close", NULL, "V", 0x1, NULL },
     { "getReadyState", NULL, "Lcom.goodow.realtime.channel.State;", 0x1, NULL },
+    { "getSessionId", NULL, "Ljava.lang.String;", 0x1, NULL },
     { "publishWithNSString:withId:", "publish", "Lcom.goodow.realtime.channel.Bus;", 0x1, NULL },
     { "publishLocalWithNSString:withId:", "publishLocal", "Lcom.goodow.realtime.channel.Bus;", 0x1, NULL },
     { "registerHandlerWithNSString:withComGoodowRealtimeCoreHandler:", "registerHandler", "Lcom.goodow.realtime.core.Registration;", 0x1, NULL },
@@ -258,9 +263,9 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
     { "handlerMap_", NULL, 0x2, "Lcom.goodow.realtime.json.JsonObject;", NULL,  },
     { "replyHandlers_", NULL, 0x10, "Lcom.goodow.realtime.json.JsonObject;", NULL,  },
     { "hook_", NULL, 0x0, "Lcom.goodow.realtime.channel.BusHook;", NULL,  },
-    { "idGenerator_", NULL, 0x12, "Lcom.goodow.realtime.channel.util.IdGenerator;", NULL,  },
+    { "idGenerator_", NULL, 0x10, "Lcom.goodow.realtime.channel.util.IdGenerator;", NULL,  },
   };
-  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplSimpleBus = { "SimpleBus", "com.goodow.realtime.channel.impl", NULL, 0x1, 22, methods, 5, fields, 0, NULL};
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplSimpleBus = { "SimpleBus", "com.goodow.realtime.channel.impl", NULL, 0x1, 23, methods, 5, fields, 0, NULL};
   return &_ComGoodowRealtimeChannelImplSimpleBus;
 }
 
