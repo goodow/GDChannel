@@ -62,39 +62,39 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplSimpleBus_log_;
   return @"@";
 }
 
-- (id<ComGoodowRealtimeChannelBus>)publishWithNSString:(NSString *)address
+- (id<ComGoodowRealtimeChannelBus>)publishWithNSString:(NSString *)topic
                                                 withId:(id)msg {
-  [self internalHandleSendOrPubWithBoolean:NO withBoolean:NO withNSString:address withId:msg withComGoodowRealtimeCoreHandler:nil];
+  [self internalHandleSendOrPubWithBoolean:NO withBoolean:NO withNSString:topic withId:msg withComGoodowRealtimeCoreHandler:nil];
   return self;
 }
 
-- (id<ComGoodowRealtimeChannelBus>)publishLocalWithNSString:(NSString *)address
+- (id<ComGoodowRealtimeChannelBus>)publishLocalWithNSString:(NSString *)topic
                                                      withId:(id)msg {
-  [self internalHandleSendOrPubWithBoolean:YES withBoolean:NO withNSString:address withId:msg withComGoodowRealtimeCoreHandler:nil];
+  [self internalHandleSendOrPubWithBoolean:YES withBoolean:NO withNSString:topic withId:msg withComGoodowRealtimeCoreHandler:nil];
   return self;
 }
 
-- (id<ComGoodowRealtimeCoreRegistration>)registerHandlerWithNSString:(NSString *)address
-                                    withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
-  return [self registerHandlerImplWithBoolean:NO withNSString:address withComGoodowRealtimeCoreHandler:handler];
+- (id<ComGoodowRealtimeCoreRegistration>)subscribeWithNSString:(NSString *)topic
+                              withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
+  return [self subscribeImplWithBoolean:NO withNSString:topic withComGoodowRealtimeCoreHandler:handler];
 }
 
-- (id<ComGoodowRealtimeCoreRegistration>)registerLocalHandlerWithNSString:(NSString *)address
-                                         withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
-  return [self registerHandlerImplWithBoolean:YES withNSString:address withComGoodowRealtimeCoreHandler:handler];
+- (id<ComGoodowRealtimeCoreRegistration>)subscribeLocalWithNSString:(NSString *)topic
+                                   withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
+  return [self subscribeImplWithBoolean:YES withNSString:topic withComGoodowRealtimeCoreHandler:handler];
 }
 
-- (id<ComGoodowRealtimeChannelBus>)sendWithNSString:(NSString *)address
+- (id<ComGoodowRealtimeChannelBus>)sendWithNSString:(NSString *)topic
                                              withId:(id)msg
                    withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler {
-  [self internalHandleSendOrPubWithBoolean:NO withBoolean:YES withNSString:address withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
+  [self internalHandleSendOrPubWithBoolean:NO withBoolean:YES withNSString:topic withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
   return self;
 }
 
-- (id<ComGoodowRealtimeChannelBus>)sendLocalWithNSString:(NSString *)address
+- (id<ComGoodowRealtimeChannelBus>)sendLocalWithNSString:(NSString *)topic
                                                   withId:(id)msg
                         withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler {
-  [self internalHandleSendOrPubWithBoolean:YES withBoolean:YES withNSString:address withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
+  [self internalHandleSendOrPubWithBoolean:YES withBoolean:YES withNSString:topic withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
   return self;
 }
 
@@ -111,14 +111,14 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplSimpleBus_log_;
   }
 }
 
-- (BOOL)doRegisterHandlerWithBoolean:(BOOL)local
-                        withNSString:(NSString *)address
-    withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
-  [ComGoodowRealtimeChannelImplSimpleBus checkNotNullWithNSString:@"address" withId:address];
+- (BOOL)doSubscribeWithBoolean:(BOOL)local
+                  withNSString:(NSString *)topic
+withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
+  [ComGoodowRealtimeChannelImplSimpleBus checkNotNullWithNSString:@"topic" withId:topic];
   [ComGoodowRealtimeChannelImplSimpleBus checkNotNullWithNSString:@"handler" withId:handler];
-  id<ComGoodowRealtimeJsonJsonArray> handlers = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(handlerMap_)) getArrayWithNSString:address];
+  id<ComGoodowRealtimeJsonJsonArray> handlers = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(handlerMap_)) getArrayWithNSString:topic];
   if (handlers == nil) {
-    (void) [handlerMap_ setWithNSString:address withId:[((id<ComGoodowRealtimeJsonJsonArray>) nil_chk([ComGoodowRealtimeJsonJson createArray])) pushWithId:handler]];
+    (void) [handlerMap_ setWithNSString:topic withId:[((id<ComGoodowRealtimeJsonJsonArray>) nil_chk([ComGoodowRealtimeJsonJson createArray])) pushWithId:handler]];
     return YES;
   }
   if ([((id<ComGoodowRealtimeJsonJsonArray>) nil_chk(handlers)) indexOfWithId:handler] == -1) {
@@ -130,32 +130,32 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplSimpleBus_log_;
 
 - (void)doSendOrPubWithBoolean:(BOOL)local
                    withBoolean:(BOOL)send
-                  withNSString:(NSString *)address
+                  withNSString:(NSString *)topic
                         withId:(id)msg
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler {
-  [ComGoodowRealtimeChannelImplSimpleBus checkNotNullWithNSString:@"address" withId:address];
-  NSString *replyAddress = nil;
+  [ComGoodowRealtimeChannelImplSimpleBus checkNotNullWithNSString:@"topic" withId:topic];
+  NSString *replyTopic = nil;
   if (replyHandler != nil) {
-    replyAddress = [self makeUUID];
+    replyTopic = [self makeUUID];
   }
-  ComGoodowRealtimeChannelImplMessageImpl *message = [[ComGoodowRealtimeChannelImplMessageImpl alloc] initWithBoolean:local withBoolean:send withComGoodowRealtimeChannelBus:self withNSString:address withNSString:replyAddress withId:msg];
+  ComGoodowRealtimeChannelImplMessageImpl *message = [[ComGoodowRealtimeChannelImplMessageImpl alloc] initWithBoolean:local withBoolean:send withComGoodowRealtimeChannelBus:self withNSString:topic withNSString:replyTopic withId:msg];
   if ([self internalHandleReceiveMessageWithBoolean:local withComGoodowRealtimeChannelMessage:message] && replyHandler != nil) {
-    (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(replyHandlers_)) setWithNSString:replyAddress withId:replyHandler];
+    (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(replyHandlers_)) setWithNSString:replyTopic withId:replyHandler];
   }
 }
 
-- (BOOL)doUnregisterHandlerWithBoolean:(BOOL)local
-                          withNSString:(NSString *)address
-      withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
-  [ComGoodowRealtimeChannelImplSimpleBus checkNotNullWithNSString:@"address" withId:address];
+- (BOOL)doUnsubscribeWithBoolean:(BOOL)local
+                    withNSString:(NSString *)topic
+withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
+  [ComGoodowRealtimeChannelImplSimpleBus checkNotNullWithNSString:@"topic" withId:topic];
   [ComGoodowRealtimeChannelImplSimpleBus checkNotNullWithNSString:@"handler" withId:handler];
-  id<ComGoodowRealtimeJsonJsonArray> handlers = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(handlerMap_)) getArrayWithNSString:address];
+  id<ComGoodowRealtimeJsonJsonArray> handlers = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(handlerMap_)) getArrayWithNSString:topic];
   if (handlers == nil) {
     return NO;
   }
   BOOL removed = [((id<ComGoodowRealtimeJsonJsonArray>) nil_chk(handlers)) removeValueWithId:handler];
   if ([handlers length] == 0) {
-    (void) [handlerMap_ removeWithNSString:address];
+    (void) [handlerMap_ removeWithNSString:topic];
   }
   return removed;
 }
@@ -177,11 +177,11 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
 
 - (void)internalHandleSendOrPubWithBoolean:(BOOL)local
                                withBoolean:(BOOL)send
-                              withNSString:(NSString *)address
+                              withNSString:(NSString *)topic
                                     withId:(id)msg
           withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler {
-  if (local || hook_ == nil || [hook_ handleSendOrPubWithBoolean:send withNSString:address withId:msg withComGoodowRealtimeCoreHandler:replyHandler]) {
-    [self doSendOrPubWithBoolean:local withBoolean:send withNSString:address withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
+  if (local || hook_ == nil || [hook_ handleSendOrPubWithBoolean:send withNSString:topic withId:msg withComGoodowRealtimeCoreHandler:replyHandler]) {
+    [self doSendOrPubWithBoolean:local withBoolean:send withNSString:topic withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
   }
 }
 
@@ -189,32 +189,32 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
   return [((ComGoodowRealtimeChannelUtilIdGenerator *) nil_chk(idGenerator_)) nextWithInt:36];
 }
 
-- (void)scheduleHandleWithNSString:(NSString *)address
+- (void)scheduleHandleWithNSString:(NSString *)topic
                             withId:(id)handler
                             withId:(id)message {
-  [((id<ComGoodowRealtimeCoreScheduler>) nil_chk([ComGoodowRealtimeCorePlatform scheduler])) scheduleDeferredWithComGoodowRealtimeCoreHandler:[[ComGoodowRealtimeChannelImplSimpleBus_$1 alloc] initWithComGoodowRealtimeChannelImplSimpleBus:self withId:handler withId:message withNSString:address]];
+  [((id<ComGoodowRealtimeCoreScheduler>) nil_chk([ComGoodowRealtimeCorePlatform scheduler])) scheduleDeferredWithComGoodowRealtimeCoreHandler:[[ComGoodowRealtimeChannelImplSimpleBus_$1 alloc] initWithComGoodowRealtimeChannelImplSimpleBus:self withId:handler withId:message withNSString:topic]];
 }
 
 - (void)doReceiveMessageWithComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)message {
-  NSString *address = [((id<ComGoodowRealtimeChannelMessage>) nil_chk(message)) address];
-  id<ComGoodowRealtimeJsonJsonArray> handlers = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(handlerMap_)) getArrayWithNSString:address];
+  NSString *topic = [((id<ComGoodowRealtimeChannelMessage>) nil_chk(message)) topic];
+  id<ComGoodowRealtimeJsonJsonArray> handlers = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(handlerMap_)) getArrayWithNSString:topic];
   if (handlers != nil) {
-    [handlers forEachWithComGoodowRealtimeJsonJsonArray_ListIterator:[[ComGoodowRealtimeChannelImplSimpleBus_$2 alloc] initWithComGoodowRealtimeChannelImplSimpleBus:self withNSString:address withComGoodowRealtimeChannelMessage:message]];
+    [handlers forEachWithComGoodowRealtimeJsonJsonArray_ListIterator:[[ComGoodowRealtimeChannelImplSimpleBus_$2 alloc] initWithComGoodowRealtimeChannelImplSimpleBus:self withNSString:topic withComGoodowRealtimeChannelMessage:message]];
   }
   else {
-    id handler = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(replyHandlers_)) getWithNSString:address];
+    id handler = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(replyHandlers_)) getWithNSString:topic];
     if (handler != nil) {
-      (void) [replyHandlers_ removeWithNSString:address];
-      [self scheduleHandleWithNSString:address withId:handler withId:message];
+      (void) [replyHandlers_ removeWithNSString:topic];
+      [self scheduleHandleWithNSString:topic withId:handler withId:message];
     }
   }
 }
 
-- (id<ComGoodowRealtimeCoreRegistration>)registerHandlerImplWithBoolean:(BOOL)local
-                                                           withNSString:(NSString *)address
-                                       withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
-  [self doRegisterHandlerWithBoolean:local withNSString:address withComGoodowRealtimeCoreHandler:handler];
-  return [[ComGoodowRealtimeChannelImplSimpleBus_$3 alloc] initWithComGoodowRealtimeChannelImplSimpleBus:self withBoolean:local withNSString:address withComGoodowRealtimeCoreHandler:handler];
+- (id<ComGoodowRealtimeCoreRegistration>)subscribeImplWithBoolean:(BOOL)local
+                                                     withNSString:(NSString *)topic
+                                 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
+  [self doSubscribeWithBoolean:local withNSString:topic withComGoodowRealtimeCoreHandler:handler];
+  return [[ComGoodowRealtimeChannelImplSimpleBus_$3 alloc] initWithComGoodowRealtimeChannelImplSimpleBus:self withBoolean:local withNSString:topic withComGoodowRealtimeCoreHandler:handler];
 }
 
 + (void)initialize {
@@ -241,22 +241,22 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
     { "getSessionId", NULL, "Ljava.lang.String;", 0x1, NULL },
     { "publishWithNSString:withId:", "publish", "Lcom.goodow.realtime.channel.Bus;", 0x1, NULL },
     { "publishLocalWithNSString:withId:", "publishLocal", "Lcom.goodow.realtime.channel.Bus;", 0x1, NULL },
-    { "registerHandlerWithNSString:withComGoodowRealtimeCoreHandler:", "registerHandler", "Lcom.goodow.realtime.core.Registration;", 0x1, NULL },
-    { "registerLocalHandlerWithNSString:withComGoodowRealtimeCoreHandler:", "registerLocalHandler", "Lcom.goodow.realtime.core.Registration;", 0x1, NULL },
+    { "subscribeWithNSString:withComGoodowRealtimeCoreHandler:", "subscribe", "Lcom.goodow.realtime.core.Registration;", 0x1, NULL },
+    { "subscribeLocalWithNSString:withComGoodowRealtimeCoreHandler:", "subscribeLocal", "Lcom.goodow.realtime.core.Registration;", 0x1, NULL },
     { "sendWithNSString:withId:withComGoodowRealtimeCoreHandler:", "send", "Lcom.goodow.realtime.channel.Bus;", 0x1, NULL },
     { "sendLocalWithNSString:withId:withComGoodowRealtimeCoreHandler:", "sendLocal", "Lcom.goodow.realtime.channel.Bus;", 0x1, NULL },
     { "setHookWithComGoodowRealtimeChannelBusHook:", "setHook", "Lcom.goodow.realtime.channel.Bus;", 0x1, NULL },
     { "doClose", NULL, "V", 0x4, NULL },
-    { "doRegisterHandlerWithBoolean:withNSString:withComGoodowRealtimeCoreHandler:", "doRegisterHandler", "Z", 0x4, NULL },
+    { "doSubscribeWithBoolean:withNSString:withComGoodowRealtimeCoreHandler:", "doSubscribe", "Z", 0x4, NULL },
     { "doSendOrPubWithBoolean:withBoolean:withNSString:withId:withComGoodowRealtimeCoreHandler:", "doSendOrPub", "V", 0x4, NULL },
-    { "doUnregisterHandlerWithBoolean:withNSString:withComGoodowRealtimeCoreHandler:", "doUnregisterHandler", "Z", 0x4, NULL },
+    { "doUnsubscribeWithBoolean:withNSString:withComGoodowRealtimeCoreHandler:", "doUnsubscribe", "Z", 0x4, NULL },
     { "clearHandlers", NULL, "V", 0x0, NULL },
     { "internalHandleReceiveMessageWithBoolean:withComGoodowRealtimeChannelMessage:", "internalHandleReceiveMessage", "Z", 0x0, NULL },
     { "internalHandleSendOrPubWithBoolean:withBoolean:withNSString:withId:withComGoodowRealtimeCoreHandler:", "internalHandleSendOrPub", "V", 0x0, NULL },
     { "makeUUID", NULL, "Ljava.lang.String;", 0x0, NULL },
     { "scheduleHandleWithNSString:withId:withId:", "scheduleHandle", "V", 0x0, NULL },
     { "doReceiveMessageWithComGoodowRealtimeChannelMessage:", "doReceiveMessage", "V", 0x2, NULL },
-    { "registerHandlerImplWithBoolean:withNSString:withComGoodowRealtimeCoreHandler:", "registerHandlerImpl", "Lcom.goodow.realtime.core.Registration;", 0x2, NULL },
+    { "subscribeImplWithBoolean:withNSString:withComGoodowRealtimeCoreHandler:", "subscribeImpl", "Lcom.goodow.realtime.core.Registration;", 0x2, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
     { "log_", NULL, 0x1a, "Ljava.util.logging.Logger;", &ComGoodowRealtimeChannelImplSimpleBus_log_,  },
@@ -278,8 +278,8 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
     [((id<ComGoodowRealtimeCoreScheduler>) nil_chk([ComGoodowRealtimeCorePlatform scheduler])) handleWithId:val$handler_ withId:val$message_];
   }
   @catch (JavaLangThrowable *e) {
-    [((JavaUtilLoggingLogger *) nil_chk(ComGoodowRealtimeChannelImplSimpleBus_get_log_())) logWithJavaUtilLoggingLevel:JavaUtilLoggingLevel_get_WARNING_() withNSString:[NSString stringWithFormat:@"Failed to handle on address: %@", val$address_] withJavaLangThrowable:e];
-    (void) [this$0_ publishLocalWithNSString:ComGoodowRealtimeChannelBus_get_ON_ERROR_() withId:[((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([ComGoodowRealtimeJsonJson createObject])) setWithNSString:@"address" withId:val$address_])) setWithNSString:@"message" withId:val$message_])) setWithNSString:@"cause" withId:e]];
+    [((JavaUtilLoggingLogger *) nil_chk(ComGoodowRealtimeChannelImplSimpleBus_get_log_())) logWithJavaUtilLoggingLevel:JavaUtilLoggingLevel_get_WARNING_() withNSString:[NSString stringWithFormat:@"Failed to handle on topic: %@", val$topic_] withJavaLangThrowable:e];
+    (void) [this$0_ publishLocalWithNSString:ComGoodowRealtimeChannelBus_get_ON_ERROR_() withId:[((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([ComGoodowRealtimeJsonJson createObject])) setWithNSString:@"topic" withId:val$topic_])) setWithNSString:@"message" withId:val$message_])) setWithNSString:@"cause" withId:e]];
   }
 }
 
@@ -290,7 +290,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
   this$0_ = outer$;
   val$handler_ = capture$0;
   val$message_ = capture$1;
-  val$address_ = capture$2;
+  val$topic_ = capture$2;
   return [super init];
 }
 
@@ -303,7 +303,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
     { "this$0_", NULL, 0x1012, "Lcom.goodow.realtime.channel.impl.SimpleBus;", NULL,  },
     { "val$handler_", NULL, 0x1012, "Ljava.lang.Object;", NULL,  },
     { "val$message_", NULL, 0x1012, "Ljava.lang.Object;", NULL,  },
-    { "val$address_", NULL, 0x1012, "Ljava.lang.String;", NULL,  },
+    { "val$topic_", NULL, 0x1012, "Ljava.lang.String;", NULL,  },
   };
   static J2ObjcClassInfo _ComGoodowRealtimeChannelImplSimpleBus_$1 = { "$1", "com.goodow.realtime.channel.impl", "SimpleBus", 0x8000, 2, methods, 4, fields, 0, NULL};
   return &_ComGoodowRealtimeChannelImplSimpleBus_$1;
@@ -315,14 +315,14 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
 
 - (void)callWithInt:(int)index
              withId:(id)value {
-  [this$0_ scheduleHandleWithNSString:val$address_ withId:value withId:val$message_];
+  [this$0_ scheduleHandleWithNSString:val$topic_ withId:value withId:val$message_];
 }
 
 - (id)initWithComGoodowRealtimeChannelImplSimpleBus:(ComGoodowRealtimeChannelImplSimpleBus *)outer$
                                        withNSString:(NSString *)capture$0
                 withComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)capture$1 {
   this$0_ = outer$;
-  val$address_ = capture$0;
+  val$topic_ = capture$0;
   val$message_ = capture$1;
   return [super init];
 }
@@ -334,7 +334,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
   };
   static J2ObjcFieldInfo fields[] = {
     { "this$0_", NULL, 0x1012, "Lcom.goodow.realtime.channel.impl.SimpleBus;", NULL,  },
-    { "val$address_", NULL, 0x1012, "Ljava.lang.String;", NULL,  },
+    { "val$topic_", NULL, 0x1012, "Ljava.lang.String;", NULL,  },
     { "val$message_", NULL, 0x1012, "Lcom.goodow.realtime.channel.Message;", NULL,  },
   };
   static J2ObjcClassInfo _ComGoodowRealtimeChannelImplSimpleBus_$2 = { "$2", "com.goodow.realtime.channel.impl", "SimpleBus", 0x8000, 2, methods, 3, fields, 0, NULL};
@@ -346,7 +346,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
 @implementation ComGoodowRealtimeChannelImplSimpleBus_$3
 
 - (void)unregister {
-  [this$0_ doUnregisterHandlerWithBoolean:val$local_ withNSString:val$address_ withComGoodowRealtimeCoreHandler:val$handler_];
+  [this$0_ doUnsubscribeWithBoolean:val$local_ withNSString:val$topic_ withComGoodowRealtimeCoreHandler:val$handler_];
 }
 
 - (id)initWithComGoodowRealtimeChannelImplSimpleBus:(ComGoodowRealtimeChannelImplSimpleBus *)outer$
@@ -355,7 +355,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
                    withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)capture$2 {
   this$0_ = outer$;
   val$local_ = capture$0;
-  val$address_ = capture$1;
+  val$topic_ = capture$1;
   val$handler_ = capture$2;
   return [super init];
 }
@@ -368,7 +368,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
   static J2ObjcFieldInfo fields[] = {
     { "this$0_", NULL, 0x1012, "Lcom.goodow.realtime.channel.impl.SimpleBus;", NULL,  },
     { "val$local_", NULL, 0x1012, "Z", NULL,  },
-    { "val$address_", NULL, 0x1012, "Ljava.lang.String;", NULL,  },
+    { "val$topic_", NULL, 0x1012, "Ljava.lang.String;", NULL,  },
     { "val$handler_", NULL, 0x1012, "Lcom.goodow.realtime.core.Handler;", NULL,  },
   };
   static J2ObjcClassInfo _ComGoodowRealtimeChannelImplSimpleBus_$3 = { "$3", "com.goodow.realtime.channel.impl", "SimpleBus", 0x8000, 2, methods, 4, fields, 0, NULL};

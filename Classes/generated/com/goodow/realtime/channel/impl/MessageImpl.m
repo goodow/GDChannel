@@ -15,22 +15,22 @@
 - (id)initWithBoolean:(BOOL)local
           withBoolean:(BOOL)send
 withComGoodowRealtimeChannelBus:(id<ComGoodowRealtimeChannelBus>)bus
-         withNSString:(NSString *)address
-         withNSString:(NSString *)replyAddress
+         withNSString:(NSString *)topic
+         withNSString:(NSString *)replyTopic
                withId:(id)body {
   if (self = [super init]) {
     self->local_ = local;
     self->send_ = send;
     self->bus_ = bus;
-    self->address__ = address;
-    self->replyAddress__ = replyAddress;
+    self->topic__ = topic;
+    self->replyTopic__ = replyTopic;
     self->body__ = body;
   }
   return self;
 }
 
-- (NSString *)address {
-  return address__;
+- (NSString *)topic {
+  return topic__;
 }
 
 - (id)body {
@@ -50,8 +50,8 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
   [self sendReplyWithId:msg withComGoodowRealtimeCoreHandler:replyHandler];
 }
 
-- (NSString *)replyAddress {
-  return replyAddress__;
+- (NSString *)replyTopic {
+  return replyTopic__;
 }
 
 - (NSString *)description {
@@ -60,43 +60,43 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
 
 - (void)sendReplyWithId:(id)msg
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler {
-  if (bus_ != nil && replyAddress__ != nil) {
+  if (bus_ != nil && replyTopic__ != nil) {
     if (local_) {
-      (void) [bus_ sendLocalWithNSString:replyAddress__ withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
+      (void) [bus_ sendLocalWithNSString:replyTopic__ withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
     }
     else {
-      (void) [bus_ sendWithNSString:replyAddress__ withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
+      (void) [bus_ sendWithNSString:replyTopic__ withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
     }
   }
 }
 
 - (void)copyAllFieldsTo:(ComGoodowRealtimeChannelImplMessageImpl *)other {
   [super copyAllFieldsTo:other];
-  other->address__ = address__;
   other->body__ = body__;
   other->bus_ = bus_;
   other->local_ = local_;
-  other->replyAddress__ = replyAddress__;
+  other->replyTopic__ = replyTopic__;
   other->send_ = send_;
+  other->topic__ = topic__;
 }
 
 + (J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {
     { "initWithBoolean:withBoolean:withComGoodowRealtimeChannelBus:withNSString:withNSString:withId:", "MessageImpl", NULL, 0x1, NULL },
-    { "address", NULL, "Ljava.lang.String;", 0x1, NULL },
+    { "topic", NULL, "Ljava.lang.String;", 0x1, NULL },
     { "body", NULL, "TU;", 0x1, NULL },
     { "failWithInt:withNSString:", "fail", "V", 0x1, NULL },
     { "replyWithId:", "reply", "V", 0x1, NULL },
     { "replyWithId:withComGoodowRealtimeCoreHandler:", "reply", "V", 0x1, NULL },
-    { "replyAddress", NULL, "Ljava.lang.String;", 0x1, NULL },
+    { "replyTopic", NULL, "Ljava.lang.String;", 0x1, NULL },
     { "description", "toString", "Ljava.lang.String;", 0x1, NULL },
     { "sendReplyWithId:withComGoodowRealtimeCoreHandler:", "sendReply", "V", 0x2, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
     { "body__", "body", 0x4, "TU;", NULL,  },
     { "bus_", NULL, 0x4, "Lcom.goodow.realtime.channel.Bus;", NULL,  },
-    { "address__", "address", 0x4, "Ljava.lang.String;", NULL,  },
-    { "replyAddress__", "replyAddress", 0x4, "Ljava.lang.String;", NULL,  },
+    { "topic__", "topic", 0x4, "Ljava.lang.String;", NULL,  },
+    { "replyTopic__", "replyTopic", 0x4, "Ljava.lang.String;", NULL,  },
     { "send_", NULL, 0x4, "Z", NULL,  },
     { "local_", NULL, 0x4, "Z", NULL,  },
   };

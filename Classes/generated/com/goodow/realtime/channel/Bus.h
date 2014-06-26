@@ -23,27 +23,27 @@
 
 - (NSString *)getSessionId;
 
-- (id<ComGoodowRealtimeChannelBus>)publishWithNSString:(NSString *)address
+- (id<ComGoodowRealtimeChannelBus>)publishWithNSString:(NSString *)topic
                                                 withId:(id)msg;
 
-- (id<ComGoodowRealtimeChannelBus>)publishLocalWithNSString:(NSString *)address
+- (id<ComGoodowRealtimeChannelBus>)publishLocalWithNSString:(NSString *)topic
                                                      withId:(id)msg;
 
-- (id<ComGoodowRealtimeCoreRegistration>)registerHandlerWithNSString:(NSString *)address
-                                    withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
-
-- (id<ComGoodowRealtimeCoreRegistration>)registerLocalHandlerWithNSString:(NSString *)address
-                                         withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
-
-- (id<ComGoodowRealtimeChannelBus>)sendWithNSString:(NSString *)address
+- (id<ComGoodowRealtimeChannelBus>)sendWithNSString:(NSString *)topic
                                              withId:(id)msg
                    withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
-- (id<ComGoodowRealtimeChannelBus>)sendLocalWithNSString:(NSString *)address
+- (id<ComGoodowRealtimeChannelBus>)sendLocalWithNSString:(NSString *)topic
                                                   withId:(id)msg
                         withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
 - (id<ComGoodowRealtimeChannelBus>)setHookWithComGoodowRealtimeChannelBusHook:(id<ComGoodowRealtimeChannelBusHook>)hook;
+
+- (id<ComGoodowRealtimeCoreRegistration>)subscribeWithNSString:(NSString *)topic
+                              withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+
+- (id<ComGoodowRealtimeCoreRegistration>)subscribeLocalWithNSString:(NSString *)topic
+                                   withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
 @end
 

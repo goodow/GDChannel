@@ -37,36 +37,36 @@
   return [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) getSessionId];
 }
 
-- (id<ComGoodowRealtimeChannelBus>)publishWithNSString:(NSString *)address
+- (id<ComGoodowRealtimeChannelBus>)publishWithNSString:(NSString *)topic
                                                 withId:(id)msg {
-  return [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) publishWithNSString:address withId:msg];
+  return [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) publishWithNSString:topic withId:msg];
 }
 
-- (id<ComGoodowRealtimeChannelBus>)publishLocalWithNSString:(NSString *)address
+- (id<ComGoodowRealtimeChannelBus>)publishLocalWithNSString:(NSString *)topic
                                                      withId:(id)msg {
-  return [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) publishLocalWithNSString:address withId:msg];
+  return [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) publishLocalWithNSString:topic withId:msg];
 }
 
-- (id<ComGoodowRealtimeCoreRegistration>)registerHandlerWithNSString:(NSString *)address
-                                    withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
-  return [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) registerHandlerWithNSString:address withComGoodowRealtimeCoreHandler:handler];
+- (id<ComGoodowRealtimeCoreRegistration>)subscribeWithNSString:(NSString *)topic
+                              withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
+  return [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) subscribeWithNSString:topic withComGoodowRealtimeCoreHandler:handler];
 }
 
-- (id<ComGoodowRealtimeCoreRegistration>)registerLocalHandlerWithNSString:(NSString *)address
-                                         withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
-  return [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) registerLocalHandlerWithNSString:address withComGoodowRealtimeCoreHandler:handler];
+- (id<ComGoodowRealtimeCoreRegistration>)subscribeLocalWithNSString:(NSString *)topic
+                                   withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
+  return [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) subscribeLocalWithNSString:topic withComGoodowRealtimeCoreHandler:handler];
 }
 
-- (id<ComGoodowRealtimeChannelBus>)sendWithNSString:(NSString *)address
+- (id<ComGoodowRealtimeChannelBus>)sendWithNSString:(NSString *)topic
                                              withId:(id)msg
                    withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler {
-  return [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) sendWithNSString:address withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
+  return [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) sendWithNSString:topic withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
 }
 
-- (id<ComGoodowRealtimeChannelBus>)sendLocalWithNSString:(NSString *)address
+- (id<ComGoodowRealtimeChannelBus>)sendLocalWithNSString:(NSString *)topic
                                                   withId:(id)msg
                         withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler {
-  return [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) sendLocalWithNSString:address withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
+  return [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) sendLocalWithNSString:topic withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
 }
 
 - (id<ComGoodowRealtimeChannelBus>)setHookWithComGoodowRealtimeChannelBusHook:(id<ComGoodowRealtimeChannelBusHook>)hook {
@@ -89,8 +89,8 @@
     { "getSessionId", NULL, "Ljava.lang.String;", 0x1, NULL },
     { "publishWithNSString:withId:", "publish", "Lcom.goodow.realtime.channel.Bus;", 0x1, NULL },
     { "publishLocalWithNSString:withId:", "publishLocal", "Lcom.goodow.realtime.channel.Bus;", 0x1, NULL },
-    { "registerHandlerWithNSString:withComGoodowRealtimeCoreHandler:", "registerHandler", "Lcom.goodow.realtime.core.Registration;", 0x1, NULL },
-    { "registerLocalHandlerWithNSString:withComGoodowRealtimeCoreHandler:", "registerLocalHandler", "Lcom.goodow.realtime.core.Registration;", 0x1, NULL },
+    { "subscribeWithNSString:withComGoodowRealtimeCoreHandler:", "subscribe", "Lcom.goodow.realtime.core.Registration;", 0x1, NULL },
+    { "subscribeLocalWithNSString:withComGoodowRealtimeCoreHandler:", "subscribeLocal", "Lcom.goodow.realtime.core.Registration;", 0x1, NULL },
     { "sendWithNSString:withId:withComGoodowRealtimeCoreHandler:", "send", "Lcom.goodow.realtime.channel.Bus;", 0x1, NULL },
     { "sendLocalWithNSString:withId:withComGoodowRealtimeCoreHandler:", "sendLocal", "Lcom.goodow.realtime.channel.Bus;", 0x1, NULL },
     { "setHookWithComGoodowRealtimeChannelBusHook:", "setHook", "Lcom.goodow.realtime.channel.Bus;", 0x1, NULL },

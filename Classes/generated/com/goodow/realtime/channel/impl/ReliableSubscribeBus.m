@@ -55,64 +55,64 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
   (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(acknowledgeNumbers_)) clear];
 }
 
-- (void)synchronizeSequenceNumberWithNSString:(NSString *)address
+- (void)synchronizeSequenceNumberWithNSString:(NSString *)topic
                                    withDouble:(double)initialSequenceNumber {
-  NSAssert(![((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(currentSequences_)) hasWithNSString:address] && ![((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(knownHeadSequences_)) hasWithNSString:address] && ![((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(pendings_)) hasWithNSString:address], @"/Users/retechretech/dev/workspace/realtime/realtime-channel/src/main/java/com/goodow/realtime/channel/impl/ReliableSubscribeBus.java:105 condition failed: assert !currentSequences.has(address) && !knownHeadSequences.has(address)\n        && !pendings.has(address);");
-  [self initSequenceNumberWithNSString:address withDouble:initialSequenceNumber];
-  [self catchupWithNSString:address withDouble:initialSequenceNumber];
+  NSAssert(![((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(currentSequences_)) hasWithNSString:topic] && ![((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(knownHeadSequences_)) hasWithNSString:topic] && ![((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(pendings_)) hasWithNSString:topic], @"/Users/retechretech/dev/workspace/realtime/realtime-channel/src/main/java/com/goodow/realtime/channel/impl/ReliableSubscribeBus.java:105 condition failed: assert !currentSequences.has(topic) && !knownHeadSequences.has(topic)\n        && !pendings.has(topic);");
+  [self initSequenceNumberWithNSString:topic withDouble:initialSequenceNumber];
+  [self catchupWithNSString:topic withDouble:initialSequenceNumber];
 }
 
-- (void)catchupWithNSString:(NSString *)address
+- (void)catchupWithNSString:(NSString *)topic
                  withDouble:(double)currentSequence {
-  NSString *id_ = [((NSString *) nil_chk(address)) substring:((int) [((NSString *) nil_chk(publishChannel_)) length]) + 1];
+  NSString *id_ = [((NSString *) nil_chk(topic)) substring:((int) [((NSString *) nil_chk(publishChannel_)) length]) + 1];
   id_ = [id_ substring:0 endIndex:[((NSString *) nil_chk(id_)) lastIndexOfString:@"/_watch"]];
-  (void) [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) sendWithNSString:[NSString stringWithFormat:@"%@/_ops", publishChannel_] withId:[((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([ComGoodowRealtimeJsonJson createObject])) setWithNSString:@"id" withId:id_])) setWithNSString:@"from" withDouble:currentSequence + 1] withComGoodowRealtimeCoreHandler:[[ComGoodowRealtimeChannelImplReliableSubscribeBus_$2 alloc] initWithComGoodowRealtimeChannelImplReliableSubscribeBus:self withNSString:address]];
+  (void) [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) sendWithNSString:[NSString stringWithFormat:@"%@/_ops", publishChannel_] withId:[((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([ComGoodowRealtimeJsonJson createObject])) setWithNSString:@"id" withId:id_])) setWithNSString:@"from" withDouble:currentSequence + 1] withComGoodowRealtimeCoreHandler:[[ComGoodowRealtimeChannelImplReliableSubscribeBus_$2 alloc] initWithComGoodowRealtimeChannelImplReliableSubscribeBus:self withNSString:topic]];
 }
 
-- (double)getSequenceNumberWithNSString:(NSString *)address
+- (double)getSequenceNumberWithNSString:(NSString *)topic
                                  withId:(id)body {
   return [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(((id<ComGoodowRealtimeJsonJsonObject>) check_protocol_cast(body, @protocol(ComGoodowRealtimeJsonJsonObject))))) getNumberWithNSString:sequenceNumberKey_];
 }
 
-- (BOOL)needProcessWithNSString:(NSString *)address {
-  return [((NSString *) nil_chk(address)) hasPrefix:[NSString stringWithFormat:@"%@/", publishChannel_]] && [address hasSuffix:@"/_watch"] && ![address contains:@"/_presence/"];
+- (BOOL)needProcessWithNSString:(NSString *)topic {
+  return [((NSString *) nil_chk(topic)) hasPrefix:[NSString stringWithFormat:@"%@/", publishChannel_]] && [topic hasSuffix:@"/_watch"] && ![topic contains:@"/_presence/"];
 }
 
 - (BOOL)onReceiveMessageWithComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)message {
-  NSString *address = [((id<ComGoodowRealtimeChannelMessage>) nil_chk(message)) address];
+  NSString *topic = [((id<ComGoodowRealtimeChannelMessage>) nil_chk(message)) topic];
   id body = [message body];
-  if (![self needProcessWithNSString:address]) {
+  if (![self needProcessWithNSString:topic]) {
     return YES;
   }
-  double sequence = [self getSequenceNumberWithNSString:address withId:body];
-  if (![((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(currentSequences_)) hasWithNSString:address]) {
-    [self initSequenceNumberWithNSString:address withDouble:sequence];
+  double sequence = [self getSequenceNumberWithNSString:topic withId:body];
+  if (![((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(currentSequences_)) hasWithNSString:topic]) {
+    [self initSequenceNumberWithNSString:topic withDouble:sequence];
     return YES;
   }
-  double currentSequence = [currentSequences_ getNumberWithNSString:address];
+  double currentSequence = [currentSequences_ getNumberWithNSString:topic];
   if (sequence <= currentSequence) {
     [((JavaUtilLoggingLogger *) nil_chk(ComGoodowRealtimeChannelImplReliableSubscribeBus_log_)) logWithJavaUtilLoggingLevel:JavaUtilLoggingLevel_get_CONFIG_() withNSString:[NSString stringWithFormat:@"Old dup at sequence %f, current is now %f", sequence, currentSequence]];
     return NO;
   }
-  id<ComGoodowRealtimeJsonJsonObject> pending = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(pendings_)) getObjectWithNSString:address];
+  id<ComGoodowRealtimeJsonJsonObject> pending = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(pendings_)) getObjectWithNSString:topic];
   id<ComGoodowRealtimeChannelMessage> existing = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(pending)) getWithNSString:[NSString stringWithFormat:@"%f", sequence]];
   if (existing != nil) {
     NSAssert(sequence > currentSequence + 1, @"should not have pending data");
     [((JavaUtilLoggingLogger *) nil_chk(ComGoodowRealtimeChannelImplReliableSubscribeBus_log_)) logWithJavaUtilLoggingLevel:JavaUtilLoggingLevel_get_CONFIG_() withNSString:[NSString stringWithFormat:@"Dup message: %@", message]];
     return NO;
   }
-  (void) [knownHeadSequences_ setWithNSString:address withDouble:[JavaLangMath maxWithDouble:[((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(knownHeadSequences_)) getNumberWithNSString:address] withDouble:sequence]];
+  (void) [knownHeadSequences_ setWithNSString:topic withDouble:[JavaLangMath maxWithDouble:[((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(knownHeadSequences_)) getNumberWithNSString:topic] withDouble:sequence]];
   if (sequence > currentSequence + 1) {
     (void) [pending setWithNSString:[NSString stringWithFormat:@"%f", sequence] withId:message];
     [((JavaUtilLoggingLogger *) nil_chk(ComGoodowRealtimeChannelImplReliableSubscribeBus_log_)) logWithJavaUtilLoggingLevel:JavaUtilLoggingLevel_get_CONFIG_() withNSString:[NSString stringWithFormat:@"Missed message, current sequence=%f incoming sequence=%f", currentSequence, sequence]];
-    [self scheduleAcknowledgmentWithNSString:address];
+    [self scheduleAcknowledgmentWithNSString:topic];
     return NO;
   }
   NSAssert(sequence == currentSequence + 1, @"other cases should have been caught");
   NSString *next;
   while (YES) {
-    (void) [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) publishLocalWithNSString:[message address] withId:[message body]];
-    (void) [currentSequences_ setWithNSString:address withDouble:++currentSequence];
+    (void) [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) publishLocalWithNSString:[message topic] withId:[message body]];
+    (void) [currentSequences_ setWithNSString:topic withDouble:++currentSequence];
     next = [NSString stringWithFormat:@"%f", currentSequence + 1];
     message = [pending getWithNSString:next];
     if (message != nil) {
@@ -126,17 +126,17 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
   return NO;
 }
 
-- (void)initSequenceNumberWithNSString:(NSString *)address
+- (void)initSequenceNumberWithNSString:(NSString *)topic
                             withDouble:(double)initialSequenceNumber {
-  (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(currentSequences_)) setWithNSString:address withDouble:initialSequenceNumber];
-  (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(knownHeadSequences_)) setWithNSString:address withDouble:initialSequenceNumber];
-  (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(pendings_)) setWithNSString:address withId:[ComGoodowRealtimeJsonJson createObject]];
+  (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(currentSequences_)) setWithNSString:topic withDouble:initialSequenceNumber];
+  (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(knownHeadSequences_)) setWithNSString:topic withDouble:initialSequenceNumber];
+  (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(pendings_)) setWithNSString:topic withId:[ComGoodowRealtimeJsonJson createObject]];
 }
 
-- (void)scheduleAcknowledgmentWithNSString:(NSString *)address {
-  if (![((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(acknowledgeScheduled_)) hasWithNSString:address]) {
-    (void) [acknowledgeScheduled_ setWithNSString:address withBoolean:YES];
-    [((id<ComGoodowRealtimeCoreScheduler>) nil_chk([ComGoodowRealtimeCorePlatform scheduler])) scheduleDelayWithInt:acknowledgeDelayMillis_ withComGoodowRealtimeCoreHandler:[[ComGoodowRealtimeChannelImplReliableSubscribeBus_$3 alloc] initWithComGoodowRealtimeChannelImplReliableSubscribeBus:self withNSString:address]];
+- (void)scheduleAcknowledgmentWithNSString:(NSString *)topic {
+  if (![((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(acknowledgeScheduled_)) hasWithNSString:topic]) {
+    (void) [acknowledgeScheduled_ setWithNSString:topic withBoolean:YES];
+    [((id<ComGoodowRealtimeCoreScheduler>) nil_chk([ComGoodowRealtimeCorePlatform scheduler])) scheduleDelayWithInt:acknowledgeDelayMillis_ withComGoodowRealtimeCoreHandler:[[ComGoodowRealtimeChannelImplReliableSubscribeBus_$3 alloc] initWithComGoodowRealtimeChannelImplReliableSubscribeBus:self withNSString:topic]];
   }
 }
 
@@ -200,15 +200,15 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
   return [this$0_ onReceiveMessageWithComGoodowRealtimeChannelMessage:message];
 }
 
-- (BOOL)handleUnregisterWithNSString:(NSString *)address {
-  if ([this$0_ needProcessWithNSString:address]) {
-    (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->pendings_)) removeWithNSString:address];
-    (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->currentSequences_)) removeWithNSString:address];
-    (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->knownHeadSequences_)) removeWithNSString:address];
-    (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->acknowledgeScheduled_)) removeWithNSString:address];
-    (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->acknowledgeNumbers_)) removeWithNSString:address];
+- (BOOL)handleUnsubscribeWithNSString:(NSString *)topic {
+  if ([this$0_ needProcessWithNSString:topic]) {
+    (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->pendings_)) removeWithNSString:topic];
+    (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->currentSequences_)) removeWithNSString:topic];
+    (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->knownHeadSequences_)) removeWithNSString:topic];
+    (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->acknowledgeScheduled_)) removeWithNSString:topic];
+    (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->acknowledgeNumbers_)) removeWithNSString:topic];
   }
-  return [super handleUnregisterWithNSString:address];
+  return [super handleUnsubscribeWithNSString:topic];
 }
 
 - (id<ComGoodowRealtimeChannelBusHook>)delegate {
@@ -223,7 +223,7 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
 + (J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {
     { "handleReceiveMessageWithComGoodowRealtimeChannelMessage:", "handleReceiveMessage", "Z", 0x1, NULL },
-    { "handleUnregisterWithNSString:", "handleUnregister", "Z", 0x1, NULL },
+    { "handleUnsubscribeWithNSString:", "handleUnsubscribe", "Z", 0x1, NULL },
     { "delegate", NULL, "Lcom.goodow.realtime.channel.BusHook;", 0x4, NULL },
     { "initWithComGoodowRealtimeChannelImplReliableSubscribeBus:", "init", NULL, 0x0, NULL },
   };
@@ -239,14 +239,14 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
 @implementation ComGoodowRealtimeChannelImplReliableSubscribeBus_$2
 
 - (void)handleWithId:(id<ComGoodowRealtimeChannelMessage>)message {
-  NSString *replyAddress = [((id<ComGoodowRealtimeChannelMessage>) nil_chk(message)) replyAddress];
-  [((id<ComGoodowRealtimeJsonJsonArray>) nil_chk([message body])) forEachWithComGoodowRealtimeJsonJsonArray_ListIterator:[[ComGoodowRealtimeChannelImplReliableSubscribeBus_$2_$1 alloc] initWithComGoodowRealtimeChannelImplReliableSubscribeBus_$2:self withNSString:replyAddress]];
+  NSString *replyTopic = [((id<ComGoodowRealtimeChannelMessage>) nil_chk(message)) replyTopic];
+  [((id<ComGoodowRealtimeJsonJsonArray>) nil_chk([message body])) forEachWithComGoodowRealtimeJsonJsonArray_ListIterator:[[ComGoodowRealtimeChannelImplReliableSubscribeBus_$2_$1 alloc] initWithComGoodowRealtimeChannelImplReliableSubscribeBus_$2:self withNSString:replyTopic]];
 }
 
 - (id)initWithComGoodowRealtimeChannelImplReliableSubscribeBus:(ComGoodowRealtimeChannelImplReliableSubscribeBus *)outer$
                                                   withNSString:(NSString *)capture$0 {
   this$0_ = outer$;
-  val$address_ = capture$0;
+  val$topic_ = capture$0;
   return [super init];
 }
 
@@ -257,7 +257,7 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
   };
   static J2ObjcFieldInfo fields[] = {
     { "this$0_", NULL, 0x1012, "Lcom.goodow.realtime.channel.impl.ReliableSubscribeBus;", NULL,  },
-    { "val$address_", NULL, 0x1012, "Ljava.lang.String;", NULL,  },
+    { "val$topic_", NULL, 0x1012, "Ljava.lang.String;", NULL,  },
   };
   static J2ObjcClassInfo _ComGoodowRealtimeChannelImplReliableSubscribeBus_$2 = { "$2", "com.goodow.realtime.channel.impl", "ReliableSubscribeBus", 0x8000, 2, methods, 2, fields, 0, NULL};
   return &_ComGoodowRealtimeChannelImplReliableSubscribeBus_$2;
@@ -269,13 +269,13 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
 
 - (void)callWithInt:(int)index
              withId:(id)value {
-  [this$0_->this$0_ onReceiveMessageWithComGoodowRealtimeChannelMessage:[[ComGoodowRealtimeChannelImplMessageImpl alloc] initWithBoolean:NO withBoolean:NO withComGoodowRealtimeChannelBus:this$0_->this$0_ withNSString:this$0_->val$address_ withNSString:val$replyAddress_ withId:value]];
+  [this$0_->this$0_ onReceiveMessageWithComGoodowRealtimeChannelMessage:[[ComGoodowRealtimeChannelImplMessageImpl alloc] initWithBoolean:NO withBoolean:NO withComGoodowRealtimeChannelBus:this$0_->this$0_ withNSString:this$0_->val$topic_ withNSString:val$replyTopic_ withId:value]];
 }
 
 - (id)initWithComGoodowRealtimeChannelImplReliableSubscribeBus_$2:(ComGoodowRealtimeChannelImplReliableSubscribeBus_$2 *)outer$
                                                      withNSString:(NSString *)capture$0 {
   this$0_ = outer$;
-  val$replyAddress_ = capture$0;
+  val$replyTopic_ = capture$0;
   return [super init];
 }
 
@@ -286,7 +286,7 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
   };
   static J2ObjcFieldInfo fields[] = {
     { "this$0_", NULL, 0x1012, "Lcom.goodow.realtime.channel.impl.ReliableSubscribeBus$2;", NULL,  },
-    { "val$replyAddress_", NULL, 0x1012, "Ljava.lang.String;", NULL,  },
+    { "val$replyTopic_", NULL, 0x1012, "Ljava.lang.String;", NULL,  },
   };
   static J2ObjcClassInfo _ComGoodowRealtimeChannelImplReliableSubscribeBus_$2_$1 = { "$1", "com.goodow.realtime.channel.impl", "ReliableSubscribeBus$$2", 0x8000, 2, methods, 2, fields, 0, NULL};
   return &_ComGoodowRealtimeChannelImplReliableSubscribeBus_$2_$1;
@@ -297,14 +297,14 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
 @implementation ComGoodowRealtimeChannelImplReliableSubscribeBus_$3
 
 - (void)handleWithId:(id)event {
-  if ([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->acknowledgeScheduled_)) hasWithNSString:val$address_]) {
-    (void) [this$0_->acknowledgeScheduled_ removeWithNSString:val$address_];
-    double knownHeadSequence = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->knownHeadSequences_)) getNumberWithNSString:val$address_];
-    double currentSequence = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->currentSequences_)) getNumberWithNSString:val$address_];
-    if (knownHeadSequence > currentSequence && (![((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->acknowledgeNumbers_)) hasWithNSString:val$address_] || knownHeadSequence > [this$0_->acknowledgeNumbers_ getNumberWithNSString:val$address_])) {
-      (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->acknowledgeNumbers_)) setWithNSString:val$address_ withDouble:knownHeadSequence];
+  if ([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->acknowledgeScheduled_)) hasWithNSString:val$topic_]) {
+    (void) [this$0_->acknowledgeScheduled_ removeWithNSString:val$topic_];
+    double knownHeadSequence = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->knownHeadSequences_)) getNumberWithNSString:val$topic_];
+    double currentSequence = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->currentSequences_)) getNumberWithNSString:val$topic_];
+    if (knownHeadSequence > currentSequence && (![((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->acknowledgeNumbers_)) hasWithNSString:val$topic_] || knownHeadSequence > [this$0_->acknowledgeNumbers_ getNumberWithNSString:val$topic_])) {
+      (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->acknowledgeNumbers_)) setWithNSString:val$topic_ withDouble:knownHeadSequence];
       [((JavaUtilLoggingLogger *) nil_chk(ComGoodowRealtimeChannelImplReliableSubscribeBus_get_log_())) logWithJavaUtilLoggingLevel:JavaUtilLoggingLevel_get_CONFIG_() withNSString:[NSString stringWithFormat:@"Catching up to %f", knownHeadSequence]];
-      [this$0_ catchupWithNSString:val$address_ withDouble:currentSequence];
+      [this$0_ catchupWithNSString:val$topic_ withDouble:currentSequence];
     }
     else {
       [((JavaUtilLoggingLogger *) nil_chk(ComGoodowRealtimeChannelImplReliableSubscribeBus_get_log_())) logWithJavaUtilLoggingLevel:JavaUtilLoggingLevel_get_FINE_() withNSString:@"No need to catchup"];
@@ -315,7 +315,7 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
 - (id)initWithComGoodowRealtimeChannelImplReliableSubscribeBus:(ComGoodowRealtimeChannelImplReliableSubscribeBus *)outer$
                                                   withNSString:(NSString *)capture$0 {
   this$0_ = outer$;
-  val$address_ = capture$0;
+  val$topic_ = capture$0;
   return [super init];
 }
 
@@ -326,7 +326,7 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
   };
   static J2ObjcFieldInfo fields[] = {
     { "this$0_", NULL, 0x1012, "Lcom.goodow.realtime.channel.impl.ReliableSubscribeBus;", NULL,  },
-    { "val$address_", NULL, 0x1012, "Ljava.lang.String;", NULL,  },
+    { "val$topic_", NULL, 0x1012, "Ljava.lang.String;", NULL,  },
   };
   static J2ObjcClassInfo _ComGoodowRealtimeChannelImplReliableSubscribeBus_$3 = { "$3", "com.goodow.realtime.channel.impl", "ReliableSubscribeBus", 0x8000, 2, methods, 2, fields, 0, NULL};
   return &_ComGoodowRealtimeChannelImplReliableSubscribeBus_$3;

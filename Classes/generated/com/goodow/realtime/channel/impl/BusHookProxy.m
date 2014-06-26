@@ -28,9 +28,9 @@
   return [self delegate] == nil ? YES : [((id<ComGoodowRealtimeChannelBusHook>) nil_chk([self delegate])) handlePreClose];
 }
 
-- (BOOL)handlePreRegisterWithNSString:(NSString *)address
-     withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
-  return [self delegate] == nil ? YES : [((id<ComGoodowRealtimeChannelBusHook>) nil_chk([self delegate])) handlePreRegisterWithNSString:address withComGoodowRealtimeCoreHandler:handler];
+- (BOOL)handlePreSubscribeWithNSString:(NSString *)topic
+      withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
+  return [self delegate] == nil ? YES : [((id<ComGoodowRealtimeChannelBusHook>) nil_chk([self delegate])) handlePreSubscribeWithNSString:topic withComGoodowRealtimeCoreHandler:handler];
 }
 
 - (BOOL)handleReceiveMessageWithComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)message {
@@ -38,14 +38,14 @@
 }
 
 - (BOOL)handleSendOrPubWithBoolean:(BOOL)send
-                      withNSString:(NSString *)address
+                      withNSString:(NSString *)topic
                             withId:(id)msg
   withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler {
-  return [self delegate] == nil ? YES : [((id<ComGoodowRealtimeChannelBusHook>) nil_chk([self delegate])) handleSendOrPubWithBoolean:send withNSString:address withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
+  return [self delegate] == nil ? YES : [((id<ComGoodowRealtimeChannelBusHook>) nil_chk([self delegate])) handleSendOrPubWithBoolean:send withNSString:topic withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
 }
 
-- (BOOL)handleUnregisterWithNSString:(NSString *)address {
-  return [self delegate] == nil ? YES : [((id<ComGoodowRealtimeChannelBusHook>) nil_chk([self delegate])) handleUnregisterWithNSString:address];
+- (BOOL)handleUnsubscribeWithNSString:(NSString *)topic {
+  return [self delegate] == nil ? YES : [((id<ComGoodowRealtimeChannelBusHook>) nil_chk([self delegate])) handleUnsubscribeWithNSString:topic];
 }
 
 - (id<ComGoodowRealtimeChannelBusHook>)delegate {
@@ -63,10 +63,10 @@
     { "handleOpened", NULL, "V", 0x1, NULL },
     { "handlePostClose", NULL, "V", 0x1, NULL },
     { "handlePreClose", NULL, "Z", 0x1, NULL },
-    { "handlePreRegisterWithNSString:withComGoodowRealtimeCoreHandler:", "handlePreRegister", "Z", 0x1, NULL },
+    { "handlePreSubscribeWithNSString:withComGoodowRealtimeCoreHandler:", "handlePreSubscribe", "Z", 0x1, NULL },
     { "handleReceiveMessageWithComGoodowRealtimeChannelMessage:", "handleReceiveMessage", "Z", 0x1, NULL },
     { "handleSendOrPubWithBoolean:withNSString:withId:withComGoodowRealtimeCoreHandler:", "handleSendOrPub", "Z", 0x1, NULL },
-    { "handleUnregisterWithNSString:", "handleUnregister", "Z", 0x1, NULL },
+    { "handleUnsubscribeWithNSString:", "handleUnsubscribe", "Z", 0x1, NULL },
     { "delegate", NULL, "Lcom.goodow.realtime.channel.BusHook;", 0x404, NULL },
     { "init", NULL, NULL, 0x1, NULL },
   };

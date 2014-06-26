@@ -32,12 +32,12 @@
   id<GDCBus> bus = [[GDCSimpleBus alloc] init];
   __block BOOL testComplete = NO;
   
-  __block id<GDCRegistration> handlerRegistration = [bus registerLocalHandler:@"someaddress" handler:^(id<GDCMessage> message) {
+  __block id<GDCRegistration> handlerRegistration = [bus subscribeLocal:@"someaddress" handler:^(id <GDCMessage> message) {
     XCTAssertTrue(self == [message body]);
-    
-    NSDictionary *msg = @{@"text": @"reply"};
+
+    NSDictionary *msg = @{@"text" : @"reply"};
     [message reply:msg];
-    
+
     [handlerRegistration unregister];
     handlerRegistration = nil;
   }];

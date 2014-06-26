@@ -21,17 +21,17 @@
 
 - (BOOL)handlePreClose;
 
-- (BOOL)handlePreRegisterWithNSString:(NSString *)address
-     withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+- (BOOL)handlePreSubscribeWithNSString:(NSString *)topic
+      withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
 - (BOOL)handleReceiveMessageWithComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)message;
 
 - (BOOL)handleSendOrPubWithBoolean:(BOOL)send
-                      withNSString:(NSString *)address
+                      withNSString:(NSString *)topic
                             withId:(id)msg
   withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
-- (BOOL)handleUnregisterWithNSString:(NSString *)address;
+- (BOOL)handleUnsubscribeWithNSString:(NSString *)topic;
 
 @end
 

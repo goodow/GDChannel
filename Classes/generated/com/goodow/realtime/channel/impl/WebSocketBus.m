@@ -32,31 +32,31 @@ NSString * ComGoodowRealtimeChannelImplWebSocketBus_SESSION_ = @"_session";
 NSString * ComGoodowRealtimeChannelImplWebSocketBus_USERNAME_ = @"username";
 NSString * ComGoodowRealtimeChannelImplWebSocketBus_PASSWORD_ = @"password";
 NSString * ComGoodowRealtimeChannelImplWebSocketBus_PING_INTERVAL_ = @"vertxbus_ping_interval";
-NSString * ComGoodowRealtimeChannelImplWebSocketBus_ADDR_ = @"realtime/channel";
+NSString * ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_CHANNEL_ = @"realtime/channel";
 NSString * ComGoodowRealtimeChannelImplWebSocketBus_BODY_ = @"body";
-NSString * ComGoodowRealtimeChannelImplWebSocketBus_ADDRESS_ = @"address";
-NSString * ComGoodowRealtimeChannelImplWebSocketBus_REPLY_ADDRESS_ = @"replyAddress";
+NSString * ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_ = @"address";
+NSString * ComGoodowRealtimeChannelImplWebSocketBus_REPLY_TOPIC_ = @"replyAddress";
 NSString * ComGoodowRealtimeChannelImplWebSocketBus_TYPE_ = @"type";
 
-- (id)initWithNSString:(NSString *)url
+- (id)initWithNSString:(NSString *)serverUri
 withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options {
   if (self = [super init]) {
     pingTimerID_ = -1;
     handlerCount_ = [ComGoodowRealtimeJsonJson createObject];
     webSocketHandler_ = [[ComGoodowRealtimeChannelImplWebSocketBus_$1 alloc] initWithComGoodowRealtimeChannelImplWebSocketBus:self];
-    [self connectWithNSString:url withComGoodowRealtimeJsonJsonObject:options];
+    [self connectWithNSString:serverUri withComGoodowRealtimeJsonJsonObject:options];
   }
   return self;
 }
 
-- (void)connectWithNSString:(NSString *)url
+- (void)connectWithNSString:(NSString *)serverUri
 withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options {
-  self->url_ = url;
+  self->serverUri_ = serverUri;
   pingInterval_ = options == nil || ![options hasWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_PING_INTERVAL_] ? 5 * 1000 : (int) [options getNumberWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_PING_INTERVAL_];
   sessionId_ = options == nil || ![options hasWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_SESSION_] ? [((ComGoodowRealtimeChannelUtilIdGenerator *) nil_chk(idGenerator_)) nextWithInt:23] : [options getStringWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_SESSION_];
   username_ = options == nil || ![options hasWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_USERNAME_] ? nil : [options getStringWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_USERNAME_];
   password_ = options == nil || ![options hasWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_PASSWORD_] ? nil : [options getStringWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_PASSWORD_];
-  webSocket_ = [((id<ComGoodowRealtimeCoreNet>) nil_chk([ComGoodowRealtimeCorePlatform net])) createWebSocketWithNSString:url withComGoodowRealtimeJsonJsonObject:options];
+  webSocket_ = [((id<ComGoodowRealtimeCoreNet>) nil_chk([ComGoodowRealtimeCorePlatform net])) createWebSocketWithNSString:serverUri withComGoodowRealtimeJsonJsonObject:options];
   [((id<ComGoodowRealtimeCoreWebSocket>) nil_chk(webSocket_)) setListenWithComGoodowRealtimeCoreWebSocket_WebSocketHandler:webSocketHandler_];
 }
 
@@ -70,56 +70,56 @@ withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options
 
 - (void)doClose {
   [((id<ComGoodowRealtimeCoreWebSocket>) nil_chk(webSocket_)) close];
-  (void) [self registerLocalHandlerWithNSString:ComGoodowRealtimeChannelBus_get_ON_CLOSE_() withComGoodowRealtimeCoreHandler:[[ComGoodowRealtimeChannelImplWebSocketBus_$2 alloc] initWithComGoodowRealtimeChannelImplWebSocketBus:self]];
+  (void) [self subscribeLocalWithNSString:ComGoodowRealtimeChannelBus_get_ON_CLOSE_() withComGoodowRealtimeCoreHandler:[[ComGoodowRealtimeChannelImplWebSocketBus_$2 alloc] initWithComGoodowRealtimeChannelImplWebSocketBus:self]];
 }
 
-- (BOOL)doRegisterHandlerWithBoolean:(BOOL)local
-                        withNSString:(NSString *)address
-    withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
-  BOOL registered = [super doRegisterHandlerWithBoolean:local withNSString:address withComGoodowRealtimeCoreHandler:handler];
-  if (local || !registered || (hook_ != nil && ![hook_ handlePreRegisterWithNSString:address withComGoodowRealtimeCoreHandler:handler])) {
+- (BOOL)doSubscribeWithBoolean:(BOOL)local
+                  withNSString:(NSString *)topic
+withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
+  BOOL subscribed = [super doSubscribeWithBoolean:local withNSString:topic withComGoodowRealtimeCoreHandler:handler];
+  if (local || !subscribed || (hook_ != nil && ![hook_ handlePreSubscribeWithNSString:topic withComGoodowRealtimeCoreHandler:handler])) {
     return NO;
   }
-  if ([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(handlerCount_)) hasWithNSString:address]) {
-    (void) [handlerCount_ setWithNSString:address withDouble:[handlerCount_ getNumberWithNSString:address] + 1];
+  if ([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(handlerCount_)) hasWithNSString:topic]) {
+    (void) [handlerCount_ setWithNSString:topic withDouble:[handlerCount_ getNumberWithNSString:topic] + 1];
     return NO;
   }
-  (void) [handlerCount_ setWithNSString:address withDouble:1];
-  [self sendRegisterWithNSString:address];
+  (void) [handlerCount_ setWithNSString:topic withDouble:1];
+  [self sendSubscribeWithNSString:topic];
   return YES;
 }
 
 - (void)doSendOrPubWithBoolean:(BOOL)local
                    withBoolean:(BOOL)send
-                  withNSString:(NSString *)address
+                  withNSString:(NSString *)topic
                         withId:(id)msg
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler {
-  [ComGoodowRealtimeChannelImplSimpleBus checkNotNullWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_ADDRESS_ withId:address];
+  [ComGoodowRealtimeChannelImplSimpleBus checkNotNullWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_ withId:topic];
   if (local) {
-    [super doSendOrPubWithBoolean:local withBoolean:send withNSString:address withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
+    [super doSendOrPubWithBoolean:local withBoolean:send withNSString:topic withId:msg withComGoodowRealtimeCoreHandler:replyHandler];
     return;
   }
   id<ComGoodowRealtimeJsonJsonObject> envelope = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([ComGoodowRealtimeJsonJson createObject])) setWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_TYPE_ withId:send ? @"send" : @"publish"];
-  (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(envelope)) setWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_ADDRESS_ withId:address])) setWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_BODY_ withId:msg];
+  (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(envelope)) setWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_ withId:topic])) setWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_BODY_ withId:msg];
   if (replyHandler != nil) {
-    NSString *replyAddress = [self makeUUID];
-    (void) [envelope setWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_REPLY_ADDRESS_ withId:replyAddress];
-    (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(replyHandlers_)) setWithNSString:replyAddress withId:replyHandler];
+    NSString *replyTopic = [self makeUUID];
+    (void) [envelope setWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_REPLY_TOPIC_ withId:replyTopic];
+    (void) [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(replyHandlers_)) setWithNSString:replyTopic withId:replyHandler];
   }
   [self sendWithComGoodowRealtimeJsonJsonObject:envelope];
 }
 
-- (BOOL)doUnregisterHandlerWithBoolean:(BOOL)local
-                          withNSString:(NSString *)address
-      withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
-  BOOL unregistered = [super doUnregisterHandlerWithBoolean:local withNSString:address withComGoodowRealtimeCoreHandler:handler];
-  if (local || !unregistered || (hook_ != nil && ![hook_ handleUnregisterWithNSString:address])) {
+- (BOOL)doUnsubscribeWithBoolean:(BOOL)local
+                    withNSString:(NSString *)topic
+withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
+  BOOL unsubscribed = [super doUnsubscribeWithBoolean:local withNSString:topic withComGoodowRealtimeCoreHandler:handler];
+  if (local || !unsubscribed || (hook_ != nil && ![hook_ handleUnsubscribeWithNSString:topic])) {
     return NO;
   }
-  (void) [handlerCount_ setWithNSString:address withDouble:[((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(handlerCount_)) getNumberWithNSString:address] - 1];
-  if ([handlerCount_ getNumberWithNSString:address] == 0) {
-    (void) [handlerCount_ removeWithNSString:address];
-    [self sendUnregisterWithNSString:address];
+  (void) [handlerCount_ setWithNSString:topic withDouble:[((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(handlerCount_)) getNumberWithNSString:topic] - 1];
+  if ([handlerCount_ getNumberWithNSString:topic] == 0) {
+    (void) [handlerCount_ removeWithNSString:topic];
+    [self sendUnsubscribeWithNSString:topic];
     return YES;
   }
   return NO;
@@ -147,14 +147,14 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
   [self sendWithComGoodowRealtimeJsonJsonObject:[((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([ComGoodowRealtimeJsonJson createObject])) setWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_TYPE_ withId:@"ping"]];
 }
 
-- (void)sendRegisterWithNSString:(NSString *)address {
-  NSAssert(address != nil, @"address shouldn't be null");
-  id<ComGoodowRealtimeJsonJsonObject> msg = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([ComGoodowRealtimeJsonJson createObject])) setWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_TYPE_ withId:@"register"])) setWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_ADDRESS_ withId:address];
+- (void)sendSubscribeWithNSString:(NSString *)topic {
+  NSAssert(topic != nil, @"topic shouldn't be null");
+  id<ComGoodowRealtimeJsonJsonObject> msg = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([ComGoodowRealtimeJsonJson createObject])) setWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_TYPE_ withId:@"register"])) setWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_ withId:topic];
   [self sendWithComGoodowRealtimeJsonJsonObject:msg];
 }
 
-- (void)sendUnregisterWithNSString:(NSString *)address {
-  id<ComGoodowRealtimeJsonJsonObject> msg = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([ComGoodowRealtimeJsonJson createObject])) setWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_TYPE_ withId:@"unregister"])) setWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_ADDRESS_ withId:address];
+- (void)sendUnsubscribeWithNSString:(NSString *)topic {
+  id<ComGoodowRealtimeJsonJsonObject> msg = [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([ComGoodowRealtimeJsonJson createObject])) setWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_TYPE_ withId:@"unregister"])) setWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_ withId:topic];
   [self sendWithComGoodowRealtimeJsonJsonObject:msg];
 }
 
@@ -164,8 +164,8 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
   other->password_ = password_;
   other->pingInterval_ = pingInterval_;
   other->pingTimerID_ = pingTimerID_;
+  other->serverUri_ = serverUri_;
   other->sessionId_ = sessionId_;
-  other->url_ = url_;
   other->username_ = username_;
   other->webSocket_ = webSocket_;
   other->webSocketHandler_ = webSocketHandler_;
@@ -178,27 +178,27 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
     { "getReadyState", NULL, "Lcom.goodow.realtime.channel.State;", 0x1, NULL },
     { "getSessionId", NULL, "Ljava.lang.String;", 0x1, NULL },
     { "doClose", NULL, "V", 0x4, NULL },
-    { "doRegisterHandlerWithBoolean:withNSString:withComGoodowRealtimeCoreHandler:", "doRegisterHandler", "Z", 0x4, NULL },
+    { "doSubscribeWithBoolean:withNSString:withComGoodowRealtimeCoreHandler:", "doSubscribe", "Z", 0x4, NULL },
     { "doSendOrPubWithBoolean:withBoolean:withNSString:withId:withComGoodowRealtimeCoreHandler:", "doSendOrPub", "V", 0x4, NULL },
-    { "doUnregisterHandlerWithBoolean:withNSString:withComGoodowRealtimeCoreHandler:", "doUnregisterHandler", "Z", 0x4, NULL },
+    { "doUnsubscribeWithBoolean:withNSString:withComGoodowRealtimeCoreHandler:", "doUnsubscribe", "Z", 0x4, NULL },
     { "sendWithComGoodowRealtimeJsonJsonObject:", "send", "V", 0x4, NULL },
     { "sendConnect", NULL, "V", 0x4, NULL },
     { "sendPing", NULL, "V", 0x4, NULL },
-    { "sendRegisterWithNSString:", "sendRegister", "V", 0x4, NULL },
-    { "sendUnregisterWithNSString:", "sendUnregister", "V", 0x4, NULL },
+    { "sendSubscribeWithNSString:", "sendSubscribe", "V", 0x4, NULL },
+    { "sendUnsubscribeWithNSString:", "sendUnsubscribe", "V", 0x4, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
     { "SESSION_", NULL, 0x19, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_SESSION_,  },
     { "USERNAME_", NULL, 0x19, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_USERNAME_,  },
     { "PASSWORD_", NULL, 0x19, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_PASSWORD_,  },
     { "PING_INTERVAL_", NULL, 0x19, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_PING_INTERVAL_,  },
-    { "ADDR_", NULL, 0x19, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_ADDR_,  },
+    { "TOPIC_CHANNEL_", NULL, 0x19, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_CHANNEL_,  },
     { "BODY_", NULL, 0x1c, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_BODY_,  },
-    { "ADDRESS_", NULL, 0x1c, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_ADDRESS_,  },
-    { "REPLY_ADDRESS_", NULL, 0x1c, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_REPLY_ADDRESS_,  },
+    { "TOPIC_", NULL, 0x1c, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_,  },
+    { "REPLY_TOPIC_", NULL, 0x1c, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_REPLY_TOPIC_,  },
     { "TYPE_", NULL, 0x1c, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_TYPE_,  },
     { "webSocketHandler_", NULL, 0x12, "Lcom.goodow.realtime.core.WebSocket$WebSocketHandler;", NULL,  },
-    { "url_", NULL, 0x0, "Ljava.lang.String;", NULL,  },
+    { "serverUri_", NULL, 0x0, "Ljava.lang.String;", NULL,  },
     { "webSocket_", NULL, 0x0, "Lcom.goodow.realtime.core.WebSocket;", NULL,  },
     { "pingInterval_", NULL, 0x2, "I", NULL,  },
     { "pingTimerID_", NULL, 0x2, "I", NULL,  },
@@ -229,7 +229,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
 
 - (void)onMessageWithNSString:(NSString *)msg {
   id<ComGoodowRealtimeJsonJsonObject> json = [ComGoodowRealtimeJsonJson parseWithNSString:msg];
-  ComGoodowRealtimeChannelImplMessageImpl *message = [[ComGoodowRealtimeChannelImplMessageImpl alloc] initWithBoolean:NO withBoolean:NO withComGoodowRealtimeChannelBus:this$0_ withNSString:[((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(json)) getStringWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_get_ADDRESS_()] withNSString:[json getStringWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_get_REPLY_ADDRESS_()] withId:[json getWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_get_BODY_()]];
+  ComGoodowRealtimeChannelImplMessageImpl *message = [[ComGoodowRealtimeChannelImplMessageImpl alloc] initWithBoolean:NO withBoolean:NO withComGoodowRealtimeChannelBus:this$0_ withNSString:[((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(json)) getStringWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_get_TOPIC_()] withNSString:[json getStringWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_get_REPLY_TOPIC_()] withId:[json getWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_get_BODY_()]];
   [this$0_ internalHandleReceiveMessageWithBoolean:NO withComGoodowRealtimeChannelMessage:message];
 }
 

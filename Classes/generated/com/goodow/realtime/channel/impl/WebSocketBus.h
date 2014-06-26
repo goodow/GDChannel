@@ -22,7 +22,7 @@
 @interface ComGoodowRealtimeChannelImplWebSocketBus : ComGoodowRealtimeChannelImplSimpleBus {
  @public
   id<ComGoodowRealtimeCoreWebSocket_WebSocketHandler> webSocketHandler_;
-  NSString *url_;
+  NSString *serverUri_;
   id<ComGoodowRealtimeCoreWebSocket> webSocket_;
   int pingInterval_;
   int pingTimerID_;
@@ -32,10 +32,10 @@
   id<ComGoodowRealtimeJsonJsonObject> handlerCount_;
 }
 
-- (id)initWithNSString:(NSString *)url
+- (id)initWithNSString:(NSString *)serverUri
 withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options;
 
-- (void)connectWithNSString:(NSString *)url
+- (void)connectWithNSString:(NSString *)serverUri
 withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options;
 
 - (ComGoodowRealtimeChannelStateEnum *)getReadyState;
@@ -44,19 +44,19 @@ withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options
 
 - (void)doClose;
 
-- (BOOL)doRegisterHandlerWithBoolean:(BOOL)local
-                        withNSString:(NSString *)address
-    withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+- (BOOL)doSubscribeWithBoolean:(BOOL)local
+                  withNSString:(NSString *)topic
+withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
 - (void)doSendOrPubWithBoolean:(BOOL)local
                    withBoolean:(BOOL)send
-                  withNSString:(NSString *)address
+                  withNSString:(NSString *)topic
                         withId:(id)msg
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
-- (BOOL)doUnregisterHandlerWithBoolean:(BOOL)local
-                          withNSString:(NSString *)address
-      withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+- (BOOL)doUnsubscribeWithBoolean:(BOOL)local
+                    withNSString:(NSString *)topic
+withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
 - (void)sendWithComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)msg;
 
@@ -64,9 +64,9 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
 - (void)sendPing;
 
-- (void)sendRegisterWithNSString:(NSString *)address;
+- (void)sendSubscribeWithNSString:(NSString *)topic;
 
-- (void)sendUnregisterWithNSString:(NSString *)address;
+- (void)sendUnsubscribeWithNSString:(NSString *)topic;
 
 - (void)copyAllFieldsTo:(ComGoodowRealtimeChannelImplWebSocketBus *)other;
 
@@ -75,7 +75,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 __attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplWebSocketBus_init() {}
 
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, webSocketHandler_, id<ComGoodowRealtimeCoreWebSocket_WebSocketHandler>)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, url_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, serverUri_, NSString *)
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, webSocket_, id<ComGoodowRealtimeCoreWebSocket>)
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, sessionId_, NSString *)
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplWebSocketBus, username_, NSString *)
@@ -94,17 +94,17 @@ J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, PASSWORD_, 
 FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_PING_INTERVAL_;
 J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, PING_INTERVAL_, NSString *)
 
-FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_ADDR_;
-J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, ADDR_, NSString *)
+FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_CHANNEL_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, TOPIC_CHANNEL_, NSString *)
 
 FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_BODY_;
 J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, BODY_, NSString *)
 
-FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_ADDRESS_;
-J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, ADDRESS_, NSString *)
+FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, TOPIC_, NSString *)
 
-FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_REPLY_ADDRESS_;
-J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, REPLY_ADDRESS_, NSString *)
+FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_REPLY_TOPIC_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, REPLY_TOPIC_, NSString *)
 
 FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_TYPE_;
 J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, TYPE_, NSString *)

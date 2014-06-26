@@ -18,8 +18,8 @@
  @public
   id body__;
   id<ComGoodowRealtimeChannelBus> bus_;
-  NSString *address__;
-  NSString *replyAddress__;
+  NSString *topic__;
+  NSString *replyTopic__;
   BOOL send_;
   BOOL local_;
 }
@@ -27,11 +27,11 @@
 - (id)initWithBoolean:(BOOL)local
           withBoolean:(BOOL)send
 withComGoodowRealtimeChannelBus:(id<ComGoodowRealtimeChannelBus>)bus
-         withNSString:(NSString *)address
-         withNSString:(NSString *)replyAddress
+         withNSString:(NSString *)topic
+         withNSString:(NSString *)replyTopic
                withId:(id)body;
 
-- (NSString *)address;
+- (NSString *)topic;
 
 - (id)body;
 
@@ -43,7 +43,7 @@ withComGoodowRealtimeChannelBus:(id<ComGoodowRealtimeChannelBus>)bus
 - (void)replyWithId:(id)msg
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
-- (NSString *)replyAddress;
+- (NSString *)replyTopic;
 
 - (NSString *)description;
 
@@ -58,7 +58,7 @@ __attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplMessageIm
 
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplMessageImpl, body__, id)
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplMessageImpl, bus_, id<ComGoodowRealtimeChannelBus>)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplMessageImpl, address__, NSString *)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplMessageImpl, replyAddress__, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplMessageImpl, topic__, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplMessageImpl, replyTopic__, NSString *)
 
 #endif // _ComGoodowRealtimeChannelImplMessageImpl_H_

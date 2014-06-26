@@ -30,7 +30,7 @@
   id<ComGoodowRealtimeJsonJsonObject> options_;
 }
 
-- (id)initWithNSString:(NSString *)url
+- (id)initWithNSString:(NSString *)serverUri
 withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options;
 
 - (void)reconnect;
@@ -80,7 +80,7 @@ J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReconnectBus_$1, this$0_, ComGoo
 }
 
 - (void)callWithInt:(int)index
-             withId:(NSString *)address;
+             withId:(NSString *)topic;
 
 - (id)initWithComGoodowRealtimeChannelImplReconnectBus_$1:(ComGoodowRealtimeChannelImplReconnectBus_$1 *)outer$;
 

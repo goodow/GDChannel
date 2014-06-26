@@ -26,9 +26,9 @@
 
 NSString * ComGoodowRealtimeChannelImplReconnectBus_AUTO_RECONNECT_ = @"reconnect";
 
-- (id)initWithNSString:(NSString *)url
+- (id)initWithNSString:(NSString *)serverUri
 withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options {
-  if (self = [super initWithNSString:url withComGoodowRealtimeJsonJsonObject:options]) {
+  if (self = [super initWithNSString:serverUri withComGoodowRealtimeJsonJsonObject:options]) {
     queuedMessages_ = [ComGoodowRealtimeJsonJson createArray];
     self->options_ = options;
     reconnect__ = options == nil || ![options hasWithNSString:ComGoodowRealtimeChannelImplReconnectBus_AUTO_RECONNECT_] ? YES : [options getBooleanWithNSString:ComGoodowRealtimeChannelImplReconnectBus_AUTO_RECONNECT_];
@@ -45,7 +45,7 @@ withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options
   if (webSocket_ != nil) {
     [webSocket_ close];
   }
-  [self connectWithNSString:url_ withComGoodowRealtimeJsonJsonObject:options_];
+  [self connectWithNSString:serverUri_ withComGoodowRealtimeJsonJsonObject:options_];
 }
 
 - (id<ComGoodowRealtimeChannelBus>)setHookWithComGoodowRealtimeChannelBusHook:(id<ComGoodowRealtimeChannelBusHook>)hook {
@@ -162,10 +162,10 @@ withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options
 @implementation ComGoodowRealtimeChannelImplReconnectBus_$1_$1
 
 - (void)callWithInt:(int)index
-             withId:(NSString *)address {
-  NSAssert([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->this$0_->handlerCount_)) getNumberWithNSString:address] > 0, [[NSString stringWithFormat:@"Handlers registried on %@ shouldn't be empty" J2OBJC_COMMA() address] description]);
-  [this$0_->this$0_ sendUnregisterWithNSString:address];
-  [this$0_->this$0_ sendRegisterWithNSString:address];
+             withId:(NSString *)topic {
+  NSAssert([((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(this$0_->this$0_->handlerCount_)) getNumberWithNSString:topic] > 0, [[NSString stringWithFormat:@"Handlers registried on %@ shouldn't be empty" J2OBJC_COMMA() topic] description]);
+  [this$0_->this$0_ sendUnsubscribeWithNSString:topic];
+  [this$0_->this$0_ sendSubscribeWithNSString:topic];
 }
 
 - (id)initWithComGoodowRealtimeChannelImplReconnectBus_$1:(ComGoodowRealtimeChannelImplReconnectBus_$1 *)outer$ {

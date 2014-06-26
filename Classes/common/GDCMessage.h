@@ -27,11 +27,6 @@
 @protocol GDCMessage
 
 /**
- * The address the message was sent to
- */
-- (NSString *)address;
-
-/**
  * The body of the message
  */
 - (id)body;
@@ -58,8 +53,13 @@
 - (void)reply:(id)msg replyHandler:(GDCMessageHandler)replyHandler;
 
 /**
- * The reply address (if any)
+ * The reply topic (if any)
  */
-- (NSString *)replyAddress;
+- (NSString *)replyTopic;
+
+/**
+* The topic the message was sent to
+*/
+- (NSString *)topic;
 
 @end

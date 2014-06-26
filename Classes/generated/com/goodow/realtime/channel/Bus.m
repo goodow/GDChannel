@@ -29,11 +29,11 @@ NSString * ComGoodowRealtimeChannelBus_ON_ERROR_ = @"@realtime/bus/onError";
     { "getSessionId", NULL, "Ljava.lang.String;", 0x401, NULL },
     { "publishWithNSString:withId:", "publish", "Lcom.goodow.realtime.channel.Bus;", 0x401, NULL },
     { "publishLocalWithNSString:withId:", "publishLocal", "Lcom.goodow.realtime.channel.Bus;", 0x401, NULL },
-    { "registerHandlerWithNSString:withComGoodowRealtimeCoreHandler:", "registerHandler", "Lcom.goodow.realtime.core.Registration;", 0x401, NULL },
-    { "registerLocalHandlerWithNSString:withComGoodowRealtimeCoreHandler:", "registerLocalHandler", "Lcom.goodow.realtime.core.Registration;", 0x401, NULL },
     { "sendWithNSString:withId:withComGoodowRealtimeCoreHandler:", "send", "Lcom.goodow.realtime.channel.Bus;", 0x401, NULL },
     { "sendLocalWithNSString:withId:withComGoodowRealtimeCoreHandler:", "sendLocal", "Lcom.goodow.realtime.channel.Bus;", 0x401, NULL },
     { "setHookWithComGoodowRealtimeChannelBusHook:", "setHook", "Lcom.goodow.realtime.channel.Bus;", 0x401, NULL },
+    { "subscribeWithNSString:withComGoodowRealtimeCoreHandler:", "subscribe", "Lcom.goodow.realtime.core.Registration;", 0x401, NULL },
+    { "subscribeLocalWithNSString:withComGoodowRealtimeCoreHandler:", "subscribeLocal", "Lcom.goodow.realtime.core.Registration;", 0x401, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
     { "ON_OPEN_", NULL, 0x19, "Ljava.lang.String;", &ComGoodowRealtimeChannelBus_ON_OPEN_,  },

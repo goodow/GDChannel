@@ -41,23 +41,23 @@
 
 - (NSString *)getSessionId;
 
-- (id<ComGoodowRealtimeChannelBus>)publishWithNSString:(NSString *)address
+- (id<ComGoodowRealtimeChannelBus>)publishWithNSString:(NSString *)topic
                                                 withId:(id)msg;
 
-- (id<ComGoodowRealtimeChannelBus>)publishLocalWithNSString:(NSString *)address
+- (id<ComGoodowRealtimeChannelBus>)publishLocalWithNSString:(NSString *)topic
                                                      withId:(id)msg;
 
-- (id<ComGoodowRealtimeCoreRegistration>)registerHandlerWithNSString:(NSString *)address
-                                    withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+- (id<ComGoodowRealtimeCoreRegistration>)subscribeWithNSString:(NSString *)topic
+                              withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
-- (id<ComGoodowRealtimeCoreRegistration>)registerLocalHandlerWithNSString:(NSString *)address
-                                         withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+- (id<ComGoodowRealtimeCoreRegistration>)subscribeLocalWithNSString:(NSString *)topic
+                                   withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
-- (id<ComGoodowRealtimeChannelBus>)sendWithNSString:(NSString *)address
+- (id<ComGoodowRealtimeChannelBus>)sendWithNSString:(NSString *)topic
                                              withId:(id)msg
                    withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
-- (id<ComGoodowRealtimeChannelBus>)sendLocalWithNSString:(NSString *)address
+- (id<ComGoodowRealtimeChannelBus>)sendLocalWithNSString:(NSString *)topic
                                                   withId:(id)msg
                         withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
@@ -65,19 +65,19 @@
 
 - (void)doClose;
 
-- (BOOL)doRegisterHandlerWithBoolean:(BOOL)local
-                        withNSString:(NSString *)address
-    withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+- (BOOL)doSubscribeWithBoolean:(BOOL)local
+                  withNSString:(NSString *)topic
+withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
 - (void)doSendOrPubWithBoolean:(BOOL)local
                    withBoolean:(BOOL)send
-                  withNSString:(NSString *)address
+                  withNSString:(NSString *)topic
                         withId:(id)msg
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
-- (BOOL)doUnregisterHandlerWithBoolean:(BOOL)local
-                          withNSString:(NSString *)address
-      withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+- (BOOL)doUnsubscribeWithBoolean:(BOOL)local
+                    withNSString:(NSString *)topic
+withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
 - (void)clearHandlers;
 
@@ -86,21 +86,21 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
 - (void)internalHandleSendOrPubWithBoolean:(BOOL)local
                                withBoolean:(BOOL)send
-                              withNSString:(NSString *)address
+                              withNSString:(NSString *)topic
                                     withId:(id)msg
           withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
 - (NSString *)makeUUID;
 
-- (void)scheduleHandleWithNSString:(NSString *)address
+- (void)scheduleHandleWithNSString:(NSString *)topic
                             withId:(id)handler
                             withId:(id)message;
 
 - (void)doReceiveMessageWithComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)message;
 
-- (id<ComGoodowRealtimeCoreRegistration>)registerHandlerImplWithBoolean:(BOOL)local
-                                                           withNSString:(NSString *)address
-                                       withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
+- (id<ComGoodowRealtimeCoreRegistration>)subscribeImplWithBoolean:(BOOL)local
+                                                     withNSString:(NSString *)topic
+                                 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
 - (void)copyAllFieldsTo:(ComGoodowRealtimeChannelImplSimpleBus *)other;
 
@@ -122,7 +122,7 @@ J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplSimpleBus, log_, JavaUtil
   ComGoodowRealtimeChannelImplSimpleBus *this$0_;
   id val$handler_;
   id val$message_;
-  NSString *val$address_;
+  NSString *val$topic_;
 }
 
 - (void)handleWithId:(id)ignore;
@@ -139,12 +139,12 @@ __attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplSimpleBus
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$1, this$0_, ComGoodowRealtimeChannelImplSimpleBus *)
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$1, val$handler_, id)
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$1, val$message_, id)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$1, val$address_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$1, val$topic_, NSString *)
 
 @interface ComGoodowRealtimeChannelImplSimpleBus_$2 : NSObject < ComGoodowRealtimeJsonJsonArray_ListIterator > {
  @public
   ComGoodowRealtimeChannelImplSimpleBus *this$0_;
-  NSString *val$address_;
+  NSString *val$topic_;
   id<ComGoodowRealtimeChannelMessage> val$message_;
 }
 
@@ -160,14 +160,14 @@ J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$1, val$address_, NSSt
 __attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplSimpleBus_$2_init() {}
 
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$2, this$0_, ComGoodowRealtimeChannelImplSimpleBus *)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$2, val$address_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$2, val$topic_, NSString *)
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$2, val$message_, id<ComGoodowRealtimeChannelMessage>)
 
 @interface ComGoodowRealtimeChannelImplSimpleBus_$3 : NSObject < ComGoodowRealtimeCoreRegistration > {
  @public
   ComGoodowRealtimeChannelImplSimpleBus *this$0_;
   BOOL val$local_;
-  NSString *val$address_;
+  NSString *val$topic_;
   id<ComGoodowRealtimeCoreHandler> val$handler_;
 }
 
@@ -183,7 +183,7 @@ J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$2, val$message_, id<C
 __attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplSimpleBus_$3_init() {}
 
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$3, this$0_, ComGoodowRealtimeChannelImplSimpleBus *)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$3, val$address_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$3, val$topic_, NSString *)
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$3, val$handler_, id<ComGoodowRealtimeCoreHandler>)
 
 #endif // _ComGoodowRealtimeChannelImplSimpleBus_H_

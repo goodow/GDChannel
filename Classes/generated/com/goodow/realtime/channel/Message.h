@@ -14,8 +14,6 @@
 
 @protocol ComGoodowRealtimeChannelMessage < NSObject, JavaObject >
 
-- (NSString *)address;
-
 - (id)body;
 
 - (void)failWithInt:(int)failureCode
@@ -26,7 +24,9 @@
 - (void)replyWithId:(id)msg
 withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler;
 
-- (NSString *)replyAddress;
+- (NSString *)replyTopic;
+
+- (NSString *)topic;
 
 @end
 

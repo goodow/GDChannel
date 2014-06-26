@@ -58,12 +58,12 @@
   return self;
 }
 
-- (id<GDCRegistration>)registerHandler:(NSString *)topic handler:(GDCMessageHandler)handler {
-  return (id<GDCRegistration>) [delegate_ registerHandlerWithNSString:topic withComGoodowRealtimeCoreHandler:handler];
+- (id<GDCRegistration>)subscribe:(NSString *)topic handler:(GDCMessageHandler)handler {
+  return (id<GDCRegistration>) [delegate_ subscribeWithNSString:topic withComGoodowRealtimeCoreHandler:handler];
 }
 
-- (id<GDCRegistration>)registerLocalHandler:(NSString *)topic handler:(GDCMessageHandler)handler {
-  return (id<GDCRegistration>) [delegate_ registerLocalHandlerWithNSString:topic withComGoodowRealtimeCoreHandler:handler];;
+- (id<GDCRegistration>)subscribeLocal:(NSString *)topic handler:(GDCMessageHandler)handler {
+  return (id<GDCRegistration>) [delegate_ subscribeLocalWithNSString:topic withComGoodowRealtimeCoreHandler:handler];;
 }
 
 - (id<GDCBus>)send:(NSString *)topic message:(id)msg replyHandler:(GDCMessageHandler)replyHandler {

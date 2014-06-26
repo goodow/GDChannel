@@ -38,23 +38,23 @@
 
 - (void)close;
 
-- (void)synchronizeSequenceNumberWithNSString:(NSString *)address
+- (void)synchronizeSequenceNumberWithNSString:(NSString *)topic
                                    withDouble:(double)initialSequenceNumber;
 
-- (void)catchupWithNSString:(NSString *)address
+- (void)catchupWithNSString:(NSString *)topic
                  withDouble:(double)currentSequence;
 
-- (double)getSequenceNumberWithNSString:(NSString *)address
+- (double)getSequenceNumberWithNSString:(NSString *)topic
                                  withId:(id)body;
 
-- (BOOL)needProcessWithNSString:(NSString *)address;
+- (BOOL)needProcessWithNSString:(NSString *)topic;
 
 - (BOOL)onReceiveMessageWithComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)message;
 
-- (void)initSequenceNumberWithNSString:(NSString *)address
+- (void)initSequenceNumberWithNSString:(NSString *)topic
                             withDouble:(double)initialSequenceNumber OBJC_METHOD_FAMILY_NONE;
 
-- (void)scheduleAcknowledgmentWithNSString:(NSString *)address;
+- (void)scheduleAcknowledgmentWithNSString:(NSString *)topic;
 
 - (void)copyAllFieldsTo:(ComGoodowRealtimeChannelImplReliableSubscribeBus *)other;
 
@@ -90,7 +90,7 @@ J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus, log
 
 - (BOOL)handleReceiveMessageWithComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)message;
 
-- (BOOL)handleUnregisterWithNSString:(NSString *)address;
+- (BOOL)handleUnsubscribeWithNSString:(NSString *)topic;
 
 - (id<ComGoodowRealtimeChannelBusHook>)delegate;
 
@@ -105,7 +105,7 @@ J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$1, this$0_
 @interface ComGoodowRealtimeChannelImplReliableSubscribeBus_$2 : NSObject < ComGoodowRealtimeCoreHandler > {
  @public
   ComGoodowRealtimeChannelImplReliableSubscribeBus *this$0_;
-  NSString *val$address_;
+  NSString *val$topic_;
 }
 
 - (void)handleWithId:(id<ComGoodowRealtimeChannelMessage>)message;
@@ -118,12 +118,12 @@ J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$1, this$0_
 __attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplReliableSubscribeBus_$2_init() {}
 
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$2, this$0_, ComGoodowRealtimeChannelImplReliableSubscribeBus *)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$2, val$address_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$2, val$topic_, NSString *)
 
 @interface ComGoodowRealtimeChannelImplReliableSubscribeBus_$2_$1 : NSObject < ComGoodowRealtimeJsonJsonArray_ListIterator > {
  @public
   ComGoodowRealtimeChannelImplReliableSubscribeBus_$2 *this$0_;
-  NSString *val$replyAddress_;
+  NSString *val$replyTopic_;
 }
 
 - (void)callWithInt:(int)index
@@ -137,12 +137,12 @@ J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$2, val$add
 __attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplReliableSubscribeBus_$2_$1_init() {}
 
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$2_$1, this$0_, ComGoodowRealtimeChannelImplReliableSubscribeBus_$2 *)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$2_$1, val$replyAddress_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$2_$1, val$replyTopic_, NSString *)
 
 @interface ComGoodowRealtimeChannelImplReliableSubscribeBus_$3 : NSObject < ComGoodowRealtimeCoreHandler > {
  @public
   ComGoodowRealtimeChannelImplReliableSubscribeBus *this$0_;
-  NSString *val$address_;
+  NSString *val$topic_;
 }
 
 - (void)handleWithId:(id)event;
@@ -155,6 +155,6 @@ J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$2_$1, val$
 __attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplReliableSubscribeBus_$3_init() {}
 
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$3, this$0_, ComGoodowRealtimeChannelImplReliableSubscribeBus *)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$3, val$address_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$3, val$topic_, NSString *)
 
 #endif // _ComGoodowRealtimeChannelImplReliableSubscribeBus_H_
