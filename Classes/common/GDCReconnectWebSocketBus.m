@@ -24,11 +24,18 @@
 #import "com/goodow/realtime/json/JsonObject.h"
 #import "GDJson.h"
 
-@implementation GDCReconnectWebSocketBus
+@implementation GDCReconnectWebSocketBus {
+  ComGoodowRealtimeChannelImplReconnectBus* delegate_;
+}
 
 -(id)initWithServerUri:(NSString *)serverUri options:(NSDictionary *)options {
-  self = [super initWithJavaBus:[[ComGoodowRealtimeChannelImplReconnectBus alloc] initWithNSString:serverUri withComGoodowRealtimeJsonJsonObject:options]];
+  delegate_ = [[ComGoodowRealtimeChannelImplReconnectBus alloc] initWithNSString:serverUri withComGoodowRealtimeJsonJsonObject:options];
+  self = [super initWithJavaBus:delegate_];
   return self;
+}
+
+-(void)reconnect {
+  [delegate_ reconnect];
 }
 
 @end

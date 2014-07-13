@@ -32,6 +32,11 @@
 - (id)body;
 
 /**
+ * Whether this message originated in the local session.
+ */
+- (BOOL)isLocal;
+
+/**
  * Signal that processing of this message failed. If the message was sent specifying a result handler
  * the handler will be called with a failure corresponding to the failure code and message specified here
  * @param failureCode A failure code to pass back to the sender

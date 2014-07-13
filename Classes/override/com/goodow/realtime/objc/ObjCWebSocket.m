@@ -49,7 +49,8 @@
 }
 
 -(ComGoodowRealtimeChannelStateEnum *)getReadyState {
-  return IOSObjectArray_Get(ComGoodowRealtimeChannelStateEnum_get_values__(), _webSocket.readyState);
+  return _webSocket == nil ? ComGoodowRealtimeChannelStateEnum_get_CLOSED() :
+  IOSObjectArray_Get(ComGoodowRealtimeChannelStateEnum_get_values__(), _webSocket.readyState);
 }
 
 - (void)sendWithNSString:(NSString *)data {
@@ -69,6 +70,8 @@
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
   NSLog(@":( Websocket Failed With Error %@", error);
   [_handler onErrorWithNSString:[error description]];
+  
+  [_handler onCloseWithComGoodowRealtimeJsonJsonObject:@{@"code":[NSNumber numberWithInteger:error.code], @"reason":[error description], @"wasClean":@NO}];
 
   _handler = nil;
   _webSocket.delegate = nil;

@@ -23,4 +23,6 @@
 
 @interface GDCReconnectWebSocketBus : GDCWebSocketBus <GDCBus>
 
+- (void)reconnect;
+
 @end
