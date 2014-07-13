@@ -14,7 +14,7 @@ PODS:
 DEPENDENCIES:
   - GDChannel (from `..`)
   - GDJson (from `https://github.com/goodow/GDJson.git`)
-  - J2ObjC (from `https://github.com/goodow/j2objc.git`, commit `32284814b6352a8d8458d1b866c59f830a2dce42`)
+  - J2ObjC (from `https://github.com/goodow/j2objc.git`, tag `v0.9.2-lib`)
 
 EXTERNAL SOURCES:
   GDChannel:
@@ -22,8 +22,8 @@ EXTERNAL SOURCES:
   GDJson:
     :git: https://github.com/goodow/GDJson.git
   J2ObjC:
-    :commit: 32284814b6352a8d8458d1b866c59f830a2dce42
     :git: https://github.com/goodow/j2objc.git
+    :tag: v0.9.2-lib
 
 SPEC CHECKSUMS:
   GDChannel: 28d5e401e33af26ce2791e1c4f4117772f278674

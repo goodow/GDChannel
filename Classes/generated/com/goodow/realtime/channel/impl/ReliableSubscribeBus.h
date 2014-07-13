@@ -13,6 +13,7 @@
 @protocol ComGoodowRealtimeChannelBus;
 @protocol ComGoodowRealtimeChannelBusHook;
 @protocol ComGoodowRealtimeChannelMessage;
+@protocol ComGoodowRealtimeJsonJsonArray;
 @protocol ComGoodowRealtimeJsonJsonObject;
 
 #import "JreEmulation.h"
@@ -55,6 +56,8 @@
                             withDouble:(double)initialSequenceNumber OBJC_METHOD_FAMILY_NONE;
 
 - (void)scheduleAcknowledgmentWithNSString:(NSString *)topic;
+
+- (void)scheduleMessagesWithComGoodowRealtimeJsonJsonArray:(id<ComGoodowRealtimeJsonJsonArray>)messages;
 
 - (void)copyAllFieldsTo:(ComGoodowRealtimeChannelImplReliableSubscribeBus *)other;
 
@@ -156,5 +159,39 @@ __attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplReliableS
 
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$3, this$0_, ComGoodowRealtimeChannelImplReliableSubscribeBus *)
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$3, val$topic_, NSString *)
+
+@interface ComGoodowRealtimeChannelImplReliableSubscribeBus_$4 : NSObject < ComGoodowRealtimeCoreHandler > {
+ @public
+  ComGoodowRealtimeChannelImplReliableSubscribeBus *this$0_;
+  id<ComGoodowRealtimeJsonJsonArray> val$messages_;
+}
+
+- (void)handleWithId:(id)event;
+
+- (id)initWithComGoodowRealtimeChannelImplReliableSubscribeBus:(ComGoodowRealtimeChannelImplReliableSubscribeBus *)outer$
+                            withComGoodowRealtimeJsonJsonArray:(id<ComGoodowRealtimeJsonJsonArray>)capture$0;
+
+@end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplReliableSubscribeBus_$4_init() {}
+
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$4, this$0_, ComGoodowRealtimeChannelImplReliableSubscribeBus *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$4, val$messages_, id<ComGoodowRealtimeJsonJsonArray>)
+
+@interface ComGoodowRealtimeChannelImplReliableSubscribeBus_$4_$1 : NSObject < ComGoodowRealtimeJsonJsonArray_ListIterator > {
+ @public
+  ComGoodowRealtimeChannelImplReliableSubscribeBus_$4 *this$0_;
+}
+
+- (void)callWithInt:(int)index
+             withId:(id<ComGoodowRealtimeChannelMessage>)message;
+
+- (id)initWithComGoodowRealtimeChannelImplReliableSubscribeBus_$4:(ComGoodowRealtimeChannelImplReliableSubscribeBus_$4 *)outer$;
+
+@end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplReliableSubscribeBus_$4_$1_init() {}
+
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplReliableSubscribeBus_$4_$1, this$0_, ComGoodowRealtimeChannelImplReliableSubscribeBus_$4 *)
 
 #endif // _ComGoodowRealtimeChannelImplReliableSubscribeBus_H_

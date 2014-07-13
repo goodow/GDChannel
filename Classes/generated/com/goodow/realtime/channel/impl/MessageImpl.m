@@ -41,6 +41,10 @@ withComGoodowRealtimeChannelBus:(id<ComGoodowRealtimeChannelBus>)bus
        withNSString:(NSString *)msg {
 }
 
+- (BOOL)isLocal {
+  return local_;
+}
+
 - (void)replyWithId:(id)msg {
   [self sendReplyWithId:msg withComGoodowRealtimeCoreHandler:nil];
 }
@@ -86,6 +90,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
     { "topic", NULL, "Ljava.lang.String;", 0x1, NULL },
     { "body", NULL, "TU;", 0x1, NULL },
     { "failWithInt:withNSString:", "fail", "V", 0x1, NULL },
+    { "isLocal", NULL, "Z", 0x1, NULL },
     { "replyWithId:", "reply", "V", 0x1, NULL },
     { "replyWithId:withComGoodowRealtimeCoreHandler:", "reply", "V", 0x1, NULL },
     { "replyTopic", NULL, "Ljava.lang.String;", 0x1, NULL },
@@ -100,7 +105,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler 
     { "send_", NULL, 0x4, "Z", NULL,  },
     { "local_", NULL, 0x4, "Z", NULL,  },
   };
-  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplMessageImpl = { "MessageImpl", "com.goodow.realtime.channel.impl", NULL, 0x0, 9, methods, 6, fields, 0, NULL};
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplMessageImpl = { "MessageImpl", "com.goodow.realtime.channel.impl", NULL, 0x0, 10, methods, 6, fields, 0, NULL};
   return &_ComGoodowRealtimeChannelImplMessageImpl;
 }
 

@@ -14,6 +14,7 @@
 @class JavaUtilLoggingLogger;
 @protocol ComGoodowRealtimeChannelBusHook;
 @protocol ComGoodowRealtimeChannelMessage;
+@protocol ComGoodowRealtimeJsonJsonArray;
 @protocol ComGoodowRealtimeJsonJsonObject;
 
 #import "JreEmulation.h"
@@ -81,8 +82,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
 - (void)clearHandlers;
 
-- (BOOL)internalHandleReceiveMessageWithBoolean:(BOOL)local
-            withComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)message;
+- (BOOL)internalHandleReceiveMessageWithComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)message;
 
 - (void)internalHandleSendOrPubWithBoolean:(BOOL)local
                                withBoolean:(BOOL)send
@@ -92,11 +92,15 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler;
 
 - (NSString *)makeUUID;
 
+- (void)doReceiveMessageWithComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)message;
+
+- (void)handleWithNSString:(NSString *)topic
+                    withId:(id)handler
+                    withId:(id)message;
+
 - (void)scheduleHandleWithNSString:(NSString *)topic
                             withId:(id)handler
-                            withId:(id)message;
-
-- (void)doReceiveMessageWithComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)message;
+withComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)message;
 
 - (id<ComGoodowRealtimeCoreRegistration>)subscribeImplWithBoolean:(BOOL)local
                                                      withNSString:(NSString *)topic
@@ -117,29 +121,21 @@ J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus, idGenerator_, ComGood
 FOUNDATION_EXPORT JavaUtilLoggingLogger *ComGoodowRealtimeChannelImplSimpleBus_log_;
 J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplSimpleBus, log_, JavaUtilLoggingLogger *)
 
-@interface ComGoodowRealtimeChannelImplSimpleBus_$1 : NSObject < ComGoodowRealtimeCoreHandler > {
+@interface ComGoodowRealtimeChannelImplSimpleBus_$1 : NSObject < ComGoodowRealtimeJsonJsonArray_ListIterator > {
  @public
-  ComGoodowRealtimeChannelImplSimpleBus *this$0_;
-  id val$handler_;
-  id val$message_;
-  NSString *val$topic_;
+  id<ComGoodowRealtimeJsonJsonArray> val$copy_;
 }
 
-- (void)handleWithId:(id)ignore;
+- (void)callWithInt:(int)index
+             withId:(id)value;
 
-- (id)initWithComGoodowRealtimeChannelImplSimpleBus:(ComGoodowRealtimeChannelImplSimpleBus *)outer$
-                                             withId:(id)capture$0
-                                             withId:(id)capture$1
-                                       withNSString:(NSString *)capture$2;
+- (id)initWithComGoodowRealtimeJsonJsonArray:(id<ComGoodowRealtimeJsonJsonArray>)capture$0;
 
 @end
 
 __attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplSimpleBus_$1_init() {}
 
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$1, this$0_, ComGoodowRealtimeChannelImplSimpleBus *)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$1, val$handler_, id)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$1, val$message_, id)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$1, val$topic_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$1, val$copy_, id<ComGoodowRealtimeJsonJsonArray>)
 
 @interface ComGoodowRealtimeChannelImplSimpleBus_$2 : NSObject < ComGoodowRealtimeJsonJsonArray_ListIterator > {
  @public
@@ -163,7 +159,31 @@ J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$2, this$0_, ComGoodow
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$2, val$topic_, NSString *)
 J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$2, val$message_, id<ComGoodowRealtimeChannelMessage>)
 
-@interface ComGoodowRealtimeChannelImplSimpleBus_$3 : NSObject < ComGoodowRealtimeCoreRegistration > {
+@interface ComGoodowRealtimeChannelImplSimpleBus_$3 : NSObject < ComGoodowRealtimeCoreHandler > {
+ @public
+  ComGoodowRealtimeChannelImplSimpleBus *this$0_;
+  NSString *val$topic_;
+  id val$handler_;
+  id<ComGoodowRealtimeChannelMessage> val$message_;
+}
+
+- (void)handleWithId:(id)ignore;
+
+- (id)initWithComGoodowRealtimeChannelImplSimpleBus:(ComGoodowRealtimeChannelImplSimpleBus *)outer$
+                                       withNSString:(NSString *)capture$0
+                                             withId:(id)capture$1
+                withComGoodowRealtimeChannelMessage:(id<ComGoodowRealtimeChannelMessage>)capture$2;
+
+@end
+
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplSimpleBus_$3_init() {}
+
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$3, this$0_, ComGoodowRealtimeChannelImplSimpleBus *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$3, val$topic_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$3, val$handler_, id)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$3, val$message_, id<ComGoodowRealtimeChannelMessage>)
+
+@interface ComGoodowRealtimeChannelImplSimpleBus_$4 : NSObject < ComGoodowRealtimeCoreRegistration > {
  @public
   ComGoodowRealtimeChannelImplSimpleBus *this$0_;
   BOOL val$local_;
@@ -180,10 +200,10 @@ J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$2, val$message_, id<C
 
 @end
 
-__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplSimpleBus_$3_init() {}
+__attribute__((always_inline)) inline void ComGoodowRealtimeChannelImplSimpleBus_$4_init() {}
 
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$3, this$0_, ComGoodowRealtimeChannelImplSimpleBus *)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$3, val$topic_, NSString *)
-J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$3, val$handler_, id<ComGoodowRealtimeCoreHandler>)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$4, this$0_, ComGoodowRealtimeChannelImplSimpleBus *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$4, val$topic_, NSString *)
+J2OBJC_FIELD_SETTER(ComGoodowRealtimeChannelImplSimpleBus_$4, val$handler_, id<ComGoodowRealtimeCoreHandler>)
 
 #endif // _ComGoodowRealtimeChannelImplSimpleBus_H_

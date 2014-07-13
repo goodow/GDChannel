@@ -110,8 +110,9 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
   }
   NSAssert(sequence == currentSequence + 1, @"other cases should have been caught");
   NSString *next;
+  id<ComGoodowRealtimeJsonJsonArray> messages = [ComGoodowRealtimeJsonJson createArray];
   while (YES) {
-    (void) [((id<ComGoodowRealtimeChannelBus>) nil_chk(delegate_)) publishLocalWithNSString:[message topic] withId:[message body]];
+    (void) [((id<ComGoodowRealtimeJsonJsonArray>) nil_chk(messages)) pushWithId:message];
     (void) [currentSequences_ setWithNSString:topic withDouble:++currentSequence];
     next = [NSString stringWithFormat:@"%f", currentSequence + 1];
     message = [pending getWithNSString:next];
@@ -122,7 +123,8 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
       break;
     }
   }
-  NSAssert(![pending hasWithNSString:next], @"/Users/retechretech/dev/workspace/realtime/realtime-channel/src/main/java/com/goodow/realtime/channel/impl/ReliableSubscribeBus.java:193 condition failed: assert !pending.has(next);");
+  [self scheduleMessagesWithComGoodowRealtimeJsonJsonArray:messages];
+  NSAssert(![pending hasWithNSString:next], @"/Users/retechretech/dev/workspace/realtime/realtime-channel/src/main/java/com/goodow/realtime/channel/impl/ReliableSubscribeBus.java:195 condition failed: assert !pending.has(next);");
   return NO;
 }
 
@@ -138,6 +140,10 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
     (void) [acknowledgeScheduled_ setWithNSString:topic withBoolean:YES];
     [((id<ComGoodowRealtimeCoreScheduler>) nil_chk([ComGoodowRealtimeCorePlatform scheduler])) scheduleDelayWithInt:acknowledgeDelayMillis_ withComGoodowRealtimeCoreHandler:[[ComGoodowRealtimeChannelImplReliableSubscribeBus_$3 alloc] initWithComGoodowRealtimeChannelImplReliableSubscribeBus:self withNSString:topic]];
   }
+}
+
+- (void)scheduleMessagesWithComGoodowRealtimeJsonJsonArray:(id<ComGoodowRealtimeJsonJsonArray>)messages {
+  [((id<ComGoodowRealtimeCoreScheduler>) nil_chk([ComGoodowRealtimeCorePlatform scheduler])) scheduleDeferredWithComGoodowRealtimeCoreHandler:[[ComGoodowRealtimeChannelImplReliableSubscribeBus_$4 alloc] initWithComGoodowRealtimeChannelImplReliableSubscribeBus:self withComGoodowRealtimeJsonJsonArray:messages]];
 }
 
 + (void)initialize {
@@ -170,6 +176,7 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
     { "onReceiveMessageWithComGoodowRealtimeChannelMessage:", "onReceiveMessage", "Z", 0x4, NULL },
     { "initSequenceNumberWithNSString:withDouble:", "initSequenceNumber", "V", 0x2, NULL },
     { "scheduleAcknowledgmentWithNSString:", "scheduleAcknowledgment", "V", 0x2, NULL },
+    { "scheduleMessagesWithComGoodowRealtimeJsonJsonArray:", "scheduleMessages", "V", 0x2, NULL },
   };
   static J2ObjcFieldInfo fields[] = {
     { "SEQUENCE_NUMBER_", NULL, 0x19, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplReliableSubscribeBus_SEQUENCE_NUMBER_,  },
@@ -185,7 +192,7 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
     { "acknowledgeScheduled_", NULL, 0x12, "Lcom.goodow.realtime.json.JsonObject;", NULL,  },
     { "acknowledgeNumbers_", NULL, 0x12, "Lcom.goodow.realtime.json.JsonObject;", NULL,  },
   };
-  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplReliableSubscribeBus = { "ReliableSubscribeBus", "com.goodow.realtime.channel.impl", NULL, 0x1, 9, methods, 12, fields, 0, NULL};
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplReliableSubscribeBus = { "ReliableSubscribeBus", "com.goodow.realtime.channel.impl", NULL, 0x1, 10, methods, 12, fields, 0, NULL};
   return &_ComGoodowRealtimeChannelImplReliableSubscribeBus;
 }
 
@@ -330,6 +337,60 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
   };
   static J2ObjcClassInfo _ComGoodowRealtimeChannelImplReliableSubscribeBus_$3 = { "$3", "com.goodow.realtime.channel.impl", "ReliableSubscribeBus", 0x8000, 2, methods, 2, fields, 0, NULL};
   return &_ComGoodowRealtimeChannelImplReliableSubscribeBus_$3;
+}
+
+@end
+
+@implementation ComGoodowRealtimeChannelImplReliableSubscribeBus_$4
+
+- (void)handleWithId:(id)event {
+  [((id<ComGoodowRealtimeJsonJsonArray>) nil_chk(val$messages_)) forEachWithComGoodowRealtimeJsonJsonArray_ListIterator:[[ComGoodowRealtimeChannelImplReliableSubscribeBus_$4_$1 alloc] initWithComGoodowRealtimeChannelImplReliableSubscribeBus_$4:self]];
+}
+
+- (id)initWithComGoodowRealtimeChannelImplReliableSubscribeBus:(ComGoodowRealtimeChannelImplReliableSubscribeBus *)outer$
+                            withComGoodowRealtimeJsonJsonArray:(id<ComGoodowRealtimeJsonJsonArray>)capture$0 {
+  this$0_ = outer$;
+  val$messages_ = capture$0;
+  return [super init];
+}
+
++ (J2ObjcClassInfo *)__metadata {
+  static J2ObjcMethodInfo methods[] = {
+    { "handleWithJavaLangVoid:", "handle", "V", 0x1, NULL },
+    { "initWithComGoodowRealtimeChannelImplReliableSubscribeBus:withComGoodowRealtimeJsonJsonArray:", "init", NULL, 0x0, NULL },
+  };
+  static J2ObjcFieldInfo fields[] = {
+    { "this$0_", NULL, 0x1012, "Lcom.goodow.realtime.channel.impl.ReliableSubscribeBus;", NULL,  },
+    { "val$messages_", NULL, 0x1012, "Lcom.goodow.realtime.json.JsonArray;", NULL,  },
+  };
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplReliableSubscribeBus_$4 = { "$4", "com.goodow.realtime.channel.impl", "ReliableSubscribeBus", 0x8000, 2, methods, 2, fields, 0, NULL};
+  return &_ComGoodowRealtimeChannelImplReliableSubscribeBus_$4;
+}
+
+@end
+
+@implementation ComGoodowRealtimeChannelImplReliableSubscribeBus_$4_$1
+
+- (void)callWithInt:(int)index
+             withId:(id<ComGoodowRealtimeChannelMessage>)message {
+  (void) [((id<ComGoodowRealtimeChannelBus>) nil_chk(this$0_->this$0_->delegate_)) publishLocalWithNSString:[((id<ComGoodowRealtimeChannelMessage>) nil_chk(message)) topic] withId:[message body]];
+}
+
+- (id)initWithComGoodowRealtimeChannelImplReliableSubscribeBus_$4:(ComGoodowRealtimeChannelImplReliableSubscribeBus_$4 *)outer$ {
+  this$0_ = outer$;
+  return [super init];
+}
+
++ (J2ObjcClassInfo *)__metadata {
+  static J2ObjcMethodInfo methods[] = {
+    { "callWithInt:withComGoodowRealtimeChannelMessage:", "call", "V", 0x1, NULL },
+    { "initWithComGoodowRealtimeChannelImplReliableSubscribeBus_$4:", "init", NULL, 0x0, NULL },
+  };
+  static J2ObjcFieldInfo fields[] = {
+    { "this$0_", NULL, 0x1012, "Lcom.goodow.realtime.channel.impl.ReliableSubscribeBus$4;", NULL,  },
+  };
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplReliableSubscribeBus_$4_$1 = { "$1", "com.goodow.realtime.channel.impl", "ReliableSubscribeBus$$4", 0x8000, 2, methods, 1, fields, 0, NULL};
+  return &_ComGoodowRealtimeChannelImplReliableSubscribeBus_$4_$1;
 }
 
 @end

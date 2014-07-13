@@ -20,12 +20,13 @@
   static J2ObjcMethodInfo methods[] = {
     { "body", NULL, "TT;", 0x401, NULL },
     { "failWithInt:withNSString:", "fail", "V", 0x401, NULL },
+    { "isLocal", NULL, "Z", 0x401, NULL },
     { "replyWithId:", "reply", "V", 0x401, NULL },
     { "replyWithId:withComGoodowRealtimeCoreHandler:", "reply", "V", 0x401, NULL },
     { "replyTopic", NULL, "Ljava.lang.String;", 0x401, NULL },
     { "topic", NULL, "Ljava.lang.String;", 0x401, NULL },
   };
-  static J2ObjcClassInfo _ComGoodowRealtimeChannelMessage = { "Message", "com.goodow.realtime.channel", NULL, 0x201, 6, methods, 0, NULL, 0, NULL};
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelMessage = { "Message", "com.goodow.realtime.channel", NULL, 0x201, 7, methods, 0, NULL, 0, NULL};
   return &_ComGoodowRealtimeChannelMessage;
 }
 

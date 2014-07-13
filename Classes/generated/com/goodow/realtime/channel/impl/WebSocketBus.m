@@ -69,8 +69,8 @@ withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options
 }
 
 - (void)doClose {
-  [((id<ComGoodowRealtimeCoreWebSocket>) nil_chk(webSocket_)) close];
   (void) [self subscribeLocalWithNSString:ComGoodowRealtimeChannelBus_get_ON_CLOSE_() withComGoodowRealtimeCoreHandler:[[ComGoodowRealtimeChannelImplWebSocketBus_$2 alloc] initWithComGoodowRealtimeChannelImplWebSocketBus:self]];
+  [((id<ComGoodowRealtimeCoreWebSocket>) nil_chk(webSocket_)) close];
 }
 
 - (BOOL)doSubscribeWithBoolean:(BOOL)local
@@ -230,7 +230,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
 - (void)onMessageWithNSString:(NSString *)msg {
   id<ComGoodowRealtimeJsonJsonObject> json = [ComGoodowRealtimeJsonJson parseWithNSString:msg];
   ComGoodowRealtimeChannelImplMessageImpl *message = [[ComGoodowRealtimeChannelImplMessageImpl alloc] initWithBoolean:NO withBoolean:NO withComGoodowRealtimeChannelBus:this$0_ withNSString:[((id<ComGoodowRealtimeJsonJsonObject>) nil_chk(json)) getStringWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_get_TOPIC_()] withNSString:[json getStringWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_get_REPLY_TOPIC_()] withId:[json getWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_get_BODY_()]];
-  [this$0_ internalHandleReceiveMessageWithBoolean:NO withComGoodowRealtimeChannelMessage:message];
+  [this$0_ internalHandleReceiveMessageWithComGoodowRealtimeChannelMessage:message];
 }
 
 - (void)onOpen {
