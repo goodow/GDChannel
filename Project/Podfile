@@ -2,7 +2,7 @@ platform :osx, '10.8'
 link_with 'GDChannel', 'GDChannelTests'
 
 # pod 'J2ObjC', :path => '~/dev/tools/lib/j2objc/J2ObjC.podspec'
-pod 'J2ObjC', :git => 'https://github.com/goodow/j2objc.git', :tag => 'v0.9.2-lib'
+pod 'J2ObjC', :git => 'https://github.com/goodow/j2objc.git', :tag => 'v0.9.3-lib'
 pod 'GDJson', :git => 'https://github.com/goodow/GDJson.git'
 
 pod 'GDChannel', :path => '..'

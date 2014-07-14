@@ -10,12 +10,7 @@ Visit [Google groups](https://groups.google.com/forum/#!forum/goodow-realtime) f
 
 [CocoaPods](http://cocoapods.org) is the recommended way to add GDChannel to your project.
 
-1. Add these pods to your Podfile:
-```ruby
-pod 'J2ObjC', :git => 'https://github.com/goodow/j2objc.git', :tag => 'v0.9.2-lib'
-pod 'GDJson', :git => 'https://github.com/goodow/GDJson.git'
-pod 'GDChannel', :git => 'https://github.com/goodow/GDChannel.git'
-```
+1. Add a pod entry for GDChannel to your Podfile `pod 'GDChannel', '~> 0.5'`
 2. Install the pod(s) by running `pod install`.
 3. Include GDChannel wherever you need it with `#import "GDChannel.h"`.
 

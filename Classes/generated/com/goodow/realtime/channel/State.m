@@ -62,8 +62,15 @@ IOSObjectArray * ComGoodowRealtimeChannelStateEnum_values__;
   static J2ObjcMethodInfo methods[] = {
     { "init", NULL, NULL, 0x1, NULL },
   };
+  static J2ObjcFieldInfo fields[] = {
+    { "CONNECTING", "CONNECTING", 0x4019, "Lcom.goodow.realtime.channel.State;", &ComGoodowRealtimeChannelStateEnum_CONNECTING,  },
+    { "OPEN", "OPEN", 0x4019, "Lcom.goodow.realtime.channel.State;", &ComGoodowRealtimeChannelStateEnum_OPEN,  },
+    { "CLOSING", "CLOSING", 0x4019, "Lcom.goodow.realtime.channel.State;", &ComGoodowRealtimeChannelStateEnum_CLOSING,  },
+    { "CLOSED", "CLOSED", 0x4019, "Lcom.goodow.realtime.channel.State;", &ComGoodowRealtimeChannelStateEnum_CLOSED,  },
+    { "values__", "values", 0x19, "[Lcom.goodow.realtime.channel.State;", &ComGoodowRealtimeChannelStateEnum_values__,  },
+  };
   static const char *superclass_type_args[] = {"Lcom.goodow.realtime.channel.State;"};
-  static J2ObjcClassInfo _ComGoodowRealtimeChannelStateEnum = { "State", "com.goodow.realtime.channel", NULL, 0x4011, 1, methods, 0, NULL, 1, superclass_type_args};
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelStateEnum = { "State", "com.goodow.realtime.channel", NULL, 0x4011, 1, methods, 5, fields, 1, superclass_type_args};
   return &_ComGoodowRealtimeChannelStateEnum;
 }
 

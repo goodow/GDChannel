@@ -35,7 +35,7 @@ JavaUtilLoggingLogger * ComGoodowRealtimeChannelImplReliableSubscribeBus_log_;
   if (self = [super initWithComGoodowRealtimeChannelBus:delegate]) {
     sequenceNumberKey_ = options == nil || ![options hasWithNSString:ComGoodowRealtimeChannelImplReliableSubscribeBus_SEQUENCE_NUMBER_] ? @"v" : [options getStringWithNSString:ComGoodowRealtimeChannelImplReliableSubscribeBus_SEQUENCE_NUMBER_];
     publishChannel_ = options == nil || ![options hasWithNSString:ComGoodowRealtimeChannelImplReliableSubscribeBus_PUBLISH_CHANNEL_] ? @"realtime/store" : [options getStringWithNSString:ComGoodowRealtimeChannelImplReliableSubscribeBus_PUBLISH_CHANNEL_];
-    acknowledgeDelayMillis_ = options == nil || ![options hasWithNSString:ComGoodowRealtimeChannelImplReliableSubscribeBus_ACKNOWLEDGE_DELAY_MILLIS_] ? 3 * 1000 : (int) [options getNumberWithNSString:ComGoodowRealtimeChannelImplReliableSubscribeBus_ACKNOWLEDGE_DELAY_MILLIS_];
+    acknowledgeDelayMillis_ = options == nil || ![options hasWithNSString:ComGoodowRealtimeChannelImplReliableSubscribeBus_ACKNOWLEDGE_DELAY_MILLIS_] ? 3 * 1000 : J2ObjCFpToInt([options getNumberWithNSString:ComGoodowRealtimeChannelImplReliableSubscribeBus_ACKNOWLEDGE_DELAY_MILLIS_]);
     pendings_ = [ComGoodowRealtimeJsonJson createObject];
     currentSequences_ = [ComGoodowRealtimeJsonJson createObject];
     knownHeadSequences_ = [ComGoodowRealtimeJsonJson createObject];

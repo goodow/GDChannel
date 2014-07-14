@@ -38,7 +38,7 @@
     nextBackOffTime_ = JavaLangInteger_MAX_VALUE;
   }
   backOffTime_ = ret;
-  int randomizeTime = (int) (backOffTime_ * (1.0 + ([JavaLangMath random] * randomizationFactor_)));
+  int randomizeTime = J2ObjCFpToInt((backOffTime_ * (1.0 + ([JavaLangMath random] * randomizationFactor_))));
   int minAllowedTime = (int) [JavaLangMath roundWithDouble:randomizeTime - backOffTime_ * randomizationFactor_];
   return [[ComGoodowRealtimeChannelUtilFuzzingBackOffGenerator_BackOffParameters alloc] initWithInt:randomizeTime withInt:minAllowedTime];
 }

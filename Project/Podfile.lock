@@ -6,15 +6,15 @@ PODS:
   - GDJson (0.5.5):
     - J2ObjC (~> 0.8)
   - Google-Diff-Match-Patch (0.0.1)
-  - J2ObjC (0.9.2):
+  - J2ObjC (0.9.3):
     - J2ObjC/lib/jre
-  - J2ObjC/lib/jre (0.9.2)
+  - J2ObjC/lib/jre (0.9.3)
   - SocketRocket (0.3.1-beta2)
 
 DEPENDENCIES:
   - GDChannel (from `..`)
   - GDJson (from `https://github.com/goodow/GDJson.git`)
-  - J2ObjC (from `https://github.com/goodow/j2objc.git`, tag `v0.9.2-lib`)
+  - J2ObjC (from `https://github.com/goodow/j2objc.git`, tag `v0.9.3-lib`)
 
 EXTERNAL SOURCES:
   GDChannel:
@@ -23,13 +23,13 @@ EXTERNAL SOURCES:
     :git: https://github.com/goodow/GDJson.git
   J2ObjC:
     :git: https://github.com/goodow/j2objc.git
-    :tag: v0.9.2-lib
+    :tag: v0.9.3-lib
 
 SPEC CHECKSUMS:
-  GDChannel: 28d5e401e33af26ce2791e1c4f4117772f278674
+  GDChannel: fa3a474ec8ffe1b0e4139283edc9196fb23ada02
   GDJson: 425eaa6e2f2df52486ea4e5dcaef8d54061f7eb8
   Google-Diff-Match-Patch: 1f9c0b972c351d9c0a4fee137eb96896460477cd
-  J2ObjC: 1a0ecde2fe9f624d076ef2aea16723ef2094e7fc
+  J2ObjC: db552552f1694fddaa717ce1284191b9a4c1f193
   SocketRocket: 79a68ae186063c65e1fe6f638b1ae2927aa5f304
 
 COCOAPODS: 0.33.1

@@ -80,8 +80,13 @@ ComGoodowRealtimeChannelReplyFailureEnum *ComGoodowRealtimeChannelReplyFailureEn
     { "toInt", NULL, "I", 0x1, NULL },
     { "init", NULL, NULL, 0x1, NULL },
   };
+  static J2ObjcFieldInfo fields[] = {
+    { "TIMEOUT", "TIMEOUT", 0x4019, "Lcom.goodow.realtime.channel.ReplyFailure;", &ComGoodowRealtimeChannelReplyFailureEnum_TIMEOUT,  },
+    { "NO_HANDLERS", "NO_HANDLERS", 0x4019, "Lcom.goodow.realtime.channel.ReplyFailure;", &ComGoodowRealtimeChannelReplyFailureEnum_NO_HANDLERS,  },
+    { "RECIPIENT_FAILURE", "RECIPIENT_FAILURE", 0x4019, "Lcom.goodow.realtime.channel.ReplyFailure;", &ComGoodowRealtimeChannelReplyFailureEnum_RECIPIENT_FAILURE,  },
+  };
   static const char *superclass_type_args[] = {"Lcom.goodow.realtime.channel.ReplyFailure;"};
-  static J2ObjcClassInfo _ComGoodowRealtimeChannelReplyFailureEnum = { "ReplyFailure", "com.goodow.realtime.channel", NULL, 0x4011, 3, methods, 0, NULL, 1, superclass_type_args};
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelReplyFailureEnum = { "ReplyFailure", "com.goodow.realtime.channel", NULL, 0x4011, 3, methods, 3, fields, 1, superclass_type_args};
   return &_ComGoodowRealtimeChannelReplyFailureEnum;
 }
 

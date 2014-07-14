@@ -111,8 +111,17 @@ ComGoodowRealtimeCorePlatform_TypeEnum *ComGoodowRealtimeCorePlatform_TypeEnum_v
   static J2ObjcMethodInfo methods[] = {
     { "init", NULL, NULL, 0x1, NULL },
   };
+  static J2ObjcFieldInfo fields[] = {
+    { "JAVA", "JAVA", 0x4019, "Lcom.goodow.realtime.core.Platform$Type;", &ComGoodowRealtimeCorePlatform_TypeEnum_JAVA,  },
+    { "HTML", "HTML", 0x4019, "Lcom.goodow.realtime.core.Platform$Type;", &ComGoodowRealtimeCorePlatform_TypeEnum_HTML,  },
+    { "ANDROID", "ANDROID", 0x4019, "Lcom.goodow.realtime.core.Platform$Type;", &ComGoodowRealtimeCorePlatform_TypeEnum_ANDROID,  },
+    { "IOS", "IOS", 0x4019, "Lcom.goodow.realtime.core.Platform$Type;", &ComGoodowRealtimeCorePlatform_TypeEnum_IOS,  },
+    { "FLASH", "FLASH", 0x4019, "Lcom.goodow.realtime.core.Platform$Type;", &ComGoodowRealtimeCorePlatform_TypeEnum_FLASH,  },
+    { "STUB", "STUB", 0x4019, "Lcom.goodow.realtime.core.Platform$Type;", &ComGoodowRealtimeCorePlatform_TypeEnum_STUB,  },
+    { "VERTX", "VERTX", 0x4019, "Lcom.goodow.realtime.core.Platform$Type;", &ComGoodowRealtimeCorePlatform_TypeEnum_VERTX,  },
+  };
   static const char *superclass_type_args[] = {"Lcom.goodow.realtime.core.Platform$Type;"};
-  static J2ObjcClassInfo _ComGoodowRealtimeCorePlatform_TypeEnum = { "Type", "com.goodow.realtime.core", "Platform", 0x4019, 1, methods, 0, NULL, 1, superclass_type_args};
+  static J2ObjcClassInfo _ComGoodowRealtimeCorePlatform_TypeEnum = { "Type", "com.goodow.realtime.core", "Platform", 0x4019, 1, methods, 7, fields, 1, superclass_type_args};
   return &_ComGoodowRealtimeCorePlatform_TypeEnum;
 }
 

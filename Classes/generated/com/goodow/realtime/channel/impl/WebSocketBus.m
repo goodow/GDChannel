@@ -52,7 +52,7 @@ withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options
 - (void)connectWithNSString:(NSString *)serverUri
 withComGoodowRealtimeJsonJsonObject:(id<ComGoodowRealtimeJsonJsonObject>)options {
   self->serverUri_ = serverUri;
-  pingInterval_ = options == nil || ![options hasWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_PING_INTERVAL_] ? 5 * 1000 : (int) [options getNumberWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_PING_INTERVAL_];
+  pingInterval_ = options == nil || ![options hasWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_PING_INTERVAL_] ? 5 * 1000 : J2ObjCFpToInt([options getNumberWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_PING_INTERVAL_]);
   sessionId_ = options == nil || ![options hasWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_SESSION_] ? [((ComGoodowRealtimeChannelUtilIdGenerator *) nil_chk(idGenerator_)) nextWithInt:23] : [options getStringWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_SESSION_];
   username_ = options == nil || ![options hasWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_USERNAME_] ? nil : [options getStringWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_USERNAME_];
   password_ = options == nil || ![options hasWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_PASSWORD_] ? nil : [options getStringWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_PASSWORD_];

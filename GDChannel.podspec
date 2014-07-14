@@ -7,6 +7,8 @@ Pod::Spec.new do |s|
   s.author       = { "Larry Tin" => "dev@goodow.com" }
   s.source       = { :git => "https://github.com/goodow/GDChannel.git", :tag => "v#{s.version}" }
 
+  s.ios.deployment_target = '5.0'
+  s.osx.deployment_target = '10.7'
   s.requires_arc = true
   # Top level attributes can't be specified by subspecs.
   s.header_mappings_dir = 'Classes/generated'
