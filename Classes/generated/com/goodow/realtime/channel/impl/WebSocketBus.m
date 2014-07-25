@@ -33,6 +33,7 @@ NSString * ComGoodowRealtimeChannelImplWebSocketBus_USERNAME_ = @"username";
 NSString * ComGoodowRealtimeChannelImplWebSocketBus_PASSWORD_ = @"password";
 NSString * ComGoodowRealtimeChannelImplWebSocketBus_PING_INTERVAL_ = @"vertxbus_ping_interval";
 NSString * ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_CHANNEL_ = @"realtime/channel";
+NSString * ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_CONNECT_ = @"realtime/channel/_CONNECT";
 NSString * ComGoodowRealtimeChannelImplWebSocketBus_BODY_ = @"body";
 NSString * ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_ = @"address";
 NSString * ComGoodowRealtimeChannelImplWebSocketBus_REPLY_TOPIC_ = @"replyAddress";
@@ -140,7 +141,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
       (void) [msg setWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_PASSWORD_ withId:password_];
     }
   }
-  (void) [self sendWithNSString:@"realtime/channel/_CONNECT" withId:msg withComGoodowRealtimeCoreHandler:[[ComGoodowRealtimeChannelImplWebSocketBus_$3 alloc] init]];
+  (void) [self sendWithNSString:ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_CONNECT_ withId:msg withComGoodowRealtimeCoreHandler:[[ComGoodowRealtimeChannelImplWebSocketBus_$3 alloc] init]];
 }
 
 - (void)sendPing {
@@ -193,6 +194,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
     { "PASSWORD_", NULL, 0x19, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_PASSWORD_,  },
     { "PING_INTERVAL_", NULL, 0x19, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_PING_INTERVAL_,  },
     { "TOPIC_CHANNEL_", NULL, 0x19, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_CHANNEL_,  },
+    { "TOPIC_CONNECT_", NULL, 0x19, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_CONNECT_,  },
     { "BODY_", NULL, 0x1c, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_BODY_,  },
     { "TOPIC_", NULL, 0x1c, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_,  },
     { "REPLY_TOPIC_", NULL, 0x1c, "Ljava.lang.String;", &ComGoodowRealtimeChannelImplWebSocketBus_REPLY_TOPIC_,  },
@@ -207,7 +209,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
     { "password_", NULL, 0x2, "Ljava.lang.String;", NULL,  },
     { "handlerCount_", NULL, 0x10, "Lcom.goodow.realtime.json.JsonObject;", NULL,  },
   };
-  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplWebSocketBus = { "WebSocketBus", "com.goodow.realtime.channel.impl", NULL, 0x1, 13, methods, 18, fields, 0, NULL};
+  static J2ObjcClassInfo _ComGoodowRealtimeChannelImplWebSocketBus = { "WebSocketBus", "com.goodow.realtime.channel.impl", NULL, 0x1, 13, methods, 19, fields, 0, NULL};
   return &_ComGoodowRealtimeChannelImplWebSocketBus;
 }
 
@@ -319,7 +321,7 @@ withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)handler {
 @implementation ComGoodowRealtimeChannelImplWebSocketBus_$3
 
 - (void)handleWithId:(id<ComGoodowRealtimeChannelMessage>)message {
-  if (0 != [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([((id<ComGoodowRealtimeChannelMessage>) nil_chk(message)) body])) getNumberWithNSString:@"code"]) {
+  if ([((id<ComGoodowRealtimeChannelMessage>) nil_chk(message)) body] != nil && [((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([message body])) getNumberWithNSString:@"code"] != 0) {
     @throw [[JavaLangRuntimeException alloc] initWithNSString:[((id<ComGoodowRealtimeJsonJsonObject>) nil_chk([message body])) toJsonString]];
   }
 }

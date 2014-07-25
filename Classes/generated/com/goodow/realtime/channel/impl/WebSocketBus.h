@@ -97,6 +97,9 @@ J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, PING_INTERV
 FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_CHANNEL_;
 J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, TOPIC_CHANNEL_, NSString *)
 
+FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_TOPIC_CONNECT_;
+J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, TOPIC_CONNECT_, NSString *)
+
 FOUNDATION_EXPORT NSString *ComGoodowRealtimeChannelImplWebSocketBus_BODY_;
 J2OBJC_STATIC_FIELD_GETTER(ComGoodowRealtimeChannelImplWebSocketBus, BODY_, NSString *)
 
