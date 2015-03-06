@@ -18,6 +18,7 @@
 //  Created by Larry Tin.
 //
 
+#import "IOSObjectArray.h"
 #import "com/goodow/realtime/objc/ObjCWebSocket.h"
 #import "SocketRocket/SRWebSocket.h"
 #import "com/goodow/realtime/json/JsonObject.h"

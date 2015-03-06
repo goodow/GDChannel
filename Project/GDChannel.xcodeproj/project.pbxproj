@@ -36,6 +36,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		586700B817B9C9BB40A39E87 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		65BBEF82A04A46F89B08867D /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D82AA7C186139C100447D50 /* GDChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GDChannel.h; sourceTree = "<group>"; };
 		8D82AA8F1861BE3A00447D50 /* GDCSimpleBusTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GDCSimpleBusTests.m; sourceTree = "<group>"; };
@@ -66,7 +67,7 @@
 		CD87A54724F60F6BD49FF451 /* JavaObjCDiff+Adapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JavaObjCDiff+Adapter.h"; sourceTree = "<group>"; };
 		CD87A8BE5CBC18963257AEA1 /* GDCState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GDCState.h; sourceTree = "<group>"; };
 		CD87AA1484DFA7D32CE57CEA /* JavaObjCDiff+Adapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "JavaObjCDiff+Adapter.m"; sourceTree = "<group>"; };
-		D25027FB16D64ABD836A84B7 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
+		F48F335200BF6962EB4950EF /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +93,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		76D253366D533CCD1885F279 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				F48F335200BF6962EB4950EF /* Pods.debug.xcconfig */,
+				586700B817B9C9BB40A39E87 /* Pods.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		8D020893185F357300BC1670 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -173,7 +183,7 @@
 				8DA48018185AA9290029CA8D /* GDChannelTests */,
 				8DA48000185AA9290029CA8D /* Frameworks */,
 				8DA47FFF185AA9290029CA8D /* Products */,
-				D25027FB16D64ABD836A84B7 /* Pods.xcconfig */,
+				76D253366D533CCD1885F279 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -339,7 +349,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		50FEA133E46B493D814C31BF /* Check Pods Manifest.lock */ = {
@@ -369,7 +379,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		83FE5657D0F048B9A14A29BE /* Check Pods Manifest.lock */ = {
@@ -497,7 +507,7 @@
 		};
 		8DA48023185AA9290029CA8D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D25027FB16D64ABD836A84B7 /* Pods.xcconfig */;
+			baseConfigurationReference = F48F335200BF6962EB4950EF /* Pods.debug.xcconfig */;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
@@ -508,7 +518,7 @@
 		};
 		8DA48024185AA9290029CA8D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D25027FB16D64ABD836A84B7 /* Pods.xcconfig */;
+			baseConfigurationReference = 586700B817B9C9BB40A39E87 /* Pods.release.xcconfig */;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
@@ -519,7 +529,7 @@
 		};
 		8DA48026185AA9290029CA8D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D25027FB16D64ABD836A84B7 /* Pods.xcconfig */;
+			baseConfigurationReference = F48F335200BF6962EB4950EF /* Pods.debug.xcconfig */;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -541,7 +551,7 @@
 		};
 		8DA48027185AA9290029CA8D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D25027FB16D64ABD836A84B7 /* Pods.xcconfig */;
+			baseConfigurationReference = 586700B817B9C9BB40A39E87 /* Pods.release.xcconfig */;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
