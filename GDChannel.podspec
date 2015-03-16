@@ -1,23 +1,38 @@
+#
+# Be sure to run `pod lib lint GDChannel.podspec' to ensure this is a
+# valid spec and remove all comments before submitting the spec.
+#
+# Any lines starting with a # are optional, but encouraged
+#
+# To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
+#
+
 Pod::Spec.new do |s|
-  s.name         = "GDChannel"
-  s.version      = "0.5.5"
-  s.license      = { :type => 'Apache 2.0', :file => 'LICENSE' }
-  s.summary      = "Event bus client over WebSocket for Java/Android/iOS/Javascript/GWT/J2ObjC"
-  s.homepage     = "https://github.com/goodow/realtime-channel"
-  s.author       = { "Larry Tin" => "dev@goodow.com" }
-  s.source       = { :git => "https://github.com/goodow/GDChannel.git", :tag => "v#{s.version}" }
+  s.name             = "GDChannel"
+  s.version          = "0.1.0"
+  s.summary          = "A short description of GDChannel."
+  s.description      = <<-DESC
+                       An optional longer description of GDChannel
 
-  s.ios.deployment_target = '5.0'
-  s.osx.deployment_target = '10.7'
+                       * Markdown format.
+                       * Don't worry about the indent, we strip it!
+                       DESC
+  s.homepage         = "https://github.com/<GITHUB_USERNAME>/GDChannel"
+  # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
+  s.license          = 'MIT'
+  s.author           = { "Larry Tin" => "dev@goodow.com" }
+  s.source           = { :git => "https://github.com/<GITHUB_USERNAME>/GDChannel.git", :tag => s.version.to_s }
+  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+
+  s.platform     = :ios, '7.0'
   s.requires_arc = true
-  # Top level attributes can't be specified by subspecs.
-  s.header_mappings_dir = 'Classes/generated'
-  
-  s.source_files = 'Classes/common', 'Classes/generated/**/*.{h,m}'
-  s.dependency 'GDJson', '~> 0.5'
-  s.dependency 'SocketRocket', '~> 0.3.1-beta2'
-  s.dependency 'Google-Diff-Match-Patch', '~> 0.0.1'
 
-  # Pods-GDChannel target need the next line.
-  s.xcconfig = { 'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/J2ObjC/dist/include"' }
+  s.source_files = 'Pod/Classes/**/*'
+  s.resource_bundles = {
+    'GDChannel' => ['Pod/Assets/*.png']
+  }
+
+  # s.public_header_files = 'Pod/Classes/**/*.h'
+  # s.frameworks = 'UIKit', 'MapKit'
+  # s.dependency 'AFNetworking', '~> 2.3'
 end

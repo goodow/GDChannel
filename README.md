@@ -1,35 +1,28 @@
-GDChannel [![Build Status](https://travis-ci.org/goodow/GDChannel.svg?branch=master)](https://travis-ci.org/goodow/GDChannel)
-=========
-iOS and Mac OS X client for realtime-channel
+# GDChannel
 
-Visit [Google groups](https://groups.google.com/forum/#!forum/goodow-realtime) for discussions and announcements.
-
-## Adding GDChannel to your project
-
-### Cocoapods
-
-[CocoaPods](http://cocoapods.org) is the recommended way to add GDChannel to your project.
-
-1. Add a pod entry for GDChannel to your Podfile `pod 'GDChannel', '~> 0.5'`
-2. Install the pod(s) by running `pod install`.
-3. Include GDChannel wherever you need it with `#import "GDChannel.h"`.
+[![CI Status](http://img.shields.io/travis/Larry Tin/GDChannel.svg?style=flat)](https://travis-ci.org/Larry Tin/GDChannel)
+[![Version](https://img.shields.io/cocoapods/v/GDChannel.svg?style=flat)](http://cocoadocs.org/docsets/GDChannel)
+[![License](https://img.shields.io/cocoapods/l/GDChannel.svg?style=flat)](http://cocoadocs.org/docsets/GDChannel)
+[![Platform](https://img.shields.io/cocoapods/p/GDChannel.svg?style=flat)](http://cocoadocs.org/docsets/GDChannel)
 
 ## Usage
 
-### WebSocket mode
-```objc
-id<GDCBus> bus = [[GDCReconnectWebSocketBus alloc]
-    initWithServerUri:@"ws://localhost:1986/channel/websocket" options:nil];
+To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
-[bus subscribe:@"some/topic" handler:^(id<GDCMessage> message) {
-  NSDictionary *body = [message body];
-  NSLog(@"Name: %@", body[@"name"]);
-}];
+## Requirements
 
-[bus publish:@"some/topic" message:@{@"name": @"Larry Tin"}];
-```
-See a [full example](https://github.com/goodow/GDChannel/blob/master/Project/GDChannelTests/GDCWebSocketBusTests.m)
-for more usage.
+## Installation
 
-### Local mode
-See https://github.com/goodow/GDChannel/blob/master/Project/GDChannelTests/GDCSimpleBusTests.m
+GDChannel is available through [CocoaPods](http://cocoapods.org). To install
+it, simply add the following line to your Podfile:
+
+    pod "GDChannel"
+
+## Author
+
+Larry Tin, dev@goodow.com
+
+## License
+
+GDChannel is available under the MIT license. See the LICENSE file for more info.
+
