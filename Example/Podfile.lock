@@ -4,7 +4,9 @@ PODS:
     - Expecta
     - FBSnapshotTestCase
   - FBSnapshotTestCase (1.5)
-  - GDChannel (0.6.0)
+  - GDChannel (0.6.0):
+    - MQTTKit (~> 0.1.0)
+  - MQTTKit (0.1.0)
   - Specta (0.4.0)
 
 DEPENDENCIES:
@@ -19,10 +21,11 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  Expecta: ee641011fe10aa1855d487b40e4976dac50ec342
-  Expecta+Snapshots: 4a56b9411c6ed156987072e52c39de67d864015a
-  FBSnapshotTestCase: e2914fbaabccea1dcc773d6a16b1c24540642488
-  GDChannel: 5c139f61849da02b6da8d2a79abf480797d8786d
-  Specta: 1df326d6ec48603c77f507a0ab1f89ad2df1c582
+  Expecta: 8c507baf13211207b1e9d0a741480600e6b4ed15
+  Expecta+Snapshots: 4a0b46d3ba755bd43dffa7d53e4585fc6cbfe8cd
+  FBSnapshotTestCase: 26f32d8fa9eb30e9f09712ecfb097808bc79b898
+  GDChannel: 204d423a0a5b267806c90cfe7b824a8bc95a2c8c
+  MQTTKit: a4e6b8aa92db1aeae917d2b773fd72a7749937c4
+  Specta: a353759f073ffcc0a365b782fe4aaeac064c03c6
 
-COCOAPODS: 0.36.0
+COCOAPODS: 0.36.3

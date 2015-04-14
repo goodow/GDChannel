@@ -3,6 +3,6 @@
 
 @interface GDCBusProvider : NSObject
 
-+ (id<GDCBus>)sharedBus;
++ (id <GDCBus>)instance;
 
 @end

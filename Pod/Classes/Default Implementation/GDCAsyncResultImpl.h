@@ -9,5 +9,5 @@
 @property(nonatomic, readonly) BOOL failed;
 @property(nonatomic, readonly, strong) id<GDCMessage> result;
 
-- (instancetype)initWithMessage:(id <GDCMessage>)message withError:(NSError *)error;
+- (instancetype)initWithMessage:(id <GDCMessage>)message;
 @end

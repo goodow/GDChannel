@@ -1,13 +1,14 @@
 #import "GDCAsyncResultImpl.h"
 #import "GDCMessage.h"
+#import "GDCMessageImpl.h"
 
 @implementation GDCAsyncResultImpl
-- (instancetype)initWithMessage:(id<GDCMessage>)message withError:(NSError *)error {
+- (instancetype)initWithMessage:(GDCMessageImpl *)message {
   self = [super init];
   if (self) {
     _result = message;
-    _cause = error;
-    if (error) {
+    _cause = message.dict[errorKey];
+    if (_cause) {
       _failed = YES;
     }
   }

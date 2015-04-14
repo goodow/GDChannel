@@ -15,4 +15,6 @@ typedef void (^GDCAsyncResultHandler)(id<GDCAsyncResult> asyncResult);
 
 - (NSString *)topic;
 
+- (void)fail:(NSError *)error;
+
 @end

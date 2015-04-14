@@ -5,4 +5,6 @@
 
 @property(nonatomic, copy) void (^unsubscribeBlock)(void);
 
+- (instancetype)initWithTopic:(NSString *)topic;
+
 @end

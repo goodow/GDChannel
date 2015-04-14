@@ -1,17 +1,26 @@
 #import "GDCBusProvider.h"
+
+#ifdef DEBUG
+#import "GDCMqttBus.h"
+#else
 #import "GDCNotificationBus.h"
+#endif
 
 @implementation GDCBusProvider
 
-+ (id <GDCBus>)sharedBus {
-  static GDCNotificationBus *sharedBus;
++ (id <GDCBus>)instance {
+  static id <GDCBus> instance;
 
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-      sharedBus = [[GDCNotificationBus alloc] init];
+#ifdef DEBUG
+      instance = [[GDCMqttBus alloc] initWithHost:@"realtime.goodow.com"];
+#else
+      instance = [[GDCNotificationBus alloc] init];
+#endif
   });
 
-  return sharedBus;
+  return instance;
 }
 
 @end
