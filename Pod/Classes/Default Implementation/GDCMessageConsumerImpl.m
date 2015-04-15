@@ -2,6 +2,7 @@
 
 @implementation GDCMessageConsumerImpl {
   NSString *_topic;
+  BOOL _unsubscribed;
 }
 
 - (instancetype)initWithTopic:(NSString *)topic {
@@ -14,15 +15,25 @@
 }
 
 - (void)unsubscribe {
-  self.unsubscribeBlock();
+  if (!_unsubscribed) {
+    self.unsubscribeBlock();
+    self.unsubscribeBlock = nil;
+    _unsubscribed = YES;
+  }
 }
 
 - (NSString *)description {
   NSMutableString *description = [NSMutableString stringWithFormat:@"<%@: ", NSStringFromClass([self class])];
   [description appendFormat:@"_topic=%@", _topic];
+  [description appendFormat:@", _unsubscribed=%d", _unsubscribed];
   [description appendFormat:@", self.unsubscribeBlock=%p", self.unsubscribeBlock];
   [description appendString:@">"];
   return description;
 }
 
+- (void)dealloc {
+  if (!_unsubscribed) {
+    NSLog(@"Warning: not %@ %@ when dealloc", NSStringFromSelector(@selector(unsubscribe)), self);
+  }
+}
 @end

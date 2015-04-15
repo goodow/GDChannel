@@ -68,6 +68,7 @@ static const NSString *object = @"GDCNotificationBus/object";
       message.bus = weakBus;
       handler(message);
   }];
+
   GDCMessageConsumerImpl *consumer = [[GDCMessageConsumerImpl alloc] initWithTopic:topic];
   consumer.unsubscribeBlock = ^{
       [weakSelf.notificationCenter removeObserver:observer];

@@ -5,4 +5,6 @@
 
 + (id <GDCBus>)instance;
 
++ (NSString *)clientId:(NSString *)newClientId;
+
 @end
