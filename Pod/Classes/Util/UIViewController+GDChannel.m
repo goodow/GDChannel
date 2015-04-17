@@ -1,5 +1,4 @@
 #import "UIViewController+GDChannel.h"
-#import "GDCBus.h"
 #import "GDCBusProvider.h"
 
 @implementation UIViewController (GDChannel)

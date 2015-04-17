@@ -10,6 +10,7 @@
 @property(nonatomic, readonly, strong) GDCNotificationBus *localBus;
 @property(nonatomic, readonly, strong) NSMutableDictionary *handlers;
 @property(nonatomic, readonly, strong) MQTTClient *mqtt;
+@property(nonatomic, readonly, strong) dispatch_queue_t queue;
 @end
 
 @implementation GDCMqttBus
@@ -21,10 +22,12 @@
     _handlers = [NSMutableDictionary dictionary];
     _mqtt = [[MQTTClient alloc] initWithClientId:clientId];
     _mqtt.port = port;
+    _queue = dispatch_queue_create("com.goodow.realtime.channel.queue", DISPATCH_QUEUE_SERIAL);
 
     __weak GDCMqttBus *weakSelf = self;
     [_mqtt disconnectWithCompletionHandler:^(NSUInteger code) {
         NSLog(@"Warning: MQTT disconnected(%i)", (int) code);
+        [weakSelf publishLocal:GDC_BUS_ON_CLOSE payload:@{@"code" : @(code)}];
     }];
     // define the handler that will be called when MQTT messages are received by the client
     [_mqtt setMessageHandler:^(MQTTMessage *message) {
@@ -45,14 +48,20 @@
     }];
 
     // connect the MQTT client
-    [_mqtt connectToHost:host completionHandler:^(MQTTConnectionReturnCode code) {
-        if (code == ConnectionAccepted) {
-          // The client is connected when this completion handler is called
-          NSLog(@"client is connected with id %@", clientId);
-        } else {
-          NSLog(@"Error: connection refused(%i)", (int) code);
-        }
-    }];
+    dispatch_barrier_async(_queue, ^{
+        [weakSelf.mqtt connectToHost:host completionHandler:^(MQTTConnectionReturnCode code) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (code == ConnectionAccepted) {
+                  // The client is connected when this completion handler is called
+                  NSLog(@"client is connected with id %@", clientId);
+                  [weakSelf publishLocal:GDC_BUS_ON_OPEN payload:@{@"clientId" : clientId}];
+                } else {
+                  NSLog(@"Error: connection refused(%i)", (int) code);
+                  [weakSelf publishLocal:GDC_BUS_ON_ERROR payload:@{@"code" : @(code)}];
+                }
+            });
+        }];
+    });
   }
   return self;
 }
@@ -96,17 +105,19 @@
 }
 
 - (id <GDCMessageConsumer>)subscribe:(NSString *)topic handler:(GDCMessageHandler)handler {
+  __weak GDCMqttBus *weakSelf = self;
   id <GDCMessageConsumer> localConsumer = [self.localBus subscribeToTopic:topic handler:handler bus:self];
   int count = [self.handlers[topic] intValue];
   if (count == 0) {
-    [self.mqtt subscribe:topic withCompletionHandler:^(NSArray *grantedQos) {
-        // The client is effectively subscribed to the topic when this completion handler is called
-        NSLog(@"subscribed to topic %@", topic);
-    }];
+    dispatch_async(self.queue, ^{
+        [weakSelf.mqtt subscribe:topic withCompletionHandler:^(NSArray *grantedQos) {
+            // The client is effectively subscribed to the topic when this completion handler is called
+            NSLog(@"subscribed to topic %@", topic);
+        }];
+    });
   }
   self.handlers[topic] = @(++count);
 
-  __weak GDCMqttBus *weakSelf = self;
   __block GDCMessageConsumerImpl *consumer = [[GDCMessageConsumerImpl alloc] initWithTopic:topic];
   consumer.unsubscribeBlock = ^{
       [localConsumer unsubscribe];

@@ -16,6 +16,10 @@ static const NSString *object = @"GDCNotificationBus/object";
   self = [super init];
   if (self) {
     _notificationCenter = [NSNotificationCenter defaultCenter];
+    __weak GDCNotificationBus *weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [weakSelf publishLocal:GDC_BUS_ON_OPEN payload:@{}];
+    });
   }
   return self;
 }

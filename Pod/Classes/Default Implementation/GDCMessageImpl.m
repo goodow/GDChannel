@@ -18,8 +18,12 @@
 
 - (instancetype)initWithTopic:(NSString *)topic payload:(id)payload replyTopic:(NSString *)replyTopic send:(BOOL)send local:(BOOL)local {
   NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:4];
-  dict[sendKey] = @(send);
-  dict[localKey] = @(local);
+  if (send) {
+    dict[sendKey] = @(send);
+  }
+  if (local) {
+    dict[localKey] = @(local);
+  }
   if (replyTopic) {
     dict[replyTopicKey] = replyTopic;
   }
