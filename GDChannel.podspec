@@ -10,18 +10,12 @@
 Pod::Spec.new do |s|
   s.name             = "GDChannel"
   s.version          = "0.6.0"
-  s.summary          = "A short description of GDChannel."
-  s.description      = <<-DESC
-                       An optional longer description of GDChannel
-
-                       * Markdown format.
-                       * Don't worry about the indent, we strip it!
-                       DESC
+  s.summary          = "iOS and Mac OS X client for realtime-channel."
   s.homepage         = "https://github.com/goodow/GDChannel"
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
   s.license          = 'MIT'
   s.author           = { "Larry Tin" => "dev@goodow.com" }
-  s.source           = { :git => "https://github.com/goodow/GDChannel.git", :tag => s.version.to_s }
+  s.source           = { :git => "https://github.com/goodow/GDChannel.git", :tag => "v#{s.version}" }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.platform     = :ios, '7.0'
