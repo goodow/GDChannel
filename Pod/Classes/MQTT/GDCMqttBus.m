@@ -138,6 +138,10 @@
 }
 
 - (void)sendOrPub:(GDCMessageImpl *)message {
+  if (message.dict[errorKey]) {
+    NSError *error = message.dict[errorKey];
+    ((NSMutableDictionary *) message.dict)[errorKey] = @{@"domain" : error.domain, @"code" : @(error.code), @"userInfo" : error.userInfo};
+  }
   NSError *error;
   NSData *jsonData = [NSJSONSerialization dataWithJSONObject:message.dict
                                                      options:0
