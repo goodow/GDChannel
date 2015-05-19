@@ -14,6 +14,12 @@
 }
 
 + (void)show:(UIViewController *)controller message:(id <GDCMessage>)message {
+  id payload = message.payload;
+  BOOL isPayloadDict = [payload isKindOfClass:NSDictionary.class];
+  if (isPayloadDict && payload[@"_redirect"] && ![payload[@"_redirect"] boolValue]) {
+    [controller receivedWithMessage:message];
+    return;
+  }
   BOOL found = [self find:controller in:UIApplication.sharedApplication.keyWindow.rootViewController];
   if (found) {
     [self config:controller message:message];
@@ -40,8 +46,7 @@
   }
 
   UIViewController *top = self.topViewController;
-  if ([message.payload isKindOfClass:NSDictionary.class]) {
-    NSDictionary *payload = message.payload;
+  if (isPayloadDict) {
     if (payload[@"_edge"]) {
       controller.edgesForExtendedLayout = [payload[@"_edge"] intValue];
     }
@@ -66,10 +71,10 @@
     return [self findTopViewController:parent.presentedViewController];
   }
   if ([parent isKindOfClass:UITabBarController.class]) {
-    return [self findTopViewController:((UITabBarController *)parent).selectedViewController];
+    return [self findTopViewController:((UITabBarController *) parent).selectedViewController];
   }
   if ([parent isKindOfClass:UINavigationController.class]) {
-    return [self findTopViewController:((UINavigationController *)parent).visibleViewController];
+    return [self findTopViewController:((UINavigationController *) parent).visibleViewController];
   }
   return parent;
 }
@@ -97,7 +102,7 @@
     }
   }
   if ([parent isKindOfClass:UITabBarController.class]) {
-    UITabBarController *tabBarController = (UITabBarController *)parent;
+    UITabBarController *tabBarController = (UITabBarController *) parent;
     if ([tabBarController.viewControllers containsObject:controller]) {
       return YES;
     }
@@ -109,7 +114,7 @@
     }
   }
   if ([parent isKindOfClass:UINavigationController.class]) {
-    UINavigationController *navigationController = (UINavigationController *)parent;
+    UINavigationController *navigationController = (UINavigationController *) parent;
     if ([navigationController.viewControllers containsObject:controller]) {
       return YES;
     }
