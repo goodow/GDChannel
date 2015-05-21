@@ -5,10 +5,10 @@
 #import "GDCMqttBus.h"
 #import "MQTTKit.h"
 #import "GDCNotificationBus.h"
+#import "GDCTopicsManager.h"
 
 @interface GDCMqttBus ()
 @property(nonatomic, readonly, strong) GDCNotificationBus *localBus;
-@property(nonatomic, readonly, strong) NSMutableDictionary *handlers;
 @property(nonatomic, readonly, strong) MQTTClient *mqtt;
 @property(nonatomic, readonly, strong) dispatch_queue_t queue;
 @end
@@ -19,7 +19,6 @@
   self = [super init];
   if (self) {
     _localBus = [[GDCNotificationBus alloc] init];
-    _handlers = [NSMutableDictionary dictionary];
     _mqtt = [[MQTTClient alloc] initWithClientId:clientId];
     _mqtt.port = port;
     _queue = dispatch_queue_create("com.goodow.realtime.channel.queue", DISPATCH_QUEUE_SERIAL);
@@ -49,7 +48,7 @@
 
     // connect the MQTT client
     dispatch_barrier_async(_queue, ^{
-        [weakSelf.mqtt connectToHost:host completionHandler:^(MQTTConnectionReturnCode code) {
+        [_mqtt connectToHost:host completionHandler:^(MQTTConnectionReturnCode code) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (code == ConnectionAccepted) {
                   // The client is connected when this completion handler is called
@@ -104,37 +103,34 @@
   return self;
 }
 
-- (id <GDCMessageConsumer>)subscribe:(NSString *)topic handler:(GDCMessageHandler)handler {
+- (id <GDCMessageConsumer>)subscribe:(NSString *)topicFilter handler:(GDCMessageHandler)handler {
   __weak GDCMqttBus *weakSelf = self;
-  id <GDCMessageConsumer> localConsumer = [self.localBus subscribeToTopic:topic handler:handler bus:self];
-  int count = [self.handlers[topic] intValue];
-  if (count == 0) {
+  int retainCount = [self.localBus.topicsManager retainCountOfTopic:topicFilter];
+  id <GDCMessageConsumer> localConsumer = [self.localBus subscribeToTopic:topicFilter handler:handler bus:self];
+  if (retainCount == 0) {
     dispatch_async(self.queue, ^{
-        [weakSelf.mqtt subscribe:topic withCompletionHandler:^(NSArray *grantedQos) {
-            // The client is effectively subscribed to the topic when this completion handler is called
-            NSLog(@"subscribed to topic %@", topic);
+        [self.mqtt subscribe:topicFilter withCompletionHandler:^(NSArray *grantedQos) {
+            // The client is effectively subscribed to the topic filter when this completion handler is called
+            NSLog(@"subscribed to topic filter: %@", topicFilter);
         }];
     });
   }
-  self.handlers[topic] = @(++count);
 
-  __block GDCMessageConsumerImpl *consumer = [[GDCMessageConsumerImpl alloc] initWithTopic:topic];
+  __block GDCMessageConsumerImpl *consumer = [[GDCMessageConsumerImpl alloc] initWithTopic:topicFilter];
   consumer.unsubscribeBlock = ^{
       [localConsumer unsubscribe];
-      int ct = [weakSelf.handlers[topic] intValue];
-      weakSelf.handlers[topic] = @(--ct);
-      if (ct == 0) {
-        [weakSelf.handlers removeObjectForKey:topic];
-        [weakSelf.mqtt unsubscribe:topic withCompletionHandler:^{
-            NSLog(@"unsubscribed to topic %@", topic);
+      int retain = [weakSelf.localBus.topicsManager retainCountOfTopic:topicFilter];
+      if (retain == 0) {
+        [weakSelf.mqtt unsubscribe:topicFilter withCompletionHandler:^{
+            NSLog(@"unsubscribed to topic filter: %@", topicFilter);
         }];
       }
   };
   return consumer;
 }
 
-- (id <GDCMessageConsumer>)subscribeLocal:(NSString *)topic handler:(GDCMessageHandler)handler {
-  return [self.localBus subscribeLocal:topic handler:handler];
+- (id <GDCMessageConsumer>)subscribeLocal:(NSString *)topicFilter handler:(GDCMessageHandler)handler {
+  return [self.localBus subscribeLocal:topicFilter handler:handler];
 }
 
 - (void)sendOrPub:(GDCMessageImpl *)message {
@@ -149,8 +145,9 @@
   if (!jsonData) {
     @throw [NSException exceptionWithName:@"JSON" reason:[NSString stringWithFormat:@"Failed to encode as JSON: %@", error] userInfo:nil];
   }
-  [self.mqtt publishData:jsonData toTopic:message.topic withQos:AtMostOnce retain:NO completionHandler:^(int mid) {
-
-  }];
+  dispatch_async(self.queue, ^{
+      [self.mqtt publishData:jsonData toTopic:message.topic withQos:AtMostOnce retain:NO completionHandler:^(int mid) {
+      }];
+  });
 }
 @end

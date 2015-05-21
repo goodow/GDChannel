@@ -16,7 +16,7 @@ typedef void (^GDCMessageHandler)(id<GDCMessage> message);
 - (id <GDCBus>)send:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultHandler)replyHandler;
 - (id<GDCBus>)sendLocal:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultHandler)replyHandler;
 
-- (id <GDCMessageConsumer>)subscribe:(NSString *)topic handler:(GDCMessageHandler)handler;
-- (id<GDCMessageConsumer>)subscribeLocal:(NSString *)topic handler:(GDCMessageHandler)handler;
+- (id <GDCMessageConsumer>)subscribe:(NSString *)topicFilter handler:(GDCMessageHandler)handler;
+- (id<GDCMessageConsumer>)subscribeLocal:(NSString *)topicFilter handler:(GDCMessageHandler)handler;
 
 @end

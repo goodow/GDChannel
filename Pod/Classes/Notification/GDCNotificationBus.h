@@ -5,13 +5,14 @@
 
 @class GDCMessageImpl;
 @class GDCMessageConsumerImpl;
+@class GDCTopicsManager;
 
 @interface GDCNotificationBus : NSObject <GDCBus>
 
+@property(nonatomic, readonly, strong) GDCTopicsManager *topicsManager;
+
 - (void)sendOrPub:(GDCMessageImpl *)message replyHandler:(GDCAsyncResultHandler)replyHandler;
 
-- (GDCMessageConsumerImpl *)subscribeToTopic:(NSString *)topic handler:(GDCMessageHandler)handler bus:(id <GDCBus>)bus;
-
-- (void)subscribeToReplyTopic:(NSString *)replyTopic replyHandler:(GDCAsyncResultHandler)replyHandler bus:(id <GDCBus>)bus;
+- (GDCMessageConsumerImpl *)subscribeToTopic:(NSString *)topicFilter handler:(GDCMessageHandler)handler bus:(id <GDCBus>)bus;
 
 @end
