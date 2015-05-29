@@ -55,6 +55,7 @@
     [top.navigationController pushViewController:controller animated:YES];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self config:controller message:message];
+        [controller view]; // force viewDidLoad to be called
         [controller receivedWithMessage:message];
     });
     return;
@@ -80,17 +81,18 @@
 }
 
 + (void)config:(UIViewController *)controller message:(id <GDCMessage>)message {
-  if ([message.payload isKindOfClass:NSDictionary.class]) {
-    NSDictionary *payload = message.payload;
-    if (payload[@"_navBar"]) {
-      [controller.navigationController setNavigationBarHidden:[payload[@"_navBar"] intValue] == 0 animated:NO];
-    }
-    if (payload[@"_toolBar"]) {
-      [controller.navigationController setToolbarHidden:[payload[@"_toolBar"] intValue] == 0 animated:NO];
-    }
-    if (payload[@"_tabBar"]) {
-      controller.tabBarController.tabBar.hidden = [payload[@"_tabBar"] intValue] == 0;
-    }
+  if (![message.payload isKindOfClass:NSDictionary.class]) {
+    return;
+  }
+  NSDictionary *payload = message.payload;
+  if (payload[@"_navBar"]) {
+    [controller.navigationController setNavigationBarHidden:![payload[@"_navBar"] boolValue] animated:NO];
+  }
+  if (payload[@"_toolBar"]) {
+    [controller.navigationController setToolbarHidden:![payload[@"_toolBar"] boolValue] animated:NO];
+  }
+  if (payload[@"_tabBar"]) {
+    controller.tabBarController.tabBar.hidden = ![payload[@"_tabBar"] boolValue];
   }
 }
 
