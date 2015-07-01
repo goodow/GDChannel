@@ -32,7 +32,7 @@
 }
 
 - (void)reply:(id)msg replyHandler:(GDCMessageHandler)replyHandler {
-  [self replyWithId:msg withComGoodowRealtimeCoreHandler:replyHandler];
+  [self replyWithId:msg withComGoodowRealtimeCoreHandler:(id<ComGoodowRealtimeCoreHandler>)replyHandler];
 }
 
 @end
