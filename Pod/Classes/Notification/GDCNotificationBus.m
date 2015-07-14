@@ -75,7 +75,7 @@ static const NSString *object = @"GDCNotificationBus/object";
 - (GDCMessageConsumerImpl *)subscribeToTopic:(NSString *)topicFilter handler:(GDCMessageHandler)handler bus:(id <GDCBus>)bus {
   __weak GDCNotificationBus *weakSelf = self;
   __weak id <GDCBus> weakBus = bus;
-  id observer = [self.notificationCenter addObserverForName:topicFilter object:object queue:self.queue usingBlock:^(NSNotification *note) {
+  __weak id observer = [self.notificationCenter addObserverForName:topicFilter object:object queue:self.queue usingBlock:^(NSNotification *note) {
       GDCMessageImpl *message = [[GDCMessageImpl alloc] initWithTopic:note.name dictionary:note.userInfo];
       message.bus = weakBus;
       [weakSelf scheduleDeferred:handler argument:message];
@@ -93,7 +93,7 @@ static const NSString *object = @"GDCNotificationBus/object";
 - (void)subscribeToReplyTopic:(NSString *)replyTopic replyHandler:(GDCAsyncResultHandler)replyHandler bus:(id <GDCBus>)bus {
   __weak GDCNotificationBus *weakSelf = self;
   __weak id <GDCBus> weakBus = bus;
-  __block id <NSObject> observer = [self.notificationCenter addObserverForName:replyTopic object:object queue:self.queue usingBlock:^(NSNotification *note) {
+  __weak __block id <NSObject> observer = [self.notificationCenter addObserverForName:replyTopic object:object queue:self.queue usingBlock:^(NSNotification *note) {
       [weakSelf.notificationCenter removeObserver:observer];
       [weakSelf.topicsManager removeSubscribedTopic:replyTopic];
 

@@ -50,6 +50,9 @@
     if (payload[@"_edge"]) {
       controller.edgesForExtendedLayout = [payload[@"_edge"] intValue];
     }
+    if (payload[@"_hidesBottomBarWhenPushed"]) {
+      controller.hidesBottomBarWhenPushed = [payload[@"_hidesBottomBarWhenPushed"] boolValue];
+    }
   }
   if (top.navigationController) {
     [top.navigationController pushViewController:controller animated:YES];
