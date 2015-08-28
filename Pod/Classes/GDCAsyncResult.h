@@ -4,10 +4,8 @@
 
 @protocol GDCAsyncResult <NSObject>
 
-- (NSError *)cause;
-
-- (BOOL)failed;
-
-- (id<GDCMessage>)result;
+@property(nonatomic, readonly) NSError *cause;
+@property(nonatomic, readonly) BOOL failed;
+@property(nonatomic, readonly) id <GDCMessage> result;
 
 @end

@@ -5,15 +5,13 @@ typedef void (^GDCAsyncResultHandler)(id<GDCAsyncResult> asyncResult);
 
 @protocol GDCMessage <NSObject>
 
-- (id)payload;
+@property(nonatomic, readonly) id payload;
+@property(nonatomic, readonly) NSString *topic;
+@property(nonatomic, readonly) NSString *replyTopic;
 
 - (void)reply:(id)payload;
 
 - (void)reply:(id)payload replyHandler:(GDCAsyncResultHandler)replyHandler;
-
-- (NSString *)replyTopic;
-
-- (NSString *)topic;
 
 - (void)fail:(NSError *)error;
 

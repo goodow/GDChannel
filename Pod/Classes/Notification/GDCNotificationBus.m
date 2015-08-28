@@ -6,6 +6,7 @@
 #import "GDCTopicsManager.h"
 
 static const NSString *object = @"GDCNotificationBus/object";
+static const NSString *messageKey = @"msg";
 
 @interface GDCNotificationBus ()
 @property(nonatomic, readonly, strong) NSNotificationCenter *notificationCenter;
@@ -30,25 +31,43 @@ static const NSString *object = @"GDCNotificationBus/object";
 }
 
 - (id <GDCBus>)publish:(NSString *)topic payload:(id)payload {
-  GDCMessageImpl *msg = [[GDCMessageImpl alloc] initWithTopic:topic payload:payload replyTopic:nil send:NO local:NO];
+  GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
+  msg.topic = topic;
+  msg.payload = payload;
+  msg.send = NO;
+  msg.local = NO;
   [self sendOrPub:msg replyHandler:nil];
   return self;
 }
 
 - (id <GDCBus>)publishLocal:(NSString *)topic payload:(id)payload {
-  GDCMessageImpl *msg = [[GDCMessageImpl alloc] initWithTopic:topic payload:payload replyTopic:nil send:NO local:YES];
+  GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
+  msg.topic = topic;
+  msg.payload = payload;
+  msg.send = NO;
+  msg.local = YES;
   [self sendOrPub:msg replyHandler:nil];
   return self;
 }
 
 - (id <GDCBus>)send:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultHandler)replyHandler {
-  GDCMessageImpl *msg = [[GDCMessageImpl alloc] initWithTopic:topic payload:payload replyTopic:(replyHandler ? GDCMessageImpl.generateReplyTopic : nil) send:YES local:NO];
+  GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
+  msg.topic = topic;
+  msg.payload = payload;
+  msg.replyTopic = (replyHandler ? GDCMessageImpl.generateReplyTopic : nil);
+  msg.send = YES;
+  msg.local = NO;
   [self sendOrPub:msg replyHandler:replyHandler];
   return self;
 }
 
 - (id <GDCBus>)sendLocal:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultHandler)replyHandler {
-  GDCMessageImpl *msg = [[GDCMessageImpl alloc] initWithTopic:topic payload:payload replyTopic:(replyHandler ? GDCMessageImpl.generateReplyTopic : nil) send:YES local:YES];
+  GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
+  msg.topic = topic;
+  msg.payload = payload;
+  msg.replyTopic = (replyHandler ? GDCMessageImpl.generateReplyTopic : nil);
+  msg.send = YES;
+  msg.local = YES;
   [self sendOrPub:msg replyHandler:replyHandler];
   return self;
 }
@@ -68,7 +87,7 @@ static const NSString *object = @"GDCNotificationBus/object";
 
   NSSet *topicsToPublish = [self.topicsManager calculateTopicsToPublish:message.topic];
   for (NSString *filter in topicsToPublish) {
-    [self.notificationCenter postNotificationName:filter object:object userInfo:message.dict];
+    [self.notificationCenter postNotificationName:filter object:object userInfo:@{messageKey : message}];
   }
 }
 
@@ -76,7 +95,7 @@ static const NSString *object = @"GDCNotificationBus/object";
   __weak GDCNotificationBus *weakSelf = self;
   __weak id <GDCBus> weakBus = bus;
   __weak id observer = [self.notificationCenter addObserverForName:topicFilter object:object queue:self.queue usingBlock:^(NSNotification *note) {
-      GDCMessageImpl *message = [[GDCMessageImpl alloc] initWithTopic:note.name dictionary:note.userInfo];
+      GDCMessageImpl *message = note.userInfo[messageKey];
       message.bus = weakBus;
       [weakSelf scheduleDeferred:handler argument:message];
   }];
@@ -97,7 +116,7 @@ static const NSString *object = @"GDCNotificationBus/object";
       [weakSelf.notificationCenter removeObserver:observer];
       [weakSelf.topicsManager removeSubscribedTopic:replyTopic];
 
-      GDCMessageImpl *message = [[GDCMessageImpl alloc] initWithTopic:note.name dictionary:note.userInfo];
+      GDCMessageImpl *message = note.userInfo[messageKey];
       message.bus = weakBus;
       GDCAsyncResultImpl *asyncResult = [[GDCAsyncResultImpl alloc] initWithMessage:message];
       [weakSelf scheduleDeferred:replyHandler argument:asyncResult];

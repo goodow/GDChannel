@@ -7,41 +7,6 @@
   return [@"GDCReplyTopic/" stringByAppendingString:[[[NSUUID alloc] init] UUIDString]];
 }
 
-- (instancetype)initWithTopic:(NSString *)topic dictionary:(NSDictionary *)dict {
-  self = [super init];
-  if (self) {
-    _topic = topic;
-    _dict = dict;
-  }
-  return self;
-}
-
-- (instancetype)initWithTopic:(NSString *)topic payload:(id)payload replyTopic:(NSString *)replyTopic send:(BOOL)send local:(BOOL)local {
-  NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:4];
-  if (send) {
-    dict[sendKey] = @(send);
-  }
-  if (local) {
-    dict[localKey] = @(local);
-  }
-  if (replyTopic) {
-    dict[replyTopicKey] = replyTopic;
-  }
-  if ([payload isKindOfClass:NSError.class]) {
-    dict[errorKey] = payload;
-  } else if (payload) {
-    dict[payloadKey] = payload;
-  }
-
-  return [self initWithTopic:topic dictionary:dict];
-}
-
-- (instancetype)init {
-  @throw [NSException exceptionWithName:@"Singleton"
-                                 reason:[NSString stringWithFormat:@"Use %@ %@", NSStringFromClass(GDCMessageImpl.class), NSStringFromSelector(@selector(initWithTopic:payload:replyTopic:send:local:))]
-                               userInfo:nil];
-}
-
 - (void)reply:(id)payload {
   [self reply:payload replyHandler:nil];
 }
@@ -60,32 +25,30 @@
   [self reply:error replyHandler:nil];
 }
 
-- (id)payload {
-  return self.dict[payloadKey];
-}
-
-- (NSString *)replyTopic {
-  return self.dict[replyTopicKey];
-}
-
-- (BOOL)local {
-  return [self.dict[localKey] boolValue];
-}
-
-- (BOOL)send {
-  return [self.dict[sendKey] boolValue];
+- (NSDictionary *)toDictWithTopic:(BOOL)containsTopic {
+  NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:5];
+  if (containsTopic) {
+    dict[topicKey] = self.topic;
+  }
+  if (self.send) {
+    dict[sendKey] = @(self.send);
+  }
+  if (self.local) {
+    dict[localKey] = @(self.local);
+  }
+  if (self.replyTopic) {
+    dict[replyTopicKey] = self.replyTopic;
+  }
+  if ([self.payload isKindOfClass:NSError.class]) {
+    NSError *error = self.payload;
+    dict[errorKey] = @{errorDomainKey : error.domain, errorCodeKey : @(error.code), errorUserInfoKey : error.userInfo};
+  } else if (self.payload) {
+    dict[payloadKey] = self.payload;
+  }
+  return dict;
 }
 
 - (NSString *)description {
-  NSMutableDictionary *all = [NSMutableDictionary dictionaryWithDictionary:self.dict];
-  all[@"topic"] = self.topic;
-  NSError *error;
-  NSData *jsonData = [NSJSONSerialization dataWithJSONObject:all
-                                                     options:NSJSONWritingPrettyPrinted
-                                                       error:&error];
-  if (!jsonData) {
-    return [NSString stringWithFormat:@"Failed to encode as JSON: %@", error];
-  }
-  return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+  return [self toDictWithTopic:YES].description;
 }
 @end

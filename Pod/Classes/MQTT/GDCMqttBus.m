@@ -20,7 +20,7 @@
   if (self) {
     _localBus = [[GDCNotificationBus alloc] init];
     _mqtt = [[MQTTClient alloc] initWithClientId:clientId];
-    _mqtt.port = port;
+    _mqtt.port = (unsigned short) port;
     _queue = dispatch_queue_create("com.goodow.realtime.channel.queue", DISPATCH_QUEUE_SERIAL);
 
     __weak GDCMqttBus *weakSelf = self;
@@ -41,7 +41,17 @@
         // the MQTTClientDelegate methods are called from a GCD queue.
         // Any update to the UI must be done on the main queue
         dispatch_async(dispatch_get_main_queue(), ^{
-            GDCMessageImpl *msg = [[GDCMessageImpl alloc] initWithTopic:message.topic dictionary:json];
+            GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
+            msg.topic = message.topic;
+            if (json[errorKey]) {
+              NSDictionary *error2 = json[errorKey];
+              msg.payload = [NSError errorWithDomain:error2[errorDomainKey] code:[error2[errorCodeKey] integerValue] userInfo:error2[errorUserInfoKey]];
+            } else {
+              msg.payload = json[payloadKey];
+            }
+            msg.replyTopic = json[replyTopicKey];
+            msg.local = [json[localKey] boolValue];
+            msg.send = [json[sendKey] boolValue];
             [weakSelf.localBus sendOrPub:msg replyHandler:nil];
         });
     }];
@@ -72,7 +82,11 @@
 }
 
 - (id <GDCBus>)publish:(NSString *)topic payload:(id)payload {
-  GDCMessageImpl *msg = [[GDCMessageImpl alloc] initWithTopic:topic payload:payload replyTopic:nil send:NO local:NO];
+  GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
+  msg.topic = topic;
+  msg.payload = payload;
+  msg.send = NO;
+  msg.local = NO;
   [self sendOrPub:msg];
   return self;
 }
@@ -93,7 +107,12 @@
     }];
   }
 
-  GDCMessageImpl *msg = [[GDCMessageImpl alloc] initWithTopic:topic payload:payload replyTopic:replyTopic send:YES local:NO];
+  GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
+  msg.topic = topic;
+  msg.payload = payload;
+  msg.replyTopic = replyTopic;
+  msg.send = YES;
+  msg.local = NO;
   [self sendOrPub:msg];
   return self;
 }
@@ -134,12 +153,8 @@
 }
 
 - (void)sendOrPub:(GDCMessageImpl *)message {
-  if (message.dict[errorKey]) {
-    NSError *error = message.dict[errorKey];
-    ((NSMutableDictionary *) message.dict)[errorKey] = @{@"domain" : error.domain, @"code" : @(error.code), @"userInfo" : error.userInfo};
-  }
   NSError *error;
-  NSData *jsonData = [NSJSONSerialization dataWithJSONObject:message.dict
+  NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[message toDictWithTopic:NO]
                                                      options:0
                                                        error:&error];
   if (!jsonData) {

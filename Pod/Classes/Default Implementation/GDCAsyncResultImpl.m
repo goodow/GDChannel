@@ -7,8 +7,8 @@
   self = [super init];
   if (self) {
     _result = message;
-    _cause = message.dict[errorKey];
-    if (_cause) {
+    if ([message.payload isKindOfClass:NSError.class]) {
+      _cause = message.payload;
       _failed = YES;
     }
   }
