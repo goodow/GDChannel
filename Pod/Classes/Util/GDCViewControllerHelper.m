@@ -20,7 +20,7 @@
     [controller receivedWithMessage:message];
     return;
   }
-  BOOL found = [self find:controller in:UIApplication.sharedApplication.keyWindow.rootViewController];
+  UIViewController *found = [self find:controller in:UIApplication.sharedApplication.keyWindow.rootViewController instanceOrClass:YES];
   if (found) {
     [self config:controller message:message];
     void (^block)() = ^{
@@ -48,7 +48,7 @@
   UIViewController *top = self.topViewController;
   if (isPayloadDict) {
     if (payload[@"_edge"]) {
-      controller.edgesForExtendedLayout = [payload[@"_edge"] intValue];
+      controller.edgesForExtendedLayout = (UIRectEdge) [payload[@"_edge"] intValue];
     }
     if (payload[@"_hidesBottomBarWhenPushed"]) {
       controller.hidesBottomBarWhenPushed = [payload[@"_hidesBottomBarWhenPushed"] boolValue];
@@ -69,6 +69,11 @@
       [controller receivedWithMessage:message];
   }];
 }
+
++ (UIViewController *)findViewController:(Class)viewControllerClass {
+  return [self find:(id) viewControllerClass in:UIApplication.sharedApplication.keyWindow.rootViewController instanceOrClass:NO];
+}
+
 
 + (UIViewController *)findTopViewController:(UIViewController *)parent {
   if (parent.presentedViewController) {
@@ -99,38 +104,38 @@
   }
 }
 
-+ (BOOL)find:(UIViewController *)controller in:(UIViewController *)parent {
++ (UIViewController *)find:(id)controllerOrClass in:(UIViewController *)parent instanceOrClass:(BOOL)isInstance {
   if (parent.presentedViewController) {
-    BOOL found = [self find:controller in:parent.presentedViewController];
+    UIViewController *found = [self find:controllerOrClass in:parent.presentedViewController instanceOrClass:isInstance];
     if (found) {
-      return YES;
+      return found;
     }
   }
   if ([parent isKindOfClass:UITabBarController.class]) {
     UITabBarController *tabBarController = (UITabBarController *) parent;
-    if ([tabBarController.viewControllers containsObject:controller]) {
-      return YES;
-    }
+//    if ([tabBarController.viewControllers containsObject:controllerOrClass]) {
+//      return controllerOrClass;
+//    }
     for (UIViewController *ctr in tabBarController.viewControllers) {
-      BOOL found = [self find:controller in:ctr];
+      UIViewController *found = [self find:controllerOrClass in:ctr instanceOrClass:isInstance];
       if (found) {
-        return YES;
+        return found;
       }
     }
   }
   if ([parent isKindOfClass:UINavigationController.class]) {
     UINavigationController *navigationController = (UINavigationController *) parent;
-    if ([navigationController.viewControllers containsObject:controller]) {
-      return YES;
-    }
+//    if ([navigationController.viewControllers containsObject:controllerOrClass]) {
+//      return controllerOrClass;
+//    }
     for (UIViewController *ctr in navigationController.viewControllers.reverseObjectEnumerator) {
-      BOOL found = [self find:controller in:ctr];
+      UIViewController *found = [self find:controllerOrClass in:ctr instanceOrClass:isInstance];
       if (found) {
-        return YES;
+        return found;
       }
     }
   }
-  return controller == parent;
+  return isInstance ? (controllerOrClass == parent ? parent : nil) : ([parent isKindOfClass:controllerOrClass] ? parent : nil);
 }
 
 @end

@@ -12,6 +12,6 @@
 
 + (void)show:(UIViewController *)controller message:(id <GDCMessage>)message;
 
-+ (UIViewController *)findTopViewController:(UIViewController *)parent;
++ (UIViewController *)findViewController:(Class)viewControllerClass;
 
 @end
