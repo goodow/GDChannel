@@ -46,6 +46,7 @@
   }
 
   UIViewController *top = self.topViewController;
+  BOOL forcePresent = NO, forcePresentWithoutNav = NO;
   if (isPayloadDict) {
     if (payload[@"_edge"]) {
       controller.edgesForExtendedLayout = (UIRectEdge) [payload[@"_edge"] intValue];
@@ -53,8 +54,15 @@
     if (payload[@"_hidesBottomBarWhenPushed"]) {
       controller.hidesBottomBarWhenPushed = [payload[@"_hidesBottomBarWhenPushed"] boolValue];
     }
+    NSString *display = payload[@"_display"];
+    if ([display isEqualToString:@"present"]) {
+      forcePresent = YES;
+    } else if ([display isEqualToString:@"presentWithoutNav"]) {
+      forcePresentWithoutNav = forcePresent = YES;
+    }
   }
-  if (top.navigationController) {
+
+  if (!forcePresent && top.navigationController) {
     [top.navigationController pushViewController:controller animated:YES];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self config:controller message:message];
@@ -64,7 +72,7 @@
     return;
   }
 
-  [top presentViewController:[[UINavigationController alloc] initWithRootViewController:controller] animated:YES completion:^{
+  [top presentViewController:forcePresentWithoutNav ? controller : [[UINavigationController alloc] initWithRootViewController:controller] animated:YES completion:^{
       [self config:controller message:message];
       [controller receivedWithMessage:message];
   }];
@@ -101,6 +109,15 @@
   }
   if (payload[@"_tabBar"]) {
     controller.tabBarController.tabBar.hidden = ![payload[@"_tabBar"] boolValue];
+  }
+  if (payload[@"_deviceOrientation"]) {
+    [[UIDevice currentDevice] setValue:payload[@"_deviceOrientation"] forKey:@"orientation"];
+  }
+  if (payload[@"_attemptRotationToDeviceOrientation"]) {
+    [UIViewController attemptRotationToDeviceOrientation];
+  }
+  if (payload[@"_statusBarOrientation"]) {
+    [[UIApplication sharedApplication] setStatusBarOrientation:(UIInterfaceOrientation) [payload[@"_statusBarOrientation"] integerValue]];
   }
 }
 
