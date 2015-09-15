@@ -96,7 +96,7 @@
   return self;
 }
 
-- (id <GDCBus>)send:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultHandler)replyHandler {
+- (id <GDCBus>)send:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultBlock)replyHandler {
   NSString *replyTopic = nil;
   if (replyHandler) {
     replyTopic = [GDCMessageImpl generateReplyTopic];
@@ -117,12 +117,12 @@
   return self;
 }
 
-- (id <GDCBus>)sendLocal:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultHandler)replyHandler {
+- (id <GDCBus>)sendLocal:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultBlock)replyHandler {
   [self.localBus sendLocal:topic payload:payload replyHandler:replyHandler];
   return self;
 }
 
-- (id <GDCMessageConsumer>)subscribe:(NSString *)topicFilter handler:(GDCMessageHandler)handler {
+- (id <GDCMessageConsumer>)subscribe:(NSString *)topicFilter handler:(GDCMessageBlock)handler {
   __weak GDCMqttBus *weakSelf = self;
   int retainCount = [self.localBus.topicsManager retainCountOfTopic:topicFilter];
   id <GDCMessageConsumer> localConsumer = [self.localBus subscribeToTopic:topicFilter handler:handler bus:self];
@@ -148,7 +148,7 @@
   return consumer;
 }
 
-- (id <GDCMessageConsumer>)subscribeLocal:(NSString *)topicFilter handler:(GDCMessageHandler)handler {
+- (id <GDCMessageConsumer>)subscribeLocal:(NSString *)topicFilter handler:(GDCMessageBlock)handler {
   return [self.localBus subscribeLocal:topicFilter handler:handler];
 }
 

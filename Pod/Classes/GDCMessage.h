@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 
 @protocol GDCAsyncResult;
-typedef void (^GDCAsyncResultHandler)(id<GDCAsyncResult> asyncResult);
+typedef void (^GDCAsyncResultBlock)(id<GDCAsyncResult> asyncResult);
 
 @protocol GDCMessage <NSObject>
 
@@ -11,7 +11,7 @@ typedef void (^GDCAsyncResultHandler)(id<GDCAsyncResult> asyncResult);
 
 - (void)reply:(id)payload;
 
-- (void)reply:(id)payload replyHandler:(GDCAsyncResultHandler)replyHandler;
+- (void)reply:(id)payload replyHandler:(GDCAsyncResultBlock)replyHandler;
 
 - (void)fail:(NSError *)error;
 

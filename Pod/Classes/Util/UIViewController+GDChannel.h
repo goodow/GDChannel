@@ -1,8 +1,8 @@
 #import <Foundation/Foundation.h>
-#import "GDCMessageObserver.h"
+#import "GDCMessageHandler.h"
 #import "GDCBus.h"
 
-@interface UIViewController (GDChannel) <GDCMessageObserver>
+@interface UIViewController (GDChannel) <GDCMessageHandler>
 
 - (id <GDCBus>)bus;
 

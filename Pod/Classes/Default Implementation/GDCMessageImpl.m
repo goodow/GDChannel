@@ -11,7 +11,7 @@
   [self reply:payload replyHandler:nil];
 }
 
-- (void)reply:(id)payload replyHandler:(GDCAsyncResultHandler)replyHandler {
+- (void)reply:(id)payload replyHandler:(GDCAsyncResultBlock)replyHandler {
   if (self.bus && self.replyTopic) {
     if (self.local) {
       [self.bus sendLocal:self.replyTopic payload:payload replyHandler:replyHandler];

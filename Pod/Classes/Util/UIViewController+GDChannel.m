@@ -7,7 +7,7 @@
   return [GDCBusProvider instance];
 }
 
-- (void)receivedWithMessage:(id <GDCMessage>)message {
+- (void)handleMessage:(id <GDCMessage>)message {
 
 }
 

@@ -11,8 +11,8 @@
 
 @property(nonatomic, readonly, strong) GDCTopicsManager *topicsManager;
 
-- (void)sendOrPub:(GDCMessageImpl *)message replyHandler:(GDCAsyncResultHandler)replyHandler;
+- (void)sendOrPub:(GDCMessageImpl *)message replyHandler:(GDCAsyncResultBlock)replyHandler;
 
-- (GDCMessageConsumerImpl *)subscribeToTopic:(NSString *)topicFilter handler:(GDCMessageHandler)handler bus:(id <GDCBus>)bus;
+- (GDCMessageConsumerImpl *)subscribeToTopic:(NSString *)topicFilter handler:(GDCMessageBlock)handler bus:(id <GDCBus>)bus;
 
 @end

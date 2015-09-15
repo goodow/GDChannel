@@ -17,7 +17,7 @@
   id payload = message.payload;
   BOOL isPayloadDict = [payload isKindOfClass:NSDictionary.class];
   if (isPayloadDict && payload[@"_redirect"] && ![payload[@"_redirect"] boolValue]) {
-    [controller receivedWithMessage:message];
+    [controller handleMessage:message];
     return;
   }
   UIViewController *found = [self find:controller in:UIApplication.sharedApplication.keyWindow.rootViewController instanceOrClass:YES];
@@ -34,7 +34,7 @@
           current = current.parentViewController;
         }
         dispatch_async(dispatch_get_main_queue(), ^{
-            [controller receivedWithMessage:message];
+            [controller handleMessage:message];
         });
     };
     if (controller.presentedViewController) {
@@ -67,14 +67,14 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         [self config:controller message:message];
         [controller view]; // force viewDidLoad to be called
-        [controller receivedWithMessage:message];
+        [controller handleMessage:message];
     });
     return;
   }
 
   [top presentViewController:forcePresentWithoutNav ? controller : [[UINavigationController alloc] initWithRootViewController:controller] animated:YES completion:^{
       [self config:controller message:message];
-      [controller receivedWithMessage:message];
+      [controller handleMessage:message];
   }];
 }
 

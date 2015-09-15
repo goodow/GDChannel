@@ -50,7 +50,7 @@ static const NSString *messageKey = @"msg";
   return self;
 }
 
-- (id <GDCBus>)send:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultHandler)replyHandler {
+- (id <GDCBus>)send:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultBlock)replyHandler {
   GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
   msg.topic = topic;
   msg.payload = payload;
@@ -61,7 +61,7 @@ static const NSString *messageKey = @"msg";
   return self;
 }
 
-- (id <GDCBus>)sendLocal:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultHandler)replyHandler {
+- (id <GDCBus>)sendLocal:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultBlock)replyHandler {
   GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
   msg.topic = topic;
   msg.payload = payload;
@@ -72,15 +72,15 @@ static const NSString *messageKey = @"msg";
   return self;
 }
 
-- (id <GDCMessageConsumer>)subscribe:(NSString *)topicFilter handler:(GDCMessageHandler)handler {
+- (id <GDCMessageConsumer>)subscribe:(NSString *)topicFilter handler:(GDCMessageBlock)handler {
   return [self subscribeLocal:topicFilter handler:handler];
 }
 
-- (id <GDCMessageConsumer>)subscribeLocal:(NSString *)topicFilter handler:(GDCMessageHandler)handler {
+- (id <GDCMessageConsumer>)subscribeLocal:(NSString *)topicFilter handler:(GDCMessageBlock)handler {
   return [self subscribeToTopic:topicFilter handler:handler bus:self];
 }
 
-- (void)sendOrPub:(GDCMessageImpl *)message replyHandler:(GDCAsyncResultHandler)replyHandler {
+- (void)sendOrPub:(GDCMessageImpl *)message replyHandler:(GDCAsyncResultBlock)replyHandler {
   if (replyHandler) {
     [self subscribeToReplyTopic:message.replyTopic replyHandler:replyHandler bus:self];
   }
@@ -91,7 +91,7 @@ static const NSString *messageKey = @"msg";
   }
 }
 
-- (GDCMessageConsumerImpl *)subscribeToTopic:(NSString *)topicFilter handler:(GDCMessageHandler)handler bus:(id <GDCBus>)bus {
+- (GDCMessageConsumerImpl *)subscribeToTopic:(NSString *)topicFilter handler:(GDCMessageBlock)handler bus:(id <GDCBus>)bus {
   __weak GDCNotificationBus *weakSelf = self;
   __weak id <GDCBus> weakBus = bus;
   __weak id observer = [self.notificationCenter addObserverForName:topicFilter object:object queue:self.queue usingBlock:^(NSNotification *note) {
@@ -109,7 +109,7 @@ static const NSString *messageKey = @"msg";
   return consumer;
 }
 
-- (void)subscribeToReplyTopic:(NSString *)replyTopic replyHandler:(GDCAsyncResultHandler)replyHandler bus:(id <GDCBus>)bus {
+- (void)subscribeToReplyTopic:(NSString *)replyTopic replyHandler:(GDCAsyncResultBlock)replyHandler bus:(id <GDCBus>)bus {
   __weak GDCNotificationBus *weakSelf = self;
   __weak id <GDCBus> weakBus = bus;
   __weak __block id <NSObject> observer = [self.notificationCenter addObserverForName:replyTopic object:object queue:self.queue usingBlock:^(NSNotification *note) {
