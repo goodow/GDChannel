@@ -1,4 +1,4 @@
-#import <GDChannel/GDCBus.h>
+#import "GDCBus.h"
 #import "GDCNotificationBus.h"
 #import "GDCMessageImpl.h"
 #import "GDCMessageConsumerImpl.h"

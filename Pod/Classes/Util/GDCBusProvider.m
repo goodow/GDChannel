@@ -1,4 +1,5 @@
 #import "GDCBusProvider.h"
+#import <UIKit/UIkit.h>
 
 #ifdef DEBUG
 #import "GDCMqttBus.h"

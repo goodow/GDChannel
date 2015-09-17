@@ -1,6 +1,5 @@
 #import <Foundation/Foundation.h>
-#import <GDChannel/GDCMessage.h>
-#import <GDChannel/GDCBus.h>
+#import "GDCMessage.h"
 #import "GDCBus.h"
 
 @class GDCMessageImpl;

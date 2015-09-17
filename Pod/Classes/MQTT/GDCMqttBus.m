@@ -1,4 +1,3 @@
-#import <GDChannel/GDCBus.h>
 #import "GDCMessageImpl.h"
 #import "GDCMessageConsumerImpl.h"
 #import "GDCAsyncResultImpl.h"
