@@ -98,7 +98,7 @@
 - (id <GDCBus>)send:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultBlock)replyHandler {
   NSString *replyTopic = nil;
   if (replyHandler) {
-    replyTopic = [GDCMessageImpl generateReplyTopic];
+    replyTopic = [GDCMessageImpl generateReplyTopic:topic];
     __block id <GDCMessageConsumer> consumer = [self subscribe:replyTopic handler:^(id <GDCMessage> message) {
         [consumer unsubscribe];
         GDCAsyncResultImpl *asyncResult = [[GDCAsyncResultImpl alloc] initWithMessage:message];

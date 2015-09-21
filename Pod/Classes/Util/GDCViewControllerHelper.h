@@ -3,12 +3,13 @@
 //
 
 #import <Foundation/Foundation.h>
-
-@protocol GDCMessage;
+#import "GDCMessage.h"
 
 @interface GDCViewControllerHelper : NSObject
 
 + (UIViewController *)topViewController;
+
++ (UIViewController *)backViewController;
 
 + (void)show:(UIViewController *)controller message:(id <GDCMessage>)message;
 

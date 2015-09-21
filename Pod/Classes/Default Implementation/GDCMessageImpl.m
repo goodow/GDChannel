@@ -2,8 +2,8 @@
 
 @implementation GDCMessageImpl
 
-+ (NSString *)generateReplyTopic {
-  return [@"GDCReplyTopic/" stringByAppendingString:[[[NSUUID alloc] init] UUIDString]];
++ (NSString *)generateReplyTopic:(NSString *)topic {
+  return [NSString stringWithFormat:@"reply/%@/%@", [[NSUUID alloc] init].UUIDString, topic];
 }
 
 - (void)reply:(id)payload {

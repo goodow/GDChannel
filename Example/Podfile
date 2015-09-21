@@ -4,11 +4,13 @@ target 'GDChannel', :exclusive => true do
   pod "GDChannel", :path => "../"
 end
 
-target 'Tests', :exclusive => true do
-  pod "GDChannel", :path => "../"
-
-  pod 'Specta'
-  pod 'Expecta'
-  pod 'FBSnapshotTestCase'
-  pod 'Expecta+Snapshots'
-end
+# target 'Tests', :exclusive => true do
+#   use_frameworks!
+#
+#   pod "GDChannel", :path => "../"
+#
+#   pod 'Specta'
+#   pod 'Expecta'
+#   pod 'FBSnapshotTestCase'
+#   pod 'Expecta+Snapshots'
+# end

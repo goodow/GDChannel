@@ -4,7 +4,6 @@
 
 #import <UIKit/UIKit.h>
 #import "GDCViewControllerHelper.h"
-#import "GDCMessage.h"
 #import "UIViewController+GDChannel.h"
 
 @implementation GDCViewControllerHelper
@@ -13,13 +12,28 @@
   return [self findTopViewController:UIApplication.sharedApplication.keyWindow.rootViewController];
 }
 
++ (UIViewController *)backViewController {
+  UIViewController *top = GDCViewControllerHelper.topViewController;
+  NSArray *navViewControllers = top.navigationController.viewControllers;
+  if (navViewControllers.count > 1) {
+    return navViewControllers[navViewControllers.count - 2];
+  } else if (top.presentingViewController) {
+    return top.presentingViewController;
+  }
+  return nil;
+}
+
 + (void)show:(UIViewController *)controller message:(id <GDCMessage>)message {
+  if (!controller) {
+    return;
+  }
   id payload = message.payload;
   BOOL isPayloadDict = [payload isKindOfClass:NSDictionary.class];
   if (isPayloadDict && payload[@"_redirect"] && ![payload[@"_redirect"] boolValue]) {
     [controller handleMessage:message];
     return;
   }
+
   UIViewController *found = [self find:controller in:UIApplication.sharedApplication.keyWindow.rootViewController instanceOrClass:YES];
   if (found) {
     [self config:controller message:message];
