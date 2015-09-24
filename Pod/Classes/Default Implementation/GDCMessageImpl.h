@@ -2,8 +2,6 @@
 #import "GDCMessage.h"
 #import "GDCBus.h"
 
-static const NSString *replyTopicPrefix = @"reply/+/";
-
 static const NSString *topicKey = @"topic";
 static const NSString *payloadKey = @"payload";
 static const NSString *replyTopicKey = @"replyTopic";

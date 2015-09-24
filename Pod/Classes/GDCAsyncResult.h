@@ -1,6 +1,5 @@
 #import <Foundation/Foundation.h>
-
-@protocol GDCMessage;
+#import "GDCMessage.h"
 
 @protocol GDCAsyncResult <NSObject>
 

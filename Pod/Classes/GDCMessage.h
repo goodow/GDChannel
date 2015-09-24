@@ -1,5 +1,7 @@
 #import <Foundation/Foundation.h>
 
+static const NSString *replyTopicPrefix = @"reply/+/";
+
 @protocol GDCAsyncResult;
 typedef void (^GDCAsyncResultBlock)(id<GDCAsyncResult> asyncResult);
 
