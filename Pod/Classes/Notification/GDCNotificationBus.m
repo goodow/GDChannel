@@ -31,43 +31,63 @@ static const NSString *messageKey = @"msg";
 }
 
 - (id <GDCBus>)publish:(NSString *)topic payload:(id)payload {
+  return [self publish:topic payload:payload options:nil];
+}
+
+- (id <GDCBus>)publish:(NSString *)topic payload:(id)payload options:(NSDictionary *)options {
   GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
   msg.topic = topic;
   msg.payload = payload;
   msg.send = NO;
   msg.local = NO;
+  msg.options = options;
   [self sendOrPub:msg replyHandler:nil];
   return self;
 }
 
 - (id <GDCBus>)publishLocal:(NSString *)topic payload:(id)payload {
+  return [self publishLocal:topic payload:payload options:nil];
+}
+
+- (id <GDCBus>)publishLocal:(NSString *)topic payload:(id)payload options:(NSDictionary *)options {
   GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
   msg.topic = topic;
   msg.payload = payload;
   msg.send = NO;
   msg.local = YES;
+  msg.options = options;
   [self sendOrPub:msg replyHandler:nil];
   return self;
 }
 
 - (id <GDCBus>)send:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultBlock)replyHandler {
+  return [self send:topic payload:payload options:nil replyHandler:replyHandler];
+}
+
+- (id <GDCBus>)send:(NSString *)topic payload:(id)payload options:(NSDictionary *)options replyHandler:(GDCAsyncResultBlock)replyHandler {
   GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
   msg.topic = topic;
   msg.payload = payload;
   msg.replyTopic = (replyHandler ? [GDCMessageImpl generateReplyTopic:topic] : nil);
   msg.send = YES;
   msg.local = NO;
+  msg.options = options;
   [self sendOrPub:msg replyHandler:replyHandler];
   return self;
 }
 
 - (id <GDCBus>)sendLocal:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultBlock)replyHandler {
+  return [self sendLocal:topic payload:payload options:nil replyHandler:replyHandler];
+}
+
+- (id <GDCBus>)sendLocal:(NSString *)topic payload:(id)payload options:(NSDictionary *)options replyHandler:(GDCAsyncResultBlock)replyHandler {
   GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
   msg.topic = topic;
   msg.payload = payload;
   msg.replyTopic = (replyHandler ? [GDCMessageImpl generateReplyTopic:topic] : nil);
   msg.send = YES;
   msg.local = YES;
+  msg.options = options;
   [self sendOrPub:msg replyHandler:replyHandler];
   return self;
 }
@@ -86,8 +106,10 @@ static const NSString *messageKey = @"msg";
   }
 
   NSSet *topicsToPublish = [self.topicsManager calculateTopicsToPublish:message.topic];
+  BOOL first = YES;
   for (NSString *filter in topicsToPublish) {
-    [self.notificationCenter postNotificationName:filter object:object userInfo:@{messageKey : message}];
+    [self.notificationCenter postNotificationName:filter object:object userInfo:@{messageKey : first ? message : message.copy}];
+    first = NO;
   }
 }
 

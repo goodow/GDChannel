@@ -10,6 +10,7 @@
     if ([message.payload isKindOfClass:NSError.class]) {
       _cause = message.payload;
       _failed = YES;
+      message.payload = nil;
     }
   }
 

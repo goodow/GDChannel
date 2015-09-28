@@ -2,7 +2,6 @@
 // Created by Larry Tin on 15/4/30.
 //
 
-#import <UIKit/UIKit.h>
 #import "GDCViewControllerHelper.h"
 #import "UIViewController+GDChannel.h"
 
@@ -27,9 +26,8 @@
   if (!controller) {
     return;
   }
-  id payload = message.payload;
-  BOOL isPayloadDict = [payload isKindOfClass:NSDictionary.class];
-  if (isPayloadDict && payload[@"_redirect"] && ![payload[@"_redirect"] boolValue]) {
+  NSDictionary *options = message.options;
+  if (options[optionRedirect] && ![options[optionRedirect] boolValue]) {
     [controller handleMessage:message];
     return;
   }
@@ -61,21 +59,20 @@
 
   UIViewController *top = self.topViewController;
   BOOL forcePresent = NO, forcePresentWithoutNav = NO;
-  if (isPayloadDict) {
-    if (payload[@"_edge"]) {
-      controller.edgesForExtendedLayout = (UIRectEdge) [payload[@"_edge"] intValue];
+  if (options) {
+    if (options[optionEdgesForExtendedLayout]) {
+      controller.edgesForExtendedLayout = (UIRectEdge) [options[optionEdgesForExtendedLayout] intValue];
     }
-    if (payload[@"_hidesBottomBarWhenPushed"]) {
-      controller.hidesBottomBarWhenPushed = [payload[@"_hidesBottomBarWhenPushed"] boolValue];
+    if (options[optionHidesBottomBarWhenPushed]) {
+      controller.hidesBottomBarWhenPushed = [options[optionHidesBottomBarWhenPushed] boolValue];
     }
-    NSString *display = payload[@"_display"];
+    NSString *display = options[optionDisplay];
     if ([display isEqualToString:@"present"]) {
       forcePresent = YES;
     } else if ([display isEqualToString:@"presentWithoutNav"]) {
       forcePresentWithoutNav = forcePresent = YES;
     }
   }
-
   if (!forcePresent && top.navigationController) {
     [top.navigationController pushViewController:controller animated:YES];
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -111,27 +108,27 @@
 }
 
 + (void)config:(UIViewController *)controller message:(id <GDCMessage>)message {
-  if (![message.payload isKindOfClass:NSDictionary.class]) {
+  if (!message.options) {
     return;
   }
-  NSDictionary *payload = message.payload;
-  if (payload[@"_navBar"]) {
-    [controller.navigationController setNavigationBarHidden:![payload[@"_navBar"] boolValue] animated:NO];
+  NSDictionary *options = message.options;
+  if (options[optionNavBar]) {
+    [controller.navigationController setNavigationBarHidden:![options[optionNavBar] boolValue] animated:NO];
   }
-  if (payload[@"_toolBar"]) {
-    [controller.navigationController setToolbarHidden:![payload[@"_toolBar"] boolValue] animated:NO];
+  if (options[optionToolBar]) {
+    [controller.navigationController setToolbarHidden:![options[optionToolBar] boolValue] animated:NO];
   }
-  if (payload[@"_tabBar"]) {
-    controller.tabBarController.tabBar.hidden = ![payload[@"_tabBar"] boolValue];
+  if (options[optionTabBar]) {
+    controller.tabBarController.tabBar.hidden = ![options[optionTabBar] boolValue];
   }
-  if (payload[@"_deviceOrientation"]) {
-    [[UIDevice currentDevice] setValue:payload[@"_deviceOrientation"] forKey:@"orientation"];
+  if (options[optionDeviceOrientation]) {
+    [[UIDevice currentDevice] setValue:options[optionDeviceOrientation] forKey:@"orientation"];
   }
-  if (payload[@"_attemptRotationToDeviceOrientation"]) {
+  if (options[optionAttemptRotationToDeviceOrientation]) {
     [UIViewController attemptRotationToDeviceOrientation];
   }
-  if (payload[@"_statusBarOrientation"]) {
-    [[UIApplication sharedApplication] setStatusBarOrientation:(UIInterfaceOrientation) [payload[@"_statusBarOrientation"] integerValue]];
+  if (options[optionStatusBarOrientation]) {
+    [[UIApplication sharedApplication] setStatusBarOrientation:(UIInterfaceOrientation) [options[optionStatusBarOrientation] integerValue]];
   }
 }
 

@@ -7,7 +7,7 @@
 //
 
 #import "GDCViewController.h"
-#import "GDCBusProvider.h"
+#import "NSObject+GDChannel.h"
 
 @interface GDCViewController ()
 
@@ -15,14 +15,11 @@
 
 @implementation GDCViewController {
   id <GDCMessageConsumer> consumer;
-  id <GDCBus> bus;
 }
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
   [super viewDidLoad];
   // Do any additional setup after loading the view, typically from a nib.
-  bus = [GDCBusProvider instance];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -32,32 +29,33 @@
 }
 
 - (IBAction)subscribe:(UIButton *)sender {
-  consumer = [bus subscribe:@"sometopic1" handler:^(id <GDCMessage> message) {
-      NSLog(@"test: %@", message.payload);
-      [message reply:@"re" replyHandler:^(id <GDCAsyncResult> asyncResult) {
-          id <GDCMessage> o = asyncResult.result;
-          NSLog(@"asyncResult2: %@", o.payload);
-      }];
-  }];
+  if (!consumer) {
+    consumer = [self.bus subscribe:@"sometopic1" handler:^(id <GDCMessage> message) {
+        NSLog(@"test: %@", message);
+        [message reply:@"re" options:@{@"optRe" : @YES} replyHandler:^(id <GDCAsyncResult> asyncResult) {
+            id <GDCMessage> result = asyncResult.result;
+            NSLog(@"asyncResult2: %@", result);
+        }];
+    }];
+  }
 }
 
 - (IBAction)publish:(UIButton *)sender {
-  [bus send:@"sometopic1" payload:@[@88] replyHandler:^(id <GDCAsyncResult> asyncResult) {
+  [self.bus send:@"sometopic1" payload:@[@88] options:@{@"optA" : @"val"} replyHandler:^(id <GDCAsyncResult> asyncResult) {
       id <GDCMessage> o = asyncResult.result;
-      NSLog(@"asyncResult: %@", o.payload);
+      NSLog(@"asyncResult: %@", o);
       [o reply:@"re2"];
   }];
 }
 
 - (IBAction)unsubscribe:(id)sender {
   [consumer unsubscribe];
+  consumer = nil;
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
   [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-  [consumer unsubscribe];
+  // Dispose of any resources that can be recreated.
 }
 
 @end

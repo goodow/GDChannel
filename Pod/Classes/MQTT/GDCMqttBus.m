@@ -51,6 +51,7 @@
             msg.replyTopic = json[replyTopicKey];
             msg.local = [json[localKey] boolValue];
             msg.send = [json[sendKey] boolValue];
+            msg.options = json[optionsKey];
             [weakSelf.localBus sendOrPub:msg replyHandler:nil];
         });
     }];
@@ -81,21 +82,34 @@
 }
 
 - (id <GDCBus>)publish:(NSString *)topic payload:(id)payload {
+  return [self publish:topic payload:payload options:nil];
+}
+
+- (id <GDCBus>)publish:(NSString *)topic payload:(id)payload options:(NSDictionary *)options {
   GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
   msg.topic = topic;
   msg.payload = payload;
   msg.send = NO;
   msg.local = NO;
+  msg.options = options;
   [self sendOrPub:msg];
   return self;
 }
 
 - (id <GDCBus>)publishLocal:(NSString *)topic payload:(id)payload {
-  [self.localBus publishLocal:topic payload:payload];
+  return [self publishLocal:topic payload:payload options:nil];
+}
+
+- (id <GDCBus>)publishLocal:(NSString *)topic payload:(id)payload options:(NSDictionary *)options {
+  [self.localBus publishLocal:topic payload:payload options:options];
   return self;
 }
 
 - (id <GDCBus>)send:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultBlock)replyHandler {
+  return [self send:topic payload:payload options:nil replyHandler:replyHandler];
+}
+
+- (id <GDCBus>)send:(NSString *)topic payload:(id)payload options:(NSDictionary *)options replyHandler:(GDCAsyncResultBlock)replyHandler {
   NSString *replyTopic = nil;
   if (replyHandler) {
     replyTopic = [GDCMessageImpl generateReplyTopic:topic];
@@ -112,12 +126,17 @@
   msg.replyTopic = replyTopic;
   msg.send = YES;
   msg.local = NO;
+  msg.options = options;
   [self sendOrPub:msg];
   return self;
 }
 
 - (id <GDCBus>)sendLocal:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultBlock)replyHandler {
-  [self.localBus sendLocal:topic payload:payload replyHandler:replyHandler];
+  return [self sendLocal:topic payload:payload options:nil replyHandler:replyHandler];
+}
+
+- (id <GDCBus>)sendLocal:(NSString *)topic payload:(id)payload options:(NSDictionary *)options replyHandler:(GDCAsyncResultBlock)replyHandler {
+  [self.localBus sendLocal:topic payload:payload options:options replyHandler:replyHandler];
   return self;
 }
 

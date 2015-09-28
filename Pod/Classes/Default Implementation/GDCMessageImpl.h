@@ -11,14 +11,16 @@ static const NSString *errorKey = @"error";
 static const NSString *errorDomainKey = @"domain";
 static const NSString *errorCodeKey = @"code";
 static const NSString *errorUserInfoKey = @"userInfo";
+static const NSString *optionsKey = @"options";
 
-@interface GDCMessageImpl : NSObject <GDCMessage>
+@interface GDCMessageImpl : NSObject <GDCMessage, NSCopying>
 
 @property(nonatomic, strong) NSString *topic;
 @property(nonatomic, strong) id payload;
 @property(nonatomic, strong) NSString *replyTopic;
 @property(nonatomic) BOOL local;
 @property(nonatomic) BOOL send;
+@property(nonatomic, strong) NSDictionary *options;
 
 @property(nonatomic, strong) id<GDCBus> bus;
 
