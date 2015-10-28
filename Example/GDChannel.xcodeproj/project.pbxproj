@@ -45,6 +45,7 @@
 		6003F5B9195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6003F5BB195388D20070C39A /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
+		61FBCFCF310915F3538710F3 /* protocol.yml */ = {isa = PBXFileReference; lastKnownFileType = file.yml; name = protocol.yml; path = ../protocol.yml; sourceTree = "<group>"; };
 		96CFBF77B609009A6D91DC3A /* libPods-GDChannel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GDChannel.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A50D03F9FC95BC4457B2AB22 /* Pods-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tests/Pods-Tests.release.xcconfig"; sourceTree = "<group>"; };
 		DE72E28F798C096573329208 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
@@ -87,6 +88,7 @@
 				6003F58C195388D20070C39A /* Frameworks */,
 				6003F58B195388D20070C39A /* Products */,
 				2BB11A2819DF2E8724C57B2E /* Pods */,
+				61FBCFCF310915F3538710F3 /* protocol.yml */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";

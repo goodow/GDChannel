@@ -57,7 +57,6 @@
     return;
   }
 
-  UIViewController *top = self.topViewController;
   BOOL forcePresent = NO, forcePresentWithoutNav = NO;
   if (options) {
     if (options[optionEdgesForExtendedLayout]) {
@@ -72,7 +71,24 @@
     } else if ([display isEqualToString:@"presentWithoutNav"]) {
       forcePresentWithoutNav = forcePresent = YES;
     }
+
+    if (forcePresent) {
+      // 动画: 仅在 present 时有效
+      id <UIViewControllerTransitioningDelegate> transition = options[optionTransition];
+      if (transition) {
+        controller.transitioningDelegate = transition;
+        controller.modalPresentationStyle = UIModalPresentationCustom;
+      }
+      if (options[optionModalTransitionStyle]) {
+        controller.modalTransitionStyle = [options[optionModalTransitionStyle] integerValue];
+      }
+      if (options[optionModalPresentationStyle]) {
+        controller.modalPresentationStyle = [options[optionModalPresentationStyle] integerValue];
+      }
+    }
   }
+
+  UIViewController *top = self.topViewController;
   if (!forcePresent && top.navigationController) {
     [top.navigationController pushViewController:controller animated:YES];
     dispatch_async(dispatch_get_main_queue(), ^{
