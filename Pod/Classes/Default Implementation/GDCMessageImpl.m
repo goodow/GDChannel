@@ -59,7 +59,11 @@
 }
 
 - (NSString *)description {
-  return [self toDictWithTopic:YES].description;
+  NSString *description = [self toDictWithTopic:YES].description;
+  // avoid Mojibake
+  NSString *desc = [NSString stringWithCString:[description cStringUsingEncoding:NSUTF8StringEncoding] encoding:NSNonLossyASCIIStringEncoding];
+//  desc = [NSString stringWithUTF8String:[description cStringUsingEncoding:[NSString defaultCStringEncoding]]];
+  return desc ?: description;
 }
 
 - (id)copyWithZone:(nullable NSZone *)zone {
