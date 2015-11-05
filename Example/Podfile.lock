@@ -1,5 +1,7 @@
 PODS:
+  - Aspects (1.4.1)
   - GDChannel (0.6.0):
+    - Aspects (~> 1.4.1)
     - MQTTKit (~> 0.1.0)
   - MQTTKit (0.1.0)
 
@@ -11,7 +13,8 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  GDChannel: 40ee5b9bbc1c842f70ab28db4aad847c7b653ab5
+  Aspects: 7595ba96a6727a58ebcbfc954497fc5d2fdde546
+  GDChannel: 07c7dd0ca67516f9eb82ae9712d224e5b2e63579
   MQTTKit: a4e6b8aa92db1aeae917d2b773fd72a7749937c4
 
-COCOAPODS: 0.39.0.beta.4
+COCOAPODS: 0.39.0

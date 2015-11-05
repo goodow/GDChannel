@@ -6,8 +6,11 @@
 #import "GDCMessageHandler.h"
 #import "GDCBus.h"
 
+static const char *_GDCMessageAssociatedKey = "_GDCMessageAssociatedKey";
+
 @interface NSObject (GDChannel) <GDCMessageHandler>
 
-- (id <GDCBus>)bus;
+@property(nonatomic, readonly) id <GDCBus> bus;
+@property(nonatomic, readonly) id <GDCMessage> message;
 
 @end

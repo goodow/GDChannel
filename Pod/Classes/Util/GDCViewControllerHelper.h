@@ -4,6 +4,7 @@
 
 #import <UIKit/UIKit.h>
 #import "GDCMessage.h"
+#import "NSObject+GDChannel.h"
 
 // 值类型: NSString, {push, present, presentWithoutNav}
 static NSString *const optionDisplay = @"_display";
@@ -19,10 +20,20 @@ static NSString *const optionNavBar = @"_navBar";
 static NSString *const optionToolBar = @"_toolBar";
 // 值类型: BOOL, 是否显示tabBar
 static NSString *const optionTabBar = @"_tabBar";
+// 值类型: BOOL, 是否显示statusBar
+static NSString *const optionStatusBar = @"_statusBar";
+// 值类型: UIStatusBarStyle
+static NSString *const optionStatusBarStyle = @"_statusBarStyle";
 // 值类型: UIDeviceOrientation, 更改设备的朝向
 static NSString *const optionDeviceOrientation = @"_deviceOrientation";
 // 值类型: BOOL
 static NSString *const optionAttemptRotationToDeviceOrientation = @"_attemptRotationToDeviceOrientation";
+// 值类型: BOOL
+static NSString *const optionAutorotate = @"_autorotate";
+// 值类型: UIInterfaceOrientationMask
+static NSString *const optionSupportedInterfaceOrientations = @"_supportedInterfaceOrientations";
+// 值类型: UIInterfaceOrientation
+static NSString *const optionPreferredInterfaceOrientationForPresentation = @"_preferredInterfaceOrientationForPresentation";
 
 /* present 显示时的动画 */
 // 值类型: id <UIViewControllerTransitioningDelegate>
@@ -46,4 +57,5 @@ static NSString *const optionStatusBarOrientation = @"_statusBarOrientation";
 
 + (UIViewController *)findViewController:(Class)viewControllerClass;
 
++ (void)aspect_hookSelector;
 @end

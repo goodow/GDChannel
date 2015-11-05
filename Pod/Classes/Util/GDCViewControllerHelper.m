@@ -3,7 +3,8 @@
 //
 
 #import "GDCViewControllerHelper.h"
-#import "UIViewController+GDChannel.h"
+#import <objc/runtime.h>
+#import "Aspects.h"
 
 @implementation GDCViewControllerHelper
 
@@ -26,6 +27,7 @@
   if (!controller) {
     return;
   }
+  objc_setAssociatedObject(controller, _GDCMessageAssociatedKey, message, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
   NSDictionary *options = message.options;
   if (options[optionRedirect] && ![options[optionRedirect] boolValue]) {
     [controller handleMessage:message];
@@ -58,6 +60,7 @@
   }
 
   BOOL forcePresent = NO, forcePresentWithoutNav = NO;
+  /* config new controller */
   if (options) {
     if (options[optionEdgesForExtendedLayout]) {
       controller.edgesForExtendedLayout = (UIRectEdge) [options[optionEdgesForExtendedLayout] intValue];
@@ -114,13 +117,8 @@
   if (parent.presentedViewController) {
     return [self findTopViewController:parent.presentedViewController];
   }
-  if ([parent isKindOfClass:UITabBarController.class]) {
-    return [self findTopViewController:((UITabBarController *) parent).selectedViewController];
-  }
-  if ([parent isKindOfClass:UINavigationController.class]) {
-    return [self findTopViewController:((UINavigationController *) parent).visibleViewController];
-  }
-  return parent;
+  UIViewController *child = [self getVisibleChildViewController:parent];
+  return child ? [self findTopViewController:child] : parent;
 }
 
 + (void)config:(UIViewController *)controller message:(id <GDCMessage>)message {
@@ -137,14 +135,17 @@
   if (options[optionTabBar]) {
     controller.tabBarController.tabBar.hidden = ![options[optionTabBar] boolValue];
   }
+  if (options[optionStatusBar] || options[optionStatusBarStyle]) {
+    [controller setNeedsStatusBarAppearanceUpdate];
+  }
+  if (options[optionStatusBarOrientation]) {
+    [[UIApplication sharedApplication] setStatusBarOrientation:(UIInterfaceOrientation) [options[optionStatusBarOrientation] integerValue]];
+  }
   if (options[optionDeviceOrientation]) {
     [[UIDevice currentDevice] setValue:options[optionDeviceOrientation] forKey:@"orientation"];
   }
   if (options[optionAttemptRotationToDeviceOrientation]) {
     [UIViewController attemptRotationToDeviceOrientation];
-  }
-  if (options[optionStatusBarOrientation]) {
-    [[UIApplication sharedApplication] setStatusBarOrientation:(UIInterfaceOrientation) [options[optionStatusBarOrientation] integerValue]];
   }
 }
 
@@ -180,6 +181,103 @@
     }
   }
   return isInstance ? (controllerOrClass == parent ? parent : nil) : ([parent isKindOfClass:controllerOrClass] ? parent : nil);
+}
+
++ (void)aspect_hookSelector {
+  [UIViewController aspect_hookSelector:@selector(shouldAutorotate) withOptions:AspectPositionInstead usingBlock:^(id <AspectInfo> info) {
+      NSInvocation *invocation = info.originalInvocation;
+      UIViewController *instance = info.instance;
+      UIViewController *child = [GDCViewControllerHelper getVisibleChildViewController:instance];
+      BOOL toRtn;
+      if (child) {
+        toRtn = [child shouldAutorotate];
+      } else {
+        id autorotate = instance.message.options[optionAutorotate];
+        if (autorotate) {
+          toRtn = [autorotate boolValue];
+        } else {
+          [invocation invoke];
+          [invocation getReturnValue:&toRtn];
+        }
+      }
+      [invocation setReturnValue:&toRtn];
+  } error:nil];
+  [UIViewController aspect_hookSelector:@selector(supportedInterfaceOrientations) withOptions:AspectPositionInstead usingBlock:^(id <AspectInfo> info) {
+      NSInvocation *invocation = info.originalInvocation;
+      UIViewController *instance = info.instance;
+      UIViewController *child = [GDCViewControllerHelper getVisibleChildViewController:instance];
+      UIInterfaceOrientationMask toRtn;
+      if (child) {
+        toRtn = [child supportedInterfaceOrientations];
+      } else {
+        static const char *_key = "_GDCoptionSupportedInterfaceOrientationsKey";
+        id supportedInterfaceOrientations = instance.message.options[optionSupportedInterfaceOrientations];
+        if (supportedInterfaceOrientations) {
+          toRtn = [supportedInterfaceOrientations integerValue];
+          objc_setAssociatedObject(instance, _key, @(toRtn), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        } else if (objc_getAssociatedObject(instance, _key)) {
+          NSNumber *previousValue = objc_getAssociatedObject(instance, _key);
+          toRtn = [previousValue integerValue];
+        } else {
+          [invocation invoke];
+          [invocation getReturnValue:&toRtn];
+        }
+      }
+      [invocation setReturnValue:&toRtn];
+  }                               error:nil];
+  [UIViewController aspect_hookSelector:@selector(preferredInterfaceOrientationForPresentation) withOptions:AspectPositionInstead usingBlock:^(id <AspectInfo> info) {
+      NSInvocation *invocation = info.originalInvocation;
+      UIViewController *instance = info.instance;
+      UIViewController *child = [GDCViewControllerHelper getVisibleChildViewController:instance];
+      UIInterfaceOrientation toRtn;
+      if (child) {
+        toRtn = [child preferredInterfaceOrientationForPresentation];
+      } else {
+        id preferredInterfaceOrientationForPresentation = instance.message.options[optionPreferredInterfaceOrientationForPresentation];
+        if (preferredInterfaceOrientationForPresentation) {
+          toRtn = [preferredInterfaceOrientationForPresentation integerValue];
+        } else {
+          [invocation invoke];
+          [invocation getReturnValue:&toRtn];
+        }
+      }
+      [invocation setReturnValue:&toRtn];
+  }                               error:nil];
+
+  [UIViewController aspect_hookSelector:@selector(prefersStatusBarHidden) withOptions:AspectPositionInstead usingBlock:^(id <AspectInfo> info) {
+      NSInvocation *invocation = info.originalInvocation;
+      UIViewController *instance = info.instance;
+      BOOL toRtn;
+      if (instance.message.options[optionStatusBar]) {
+        toRtn = ![instance.message.options[optionStatusBar] boolValue];
+      } else {
+        [invocation invoke];
+        [invocation getReturnValue:&toRtn];
+      }
+      [invocation setReturnValue:&toRtn];
+  }                               error:nil];
+  [UIViewController aspect_hookSelector:@selector(preferredStatusBarStyle) withOptions:AspectPositionInstead usingBlock:^(id <AspectInfo> info) {
+      NSInvocation *invocation = info.originalInvocation;
+      UIViewController *instance = info.instance;
+      UIStatusBarStyle toRtn;
+      if (instance.message.options[optionStatusBarStyle]) {
+        toRtn = [instance.message.options[optionStatusBarStyle] integerValue];
+      } else {
+        [invocation invoke];
+        [invocation getReturnValue:&toRtn];
+      }
+      [invocation setReturnValue:&toRtn];
+  }                               error:nil];
+}
+
++ (UIViewController *)getVisibleChildViewController:(UIViewController *)parent {
+  if ([parent isKindOfClass:UINavigationController.class]) {
+    return ((UINavigationController *) parent).visibleViewController;
+  } else if ([parent isKindOfClass:UITabBarController.class]) {
+    return ((UITabBarController *) parent).selectedViewController;
+  } else {
+    return nil;
+  }
 }
 
 @end
