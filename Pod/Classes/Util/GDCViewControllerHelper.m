@@ -210,7 +210,7 @@
       if (child) {
         toRtn = [child supportedInterfaceOrientations];
       } else {
-        static const char *_key = "_GDCoptionSupportedInterfaceOrientationsKey";
+        static const char *_key = "_GDCOptionSupportedInterfaceOrientationsKey";
         id supportedInterfaceOrientations = instance.message.options[optionSupportedInterfaceOrientations];
         if (supportedInterfaceOrientations) {
           toRtn = [supportedInterfaceOrientations integerValue];
@@ -247,9 +247,14 @@
   [UIViewController aspect_hookSelector:@selector(prefersStatusBarHidden) withOptions:AspectPositionInstead usingBlock:^(id <AspectInfo> info) {
       NSInvocation *invocation = info.originalInvocation;
       UIViewController *instance = info.instance;
+      static const char *_key = "_GDCOptionPrefersStatusBarHiddenKey";
       BOOL toRtn;
       if (instance.message.options[optionStatusBar]) {
         toRtn = ![instance.message.options[optionStatusBar] boolValue];
+        objc_setAssociatedObject(instance, _key, @(toRtn), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+      } else if (objc_getAssociatedObject(instance, _key)) {
+        NSNumber *previousValue = objc_getAssociatedObject(instance, _key);
+        toRtn = [previousValue boolValue];
       } else {
         [invocation invoke];
         [invocation getReturnValue:&toRtn];
@@ -259,9 +264,14 @@
   [UIViewController aspect_hookSelector:@selector(preferredStatusBarStyle) withOptions:AspectPositionInstead usingBlock:^(id <AspectInfo> info) {
       NSInvocation *invocation = info.originalInvocation;
       UIViewController *instance = info.instance;
+      static const char *_key = "_GDCOptionPreferredStatusBarStyleKey";
       UIStatusBarStyle toRtn;
       if (instance.message.options[optionStatusBarStyle]) {
         toRtn = [instance.message.options[optionStatusBarStyle] integerValue];
+        objc_setAssociatedObject(instance, _key, @(toRtn), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+      } else if (objc_getAssociatedObject(instance, _key)) {
+        NSNumber *previousValue = objc_getAssociatedObject(instance, _key);
+        toRtn = [previousValue integerValue];
       } else {
         [invocation invoke];
         [invocation getReturnValue:&toRtn];
