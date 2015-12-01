@@ -48,10 +48,13 @@
             } else {
               msg.payload = json[payloadKey];
             }
-            msg.replyTopic = json[replyTopicKey];
             msg.local = [json[localKey] boolValue];
             msg.send = [json[sendKey] boolValue];
             msg.options = json[optionsKey];
+            msg.replyTopic = json[replyTopicKey];
+            if (msg.replyTopic && msg.send) {
+              msg.bus = weakSelf;
+            }
             [weakSelf.localBus sendOrPub:msg replyHandler:nil];
         });
     }];
@@ -89,8 +92,6 @@
   GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
   msg.topic = topic;
   msg.payload = payload;
-  msg.send = NO;
-  msg.local = NO;
   msg.options = options;
   [self sendOrPub:msg];
   return self;
@@ -125,7 +126,6 @@
   msg.payload = payload;
   msg.replyTopic = replyTopic;
   msg.send = YES;
-  msg.local = NO;
   msg.options = options;
   [self sendOrPub:msg];
   return self;
@@ -143,7 +143,7 @@
 - (id <GDCMessageConsumer>)subscribe:(NSString *)topicFilter handler:(GDCMessageBlock)handler {
   __weak GDCMqttBus *weakSelf = self;
   int retainCount = [self.localBus.topicsManager retainCountOfTopic:topicFilter];
-  id <GDCMessageConsumer> localConsumer = [self.localBus subscribeToTopic:topicFilter handler:handler bus:self];
+  id <GDCMessageConsumer> localConsumer = [self.localBus subscribeLocal:topicFilter handler:handler];
   if (retainCount == 0) {
     dispatch_async(self.queue, ^{
         [self.mqtt subscribe:topicFilter withCompletionHandler:^(NSArray *grantedQos) {
