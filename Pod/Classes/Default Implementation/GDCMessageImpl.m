@@ -10,7 +10,7 @@
   [self reply:payload options:nil replyHandler:nil];
 }
 
-- (void)reply:(id)payload options:(NSDictionary *)options {
+- (void)reply:(id)payload options:(GDCOptions *)options {
   [self reply:payload options:options replyHandler:nil];
 }
 
@@ -18,7 +18,7 @@
   [self reply:payload options:nil replyHandler:replyHandler];
 }
 
-- (void)reply:(id)payload options:(NSDictionary *)options replyHandler:(GDCAsyncResultBlock)replyHandler {
+- (void)reply:(id)payload options:(GDCOptions *)options replyHandler:(GDCAsyncResultBlock)replyHandler {
   if (self.bus && self.replyTopic) {
     if (self.local) {
       [self.bus sendLocal:self.replyTopic payload:payload options:options replyHandler:replyHandler];
@@ -49,11 +49,13 @@
   if ([self.payload isKindOfClass:NSError.class]) {
     NSError *error = self.payload;
     dict[errorKey] = @{errorDomainKey : error.domain, errorCodeKey : @(error.code), errorUserInfoKey : error.userInfo};
+  } else if ([self.payload conformsToProtocol:@protocol(GDCEntry)]) {
+    dict[payloadKey] = [self.payload toDictionary];
   } else if (self.payload) {
     dict[payloadKey] = self.payload;
   }
   if (self.options) {
-    dict[optionsKey] = self.options;
+    dict[optionsKey] = [self.options toDictionary];
   }
   return dict;
 }
@@ -74,8 +76,27 @@
   copy.bus = self.bus;
   copy.local = self.local;
   copy.send = self.send;
-  copy.options = self.options;
+  copy.options = [self.options copyWithZone:zone];
   return copy;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+  [coder encodeObject:self.payload forKey:payloadKey];
+  [coder encodeObject:self.topic forKey:topicKey];
+  [coder encodeObject:self.replyTopic forKey:replyTopicKey];
+  [coder encodeBool:self.local forKey:localKey];
+  [coder encodeBool:self.send forKey:sendKey];
+  [coder encodeObject:self.options forKey:optionsKey];
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder {
+  self.payload = [coder decodeObjectForKey:payloadKey];
+  self.topic = [coder decodeObjectForKey:topicKey];
+  self.replyTopic = [coder decodeObjectForKey:replyTopicKey];
+  self.local = [coder decodeBoolForKey:localKey];
+  self.send = [coder decodeBoolForKey:sendKey];
+  self.options = [coder decodeObjectForKey:optionsKey];
+  return self;
 }
 
 @end

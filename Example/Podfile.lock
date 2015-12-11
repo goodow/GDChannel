@@ -2,7 +2,11 @@ PODS:
   - Aspects (1.4.1)
   - GDChannel (0.6.0):
     - Aspects (~> 1.4.1)
+    - Mantle (~> 2.0.6)
     - MQTTKit (~> 0.1.0)
+  - Mantle (2.0.6):
+    - Mantle/extobjc (= 2.0.6)
+  - Mantle/extobjc (2.0.6)
   - MQTTKit (0.1.0)
 
 DEPENDENCIES:
@@ -14,7 +18,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Aspects: 7595ba96a6727a58ebcbfc954497fc5d2fdde546
-  GDChannel: 07c7dd0ca67516f9eb82ae9712d224e5b2e63579
+  GDChannel: 81bb1d279bcd3dec1435f4b774c1018a548f5b0e
+  Mantle: 299966b00759634931699f69cb6a30b9239b944d
   MQTTKit: a4e6b8aa92db1aeae917d2b773fd72a7749937c4
 
 COCOAPODS: 0.39.0

@@ -18,6 +18,8 @@
 		6003F5A4195388D20070C39A /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5A2195388D20070C39A /* Main_iPad.storyboard */; };
 		6003F5A7195388D20070C39A /* GDCViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5A6195388D20070C39A /* GDCViewController.m */; };
 		6003F5A9195388D20070C39A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5A8195388D20070C39A /* Images.xcassets */; };
+		61FBC29F43686452ACC20753 /* GDCSampleEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 61FBC625B7C90F207B045C13 /* GDCSampleEntry.m */; };
+		61FBCB301FC128D5CDAAF0D8 /* GDCTestEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 61FBC9AE5161290D6EDBE20D /* GDCTestEntry.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,7 +47,11 @@
 		6003F5B9195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6003F5BB195388D20070C39A /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
+		61FBC625B7C90F207B045C13 /* GDCSampleEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GDCSampleEntry.m; sourceTree = "<group>"; };
+		61FBC8CEB571DDCE20BC8CB4 /* GDCSampleEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GDCSampleEntry.h; sourceTree = "<group>"; };
+		61FBC9AE5161290D6EDBE20D /* GDCTestEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GDCTestEntry.m; sourceTree = "<group>"; };
 		61FBCFCF310915F3538710F3 /* protocol.yml */ = {isa = PBXFileReference; lastKnownFileType = file.yml; name = protocol.yml; path = ../protocol.yml; sourceTree = "<group>"; };
+		61FBCFEC0A9BFEDC800F6AEC /* GDCTestEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GDCTestEntry.h; sourceTree = "<group>"; };
 		96CFBF77B609009A6D91DC3A /* libPods-GDChannel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GDChannel.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A50D03F9FC95BC4457B2AB22 /* Pods-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tests/Pods-Tests.release.xcconfig"; sourceTree = "<group>"; };
 		DE72E28F798C096573329208 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
@@ -126,6 +132,10 @@
 				6003F5A6195388D20070C39A /* GDCViewController.m */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
+				61FBC625B7C90F207B045C13 /* GDCSampleEntry.m */,
+				61FBC8CEB571DDCE20BC8CB4 /* GDCSampleEntry.h */,
+				61FBC9AE5161290D6EDBE20D /* GDCTestEntry.m */,
+				61FBCFEC0A9BFEDC800F6AEC /* GDCTestEntry.h */,
 			);
 			path = GDChannel;
 			sourceTree = "<group>";
@@ -291,6 +301,8 @@
 				6003F59E195388D20070C39A /* GDCAppDelegate.m in Sources */,
 				6003F5A7195388D20070C39A /* GDCViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
+				61FBC29F43686452ACC20753 /* GDCSampleEntry.m in Sources */,
+				61FBCB301FC128D5CDAAF0D8 /* GDCTestEntry.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

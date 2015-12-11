@@ -1,0 +1,21 @@
+//
+// Created by Larry Tin on 15/12/8.
+// Copyright (c) 2015 Larry Tin. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "MTLModel.h"
+
+@class GDCOptions;
+
+@protocol GDCEntry <MTLModel>
+@end
+
+@interface GDCEntry : MTLModel <GDCEntry>
++ (instancetype)of:(id)payload;
+
+- (NSDictionary *)toDictionary;
+
+- (void)addTopic:(NSString *)topic options:(GDCOptions *)options;
+
+@end

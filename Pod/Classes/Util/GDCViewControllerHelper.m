@@ -28,8 +28,9 @@
     return;
   }
   objc_setAssociatedObject(controller, _GDCMessageAssociatedKey, message, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-  NSDictionary *options = message.options;
-  if (options[optionRedirect] && ![options[optionRedirect] boolValue]) {
+  GDCViewOptions *viewOptions = message.options.viewOptions;
+  if (viewOptions && !viewOptions.redirect) {
+//    [controller view]; // force viewDidLoad to be called
     [controller handleMessage:message];
     return;
   }
@@ -61,33 +62,23 @@
 
   BOOL forcePresent = NO, forcePresentWithoutNav = NO;
   /* config new controller */
-  if (options) {
-    if (options[optionEdgesForExtendedLayout]) {
-      controller.edgesForExtendedLayout = (UIRectEdge) [options[optionEdgesForExtendedLayout] intValue];
-    }
-    if (options[optionHidesBottomBarWhenPushed]) {
-      controller.hidesBottomBarWhenPushed = [options[optionHidesBottomBarWhenPushed] boolValue];
-    }
-    NSString *display = options[optionDisplay];
-    if ([display isEqualToString:@"present"]) {
+  if (viewOptions) {
+    controller.edgesForExtendedLayout = viewOptions.edgesForExtendedLayout;
+    controller.hidesBottomBarWhenPushed = viewOptions.hidesBottomBarWhenPushed;
+    if ([viewOptions.display isEqualToString:@"present"]) {
       forcePresent = YES;
-    } else if ([display isEqualToString:@"presentWithoutNav"]) {
+    } else if ([viewOptions.display isEqualToString:@"presentWithoutNav"]) {
       forcePresentWithoutNav = forcePresent = YES;
     }
 
     if (forcePresent) {
       // 动画: 仅在 present 时有效
-      id <UIViewControllerTransitioningDelegate> transition = options[optionTransition];
-      if (transition) {
-        controller.transitioningDelegate = transition;
+      if (viewOptions.transition) {
+        controller.transitioningDelegate = viewOptions.transition;
         controller.modalPresentationStyle = UIModalPresentationCustom;
       }
-      if (options[optionModalTransitionStyle]) {
-        controller.modalTransitionStyle = [options[optionModalTransitionStyle] integerValue];
-      }
-      if (options[optionModalPresentationStyle]) {
-        controller.modalPresentationStyle = [options[optionModalPresentationStyle] integerValue];
-      }
+      controller.modalTransitionStyle = viewOptions.modalTransitionStyle;
+      controller.modalPresentationStyle = controller.modalPresentationStyle;
     }
   }
 
@@ -122,29 +113,21 @@
 }
 
 + (void)config:(UIViewController *)controller message:(id <GDCMessage>)message {
-  if (!message.options) {
+  GDCViewOptions *viewOptions = message.options.viewOptions;
+  if (!viewOptions) {
     return;
   }
-  NSDictionary *options = message.options;
-  if (options[optionNavBar]) {
-    [controller.navigationController setNavigationBarHidden:![options[optionNavBar] boolValue] animated:NO];
+  [controller.navigationController setNavigationBarHidden:!viewOptions.navBar animated:NO];
+  [controller.navigationController setToolbarHidden:!viewOptions.toolBar animated:NO];
+  controller.tabBarController.tabBar.hidden = !viewOptions.tabBar;
+  [controller setNeedsStatusBarAppearanceUpdate];
+//  if (options[optionStatusBarOrientation]) {
+//    [[UIApplication sharedApplication] setStatusBarOrientation:(UIInterfaceOrientation) [options[optionStatusBarOrientation] integerValue]];
+//  }
+  if (!viewOptions.deviceOrientation) {
+    [[UIDevice currentDevice] setValue:@(viewOptions.deviceOrientation) forKey:@"orientation"];
   }
-  if (options[optionToolBar]) {
-    [controller.navigationController setToolbarHidden:![options[optionToolBar] boolValue] animated:NO];
-  }
-  if (options[optionTabBar]) {
-    controller.tabBarController.tabBar.hidden = ![options[optionTabBar] boolValue];
-  }
-  if (options[optionStatusBar] || options[optionStatusBarStyle]) {
-    [controller setNeedsStatusBarAppearanceUpdate];
-  }
-  if (options[optionStatusBarOrientation]) {
-    [[UIApplication sharedApplication] setStatusBarOrientation:(UIInterfaceOrientation) [options[optionStatusBarOrientation] integerValue]];
-  }
-  if (options[optionDeviceOrientation]) {
-    [[UIDevice currentDevice] setValue:options[optionDeviceOrientation] forKey:@"orientation"];
-  }
-  if (options[optionAttemptRotationToDeviceOrientation]) {
+  if (viewOptions.attemptRotationToDeviceOrientation) {
     [UIViewController attemptRotationToDeviceOrientation];
   }
 }
@@ -192,16 +175,16 @@
       if (child) {
         toRtn = [child shouldAutorotate];
       } else {
-        id autorotate = instance.message.options[optionAutorotate];
-        if (autorotate) {
-          toRtn = [autorotate boolValue];
+        GDCViewOptions *viewOptions = instance.message.options.viewOptions;
+        if (viewOptions) {
+          toRtn = viewOptions.autorotate;
         } else {
           [invocation invoke];
           [invocation getReturnValue:&toRtn];
         }
       }
       [invocation setReturnValue:&toRtn];
-  } error:nil];
+  }                               error:nil];
   [UIViewController aspect_hookSelector:@selector(supportedInterfaceOrientations) withOptions:AspectPositionInstead usingBlock:^(id <AspectInfo> info) {
       NSInvocation *invocation = info.originalInvocation;
       UIViewController *instance = info.instance;
@@ -210,14 +193,9 @@
       if (child) {
         toRtn = [child supportedInterfaceOrientations];
       } else {
-        static const char *_key = "_GDCOptionSupportedInterfaceOrientationsKey";
-        id supportedInterfaceOrientations = instance.message.options[optionSupportedInterfaceOrientations];
-        if (supportedInterfaceOrientations) {
-          toRtn = [supportedInterfaceOrientations integerValue];
-          objc_setAssociatedObject(instance, _key, @(toRtn), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-        } else if (objc_getAssociatedObject(instance, _key)) {
-          NSNumber *previousValue = objc_getAssociatedObject(instance, _key);
-          toRtn = [previousValue integerValue];
+        GDCViewOptions *viewOptions = instance.message.options.viewOptions;
+        if (viewOptions) {
+          toRtn = viewOptions.supportedInterfaceOrientations;
         } else {
           [invocation invoke];
           [invocation getReturnValue:&toRtn];
@@ -233,9 +211,9 @@
       if (child) {
         toRtn = [child preferredInterfaceOrientationForPresentation];
       } else {
-        id preferredInterfaceOrientationForPresentation = instance.message.options[optionPreferredInterfaceOrientationForPresentation];
-        if (preferredInterfaceOrientationForPresentation) {
-          toRtn = [preferredInterfaceOrientationForPresentation integerValue];
+        GDCViewOptions *viewOptions = instance.message.options.viewOptions;
+        if (viewOptions) {
+          toRtn = viewOptions.preferredInterfaceOrientationForPresentation;
         } else {
           [invocation invoke];
           [invocation getReturnValue:&toRtn];
@@ -247,14 +225,10 @@
   [UIViewController aspect_hookSelector:@selector(prefersStatusBarHidden) withOptions:AspectPositionInstead usingBlock:^(id <AspectInfo> info) {
       NSInvocation *invocation = info.originalInvocation;
       UIViewController *instance = info.instance;
-      static const char *_key = "_GDCOptionPrefersStatusBarHiddenKey";
       BOOL toRtn;
-      if (instance.message.options[optionStatusBar]) {
-        toRtn = ![instance.message.options[optionStatusBar] boolValue];
-        objc_setAssociatedObject(instance, _key, @(toRtn), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-      } else if (objc_getAssociatedObject(instance, _key)) {
-        NSNumber *previousValue = objc_getAssociatedObject(instance, _key);
-        toRtn = [previousValue boolValue];
+      GDCViewOptions *viewOptions = instance.message.options.viewOptions;
+      if (viewOptions) {
+        toRtn = !viewOptions.statusBar;
       } else {
         [invocation invoke];
         [invocation getReturnValue:&toRtn];
@@ -264,14 +238,10 @@
   [UIViewController aspect_hookSelector:@selector(preferredStatusBarStyle) withOptions:AspectPositionInstead usingBlock:^(id <AspectInfo> info) {
       NSInvocation *invocation = info.originalInvocation;
       UIViewController *instance = info.instance;
-      static const char *_key = "_GDCOptionPreferredStatusBarStyleKey";
       UIStatusBarStyle toRtn;
-      if (instance.message.options[optionStatusBarStyle]) {
-        toRtn = [instance.message.options[optionStatusBarStyle] integerValue];
-        objc_setAssociatedObject(instance, _key, @(toRtn), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-      } else if (objc_getAssociatedObject(instance, _key)) {
-        NSNumber *previousValue = objc_getAssociatedObject(instance, _key);
-        toRtn = [previousValue integerValue];
+      GDCViewOptions *viewOptions = instance.message.options.viewOptions;
+      if (viewOptions) {
+        toRtn = viewOptions.statusBarStyle;
       } else {
         [invocation invoke];
         [invocation getReturnValue:&toRtn];

@@ -50,7 +50,7 @@
             }
             msg.local = [json[localKey] boolValue];
             msg.send = [json[sendKey] boolValue];
-            msg.options = json[optionsKey];
+            msg.options = [GDCOptions of:json[optionsKey]];
             msg.replyTopic = json[replyTopicKey];
             if (msg.replyTopic && msg.send) {
               msg.bus = weakSelf;
@@ -88,7 +88,7 @@
   return [self publish:topic payload:payload options:nil];
 }
 
-- (id <GDCBus>)publish:(NSString *)topic payload:(id)payload options:(NSDictionary *)options {
+- (id <GDCBus>)publish:(NSString *)topic payload:(id)payload options:(GDCOptions *)options {
   GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
   msg.topic = topic;
   msg.payload = payload;
@@ -101,7 +101,7 @@
   return [self publishLocal:topic payload:payload options:nil];
 }
 
-- (id <GDCBus>)publishLocal:(NSString *)topic payload:(id)payload options:(NSDictionary *)options {
+- (id <GDCBus>)publishLocal:(NSString *)topic payload:(id)payload options:(GDCOptions *)options {
   [self.localBus publishLocal:topic payload:payload options:options];
   return self;
 }
@@ -110,7 +110,7 @@
   return [self send:topic payload:payload options:nil replyHandler:replyHandler];
 }
 
-- (id <GDCBus>)send:(NSString *)topic payload:(id)payload options:(NSDictionary *)options replyHandler:(GDCAsyncResultBlock)replyHandler {
+- (id <GDCBus>)send:(NSString *)topic payload:(id)payload options:(GDCOptions *)options replyHandler:(GDCAsyncResultBlock)replyHandler {
   NSString *replyTopic = nil;
   if (replyHandler) {
     replyTopic = [GDCMessageImpl generateReplyTopic:topic];
@@ -135,7 +135,7 @@
   return [self sendLocal:topic payload:payload options:nil replyHandler:replyHandler];
 }
 
-- (id <GDCBus>)sendLocal:(NSString *)topic payload:(id)payload options:(NSDictionary *)options replyHandler:(GDCAsyncResultBlock)replyHandler {
+- (id <GDCBus>)sendLocal:(NSString *)topic payload:(id)payload options:(GDCOptions *)options replyHandler:(GDCAsyncResultBlock)replyHandler {
   [self.localBus sendLocal:topic payload:payload options:options replyHandler:replyHandler];
   return self;
 }

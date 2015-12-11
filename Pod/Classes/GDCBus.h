@@ -13,19 +13,19 @@ typedef void (^GDCMessageBlock)(id <GDCMessage> message);
 
 - (id <GDCBus>)publish:(NSString *)topic payload:(id)payload;
 
-- (id <GDCBus>)publish:(NSString *)topic payload:(id)payload options:(NSDictionary *)options;
+- (id <GDCBus>)publish:(NSString *)topic payload:(id)payload options:(GDCOptions *)options;
 
 - (id <GDCBus>)publishLocal:(NSString *)topic payload:(id)payload;
 
-- (id <GDCBus>)publishLocal:(NSString *)topic payload:(id)payload options:(NSDictionary *)options;
+- (id <GDCBus>)publishLocal:(NSString *)topic payload:(id)payload options:(GDCOptions *)options;
 
 - (id <GDCBus>)send:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultBlock)replyHandler;
 
-- (id <GDCBus>)send:(NSString *)topic payload:(id)payload options:(NSDictionary *)options replyHandler:(GDCAsyncResultBlock)replyHandler;
+- (id <GDCBus>)send:(NSString *)topic payload:(id)payload options:(GDCOptions *)options replyHandler:(GDCAsyncResultBlock)replyHandler;
 
 - (id <GDCBus>)sendLocal:(NSString *)topic payload:(id)payload replyHandler:(GDCAsyncResultBlock)replyHandler;
 
-- (id <GDCBus>)sendLocal:(NSString *)topic payload:(id)payload options:(NSDictionary *)options replyHandler:(GDCAsyncResultBlock)replyHandler;
+- (id <GDCBus>)sendLocal:(NSString *)topic payload:(id)payload options:(GDCOptions *)options replyHandler:(GDCAsyncResultBlock)replyHandler;
 
 - (id <GDCMessageConsumer>)subscribe:(NSString *)topicFilter handler:(GDCMessageBlock)handler;
 

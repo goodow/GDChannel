@@ -6,35 +6,37 @@
 # 定义通用锚点标记, 以供参考引用
 --- # UIViewController 的控制项
 viewOptions: &viewOptions
-  _navBar: true # true:显示 false:隐藏
-  _toolBar: false # true:显示 false:隐藏
-  _tabBar: false # true:显示 false:隐藏
-  _statusBar:  true # true:显示 false:隐藏
-  _statusBarStyle: *UIStatusBarStyle
-  _redirect: true # 是否强制跳转
-  _deviceOrientation: *UIDeviceOrientation
-  _attemptRotationToDeviceOrientation: false
-  _autorotate: true
-  _supportedInterfaceOrientations: *UIInterfaceOrientationMask
-  _preferredInterfaceOrientationForPresentation: *UIInterfaceOrientation
-  _statusBarOrientation: *UIInterfaceOrientation
-  _transition: *UIViewControllerTransitioningDelegate
-  _modalTransitionStyle: *UIModalTransitionStyle
-  _modalPresentationStyle: *UIModalPresentationStyle
+  navBar: true # true:显示 false:隐藏
+  toolBar: false # true:显示 false:隐藏
+  tabBar: false # true:显示 false:隐藏
+  statusBar:  true # true:显示 false:隐藏
+  statusBarStyle: *UIStatusBarStyle
+  redirect: true # 是否强制跳转
+  deviceOrientation: *UIDeviceOrientation
+  attemptRotationToDeviceOrientation: false
+  autorotate: true
+  supportedInterfaceOrientations: *UIInterfaceOrientationMask
+  preferredInterfaceOrientationForPresentation: *UIInterfaceOrientation
+  statusBarOrientation: *UIInterfaceOrientation
+  transition: *UIViewControllerTransitioningDelegate
+  modalTransitionStyle: *UIModalTransitionStyle
+  modalPresentationStyle: *UIModalPresentationStyle
 
 --- # 新建 UIViewController 时的控制项
 createViewOptions: &createViewOptions
-  _edge: *UIRectEdge
-  _hidesBottomBarWhenPushed: false
-  _display: push # {push, present, presentWithoutNav}
+  edge: *UIRectEdge
+  hidesBottomBarWhenPushed: false
+  display: push # {push, present, presentWithoutNav}
   <<: *viewOptions
 ...
 
 # topic: up
 -- # 返回上一层界面
-_options: *viewOptions
+_options:
+  viewOptions: *viewOptions
 
 # topic: opt
 -- # 修改当前的 UIViewController 选项
-_options: *viewOptions
+_options:
+  viewOptions: *viewOptions
 ...

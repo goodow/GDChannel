@@ -26,5 +26,6 @@ Pod::Spec.new do |s|
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   s.dependency 'MQTTKit', '~> 0.1.0'
+  s.dependency 'Mantle', '~> 2.0.6'
   s.dependency 'Aspects', '~> 1.4.1'
 end

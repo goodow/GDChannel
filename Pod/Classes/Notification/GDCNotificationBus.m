@@ -4,6 +4,7 @@
 #import "GDCMessageConsumerImpl.h"
 #import "GDCAsyncResultImpl.h"
 #import "GDCTopicsManager.h"
+#import "GDCStorage.h"
 
 static const NSString *object = @"GDCNotificationBus/object";
 static const NSString *messageKey = @"msg";
@@ -11,6 +12,7 @@ static const NSString *messageKey = @"msg";
 @interface GDCNotificationBus ()
 @property(nonatomic, readonly, strong) NSNotificationCenter *notificationCenter;
 @property(nonatomic, readonly, strong) NSOperationQueue *queue;
+@property(nonatomic, readonly, strong) GDCStorage *storage;
 @end
 
 @implementation GDCNotificationBus
@@ -23,6 +25,7 @@ static const NSString *messageKey = @"msg";
     _queue = [[NSOperationQueue alloc] init];
     _queue.name = @"GDChannel dispatch queue";
     _queue.maxConcurrentOperationCount = 1;
+    _storage = GDCStorage.instance;
     dispatch_async(dispatch_get_main_queue(), ^{
         [self publishLocal:GDC_BUS_ON_OPEN payload:@{}];
     });
@@ -34,7 +37,7 @@ static const NSString *messageKey = @"msg";
   return [self publish:topic payload:payload options:nil];
 }
 
-- (id <GDCBus>)publish:(NSString *)topic payload:(id)payload options:(NSDictionary *)options {
+- (id <GDCBus>)publish:(NSString *)topic payload:(id)payload options:(GDCOptions *)options {
   GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
   msg.topic = topic;
   msg.payload = payload;
@@ -47,7 +50,7 @@ static const NSString *messageKey = @"msg";
   return [self publishLocal:topic payload:payload options:nil];
 }
 
-- (id <GDCBus>)publishLocal:(NSString *)topic payload:(id)payload options:(NSDictionary *)options {
+- (id <GDCBus>)publishLocal:(NSString *)topic payload:(id)payload options:(GDCOptions *)options {
   GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
   msg.topic = topic;
   msg.payload = payload;
@@ -61,7 +64,7 @@ static const NSString *messageKey = @"msg";
   return [self send:topic payload:payload options:nil replyHandler:replyHandler];
 }
 
-- (id <GDCBus>)send:(NSString *)topic payload:(id)payload options:(NSDictionary *)options replyHandler:(GDCAsyncResultBlock)replyHandler {
+- (id <GDCBus>)send:(NSString *)topic payload:(id)payload options:(GDCOptions *)options replyHandler:(GDCAsyncResultBlock)replyHandler {
   GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
   msg.topic = topic;
   msg.payload = payload;
@@ -79,7 +82,7 @@ static const NSString *messageKey = @"msg";
   return [self sendLocal:topic payload:payload options:nil replyHandler:replyHandler];
 }
 
-- (id <GDCBus>)sendLocal:(NSString *)topic payload:(id)payload options:(NSDictionary *)options replyHandler:(GDCAsyncResultBlock)replyHandler {
+- (id <GDCBus>)sendLocal:(NSString *)topic payload:(id)payload options:(GDCOptions *)options replyHandler:(GDCAsyncResultBlock)replyHandler {
   GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
   msg.topic = topic;
   msg.payload = payload;
@@ -107,19 +110,68 @@ static const NSString *messageKey = @"msg";
     [self subscribeToReplyTopic:message.replyTopic replyHandler:replyHandler];
   }
 
-  NSSet *topicsToPublish = [self.topicsManager calculateTopicsToPublish:message.topic];
-  BOOL first = YES;
-  for (NSString *filter in topicsToPublish) {
-    [self.notificationCenter postNotificationName:filter object:object userInfo:@{messageKey : first ? message : message.copy}];
-    first = NO;
+  if (!message.send || !message.local) {
+    id payload = message.payload = [self typeCastAndPatch:message];
+    if ([payload conformsToProtocol:@protocol(GDCEntry)]) {
+      [payload addTopic:message.topic options:message.options];
+    }
+
+    if (message.options.retained) {
+      if (payload) {
+        [self.storage save:message];
+      } else {
+        [self.storage remove:message.topic];
+      }
+    } else {
+      [self.storage cachePayload:message];
+    }
   }
+
+  NSSet *topicsToPublish = [self.topicsManager calculateTopicsToPublish:message.topic];
+  for (NSString *filter in topicsToPublish) {
+    // Each handler gets a fresh copy
+    GDCMessageImpl *copied = message.copy;
+    copied.options.retained = NO;
+    [self.notificationCenter postNotificationName:filter object:object userInfo:@{messageKey : copied}];
+  }
+}
+
+- (id)typeCastAndPatch:(GDCMessageImpl *)message {
+  id payload = message.payload;
+  NSString *type = message.options.type;
+  BOOL patch = message.options.patch;
+  id originalPayload;
+  if (!type) {
+    if (!patch || !(originalPayload = [self.storage getPayload:message.topic])) {
+      return payload;
+    }
+    BOOL isEntry = [payload conformsToProtocol:@protocol(GDCEntry)];
+    id toRtn = [GDCStorage patchRecursively:originalPayload with:payload];
+    return isEntry ? [[payload class] of:toRtn] : toRtn;
+  }
+
+  // 设置了 type
+  Class clz = NSClassFromString(type);
+  if (!patch || !(originalPayload = [self.storage getPayload:message.topic])) {
+    if ([payload isKindOfClass:clz]) {
+      return payload;
+    }
+    if ([payload conformsToProtocol:@protocol(GDCEntry)]) {
+      payload = [(GDCEntry *) payload toDictionary];
+    }
+    return [clz of:payload];
+  }
+
+  // 设置了 type 和 patch
+  NSDictionary *toRtn = [GDCStorage patchRecursively:originalPayload with:payload];
+  return [clz of:toRtn];
 }
 
 - (GDCMessageConsumerImpl *)subscribeToTopic:(NSString *)topicFilter handler:(GDCMessageBlock)handler {
   __weak GDCNotificationBus *weakSelf = self;
   __weak id observer = [self.notificationCenter addObserverForName:topicFilter object:object queue:self.queue usingBlock:^(NSNotification *note) {
       GDCMessageImpl *message = note.userInfo[messageKey];
-      [weakSelf scheduleDeferred:handler argument:message];
+      [GDCNotificationBus scheduleDeferred:handler argument:message];
   }];
   [self.topicsManager addSubscribedTopic:topicFilter];
 
@@ -128,6 +180,13 @@ static const NSString *messageKey = @"msg";
       [weakSelf.notificationCenter removeObserver:observer];
       [weakSelf.topicsManager removeSubscribedTopic:topicFilter];
   };
+
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+      GDCMessageImpl *retained = [self.storage getRetainedMessage:topicFilter];
+      if (retained) {
+        [self.notificationCenter postNotificationName:retained.topic object:object userInfo:@{messageKey : retained.copy}];
+      }
+  });
   return consumer;
 }
 
@@ -139,17 +198,17 @@ static const NSString *messageKey = @"msg";
 
       GDCMessageImpl *message = note.userInfo[messageKey];
       GDCAsyncResultImpl *asyncResult = [[GDCAsyncResultImpl alloc] initWithMessage:message];
-      [weakSelf scheduleDeferred:replyHandler argument:asyncResult];
+      [GDCNotificationBus scheduleDeferred:replyHandler argument:asyncResult];
   }];
   [self.topicsManager addSubscribedTopic:replyTopic];
 }
 
-- (void)scheduleDeferred:(void (^)(id))block argument:(id)argument {
++ (void)scheduleDeferred:(void (^)(id))block argument:(id)argument {
 //  [[NSRunLoop mainRunLoop] performSelector:@selector(performBlock:) target:self argument:@[block, argument] order:0 modes:@[NSRunLoopCommonModes]];
-  [self performSelectorOnMainThread:@selector(performBlock:) withObject:@[block, argument] waitUntilDone:NO];
+  [self performSelectorOnMainThread:@selector(performBlock:) withObject:@[block, argument ?: NSNull.null] waitUntilDone:NO];
 }
 
-- (void)performBlock:(NSArray *)arguments {
++ (void)performBlock:(NSArray *)arguments {
   void (^block)(id) = arguments[0];
   block(arguments[1]);
 }
