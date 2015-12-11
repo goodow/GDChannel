@@ -8,6 +8,9 @@
 
 #import "GDCViewController.h"
 #import "NSObject+GDChannel.h"
+#import "GDCStorage.h"
+#import "GDCSampleEntry.h"
+#import "GDCViewOptions.h"
 
 @interface GDCViewController ()
 
@@ -32,7 +35,12 @@
   if (!consumer) {
     consumer = [self.bus subscribe:@"sometopic1" handler:^(id <GDCMessage> message) {
         NSLog(@"test: %@", message);
-        [message reply:@"re" options:@{@"optRe" : @YES} replyHandler:^(id <GDCAsyncResult> asyncResult) {
+        GDCStorage *storage = [[GDCStorage alloc] initWithBaseDirectory:nil];
+        id <GDCMessage> o = [storage get:message.topic];
+        GDCSampleEntry *entry = [GDCSampleEntry of:message.payload];
+        GDCOptions *options = [GDCViewOptions options];
+        options.extras = @{@"optRe" : @YES};
+        [message reply:@"re" options:options replyHandler:^(id <GDCAsyncResult> asyncResult) {
             id <GDCMessage> result = asyncResult.result;
             NSLog(@"asyncResult2: %@", result);
         }];
@@ -41,7 +49,15 @@
 }
 
 - (IBAction)publish:(UIButton *)sender {
-  [self.bus send:@"sometopic1" payload:@[@88] options:@{@"optA" : @"val"} replyHandler:^(id <GDCAsyncResult> asyncResult) {
+  GDCSampleEntry *entry = [[GDCSampleEntry alloc] init];
+  entry.floatA = 2.1;
+  entry.str = @"testEntry";
+  GDCSampleEntry *subEntry = [[GDCSampleEntry alloc] init];
+  subEntry.floatA = -1.1;
+  entry.entry = subEntry;
+  GDCOptions *options = [GDCViewOptions options];
+  options.retained = YES;
+  [self.bus send:@"sometopic1" payload:entry options:options replyHandler:^(id <GDCAsyncResult> asyncResult) {
       id <GDCMessage> o = asyncResult.result;
       NSLog(@"asyncResult: %@", o);
       [o reply:@"re2"];

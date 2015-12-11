@@ -4,6 +4,7 @@
 
 #import "NSObject+GDChannel.h"
 #import "GDCBusProvider.h"
+#import "GDCEntry.h"
 #import <objc/runtime.h>
 
 @implementation NSObject (GDChannel)

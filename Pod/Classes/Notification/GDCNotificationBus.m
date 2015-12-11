@@ -1,9 +1,12 @@
+#import <GDChannel/GDCOptions.h>
+#import <Mantle/MTLModel.h>
 #import "GDCBus.h"
 #import "GDCNotificationBus.h"
 #import "GDCMessageImpl.h"
 #import "GDCMessageConsumerImpl.h"
 #import "GDCAsyncResultImpl.h"
 #import "GDCTopicsManager.h"
+#import "GDCStorage.h"
 
 static const NSString *object = @"GDCNotificationBus/object";
 static const NSString *messageKey = @"msg";
@@ -11,6 +14,7 @@ static const NSString *messageKey = @"msg";
 @interface GDCNotificationBus ()
 @property(nonatomic, readonly, strong) NSNotificationCenter *notificationCenter;
 @property(nonatomic, readonly, strong) NSOperationQueue *queue;
+@property(nonatomic, readonly, strong) GDCStorage *storage;
 @end
 
 @implementation GDCNotificationBus
@@ -23,6 +27,7 @@ static const NSString *messageKey = @"msg";
     _queue = [[NSOperationQueue alloc] init];
     _queue.name = @"GDChannel dispatch queue";
     _queue.maxConcurrentOperationCount = 1;
+    _storage = [[GDCStorage alloc] initWithBaseDirectory:nil];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self publishLocal:GDC_BUS_ON_OPEN payload:@{}];
     });
@@ -34,7 +39,7 @@ static const NSString *messageKey = @"msg";
   return [self publish:topic payload:payload options:nil];
 }
 
-- (id <GDCBus>)publish:(NSString *)topic payload:(id)payload options:(NSDictionary *)options {
+- (id <GDCBus>)publish:(NSString *)topic payload:(id)payload options:(GDCOptions *)options {
   GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
   msg.topic = topic;
   msg.payload = payload;
@@ -47,7 +52,7 @@ static const NSString *messageKey = @"msg";
   return [self publishLocal:topic payload:payload options:nil];
 }
 
-- (id <GDCBus>)publishLocal:(NSString *)topic payload:(id)payload options:(NSDictionary *)options {
+- (id <GDCBus>)publishLocal:(NSString *)topic payload:(id)payload options:(GDCOptions *)options {
   GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
   msg.topic = topic;
   msg.payload = payload;
@@ -61,7 +66,7 @@ static const NSString *messageKey = @"msg";
   return [self send:topic payload:payload options:nil replyHandler:replyHandler];
 }
 
-- (id <GDCBus>)send:(NSString *)topic payload:(id)payload options:(NSDictionary *)options replyHandler:(GDCAsyncResultBlock)replyHandler {
+- (id <GDCBus>)send:(NSString *)topic payload:(id)payload options:(GDCOptions *)options replyHandler:(GDCAsyncResultBlock)replyHandler {
   GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
   msg.topic = topic;
   msg.payload = payload;
@@ -79,7 +84,7 @@ static const NSString *messageKey = @"msg";
   return [self sendLocal:topic payload:payload options:nil replyHandler:replyHandler];
 }
 
-- (id <GDCBus>)sendLocal:(NSString *)topic payload:(id)payload options:(NSDictionary *)options replyHandler:(GDCAsyncResultBlock)replyHandler {
+- (id <GDCBus>)sendLocal:(NSString *)topic payload:(id)payload options:(GDCOptions *)options replyHandler:(GDCAsyncResultBlock)replyHandler {
   GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
   msg.topic = topic;
   msg.payload = payload;
@@ -107,11 +112,40 @@ static const NSString *messageKey = @"msg";
     [self subscribeToReplyTopic:message.replyTopic replyHandler:replyHandler];
   }
 
+  if (!message.send) {
+    id payload = message.payload;
+    BOOL isEntry = [payload conformsToProtocol:@protocol(GDCEntry)];
+    if (isEntry) {
+      [message.payload addTopic:message.topic];
+    }
+    if (message.options.patch) {
+      id <GDCMessage> origin = [self.storage get:message.topic];
+      if ([origin.payload isKindOfClass:NSDictionary.class]) {
+        message.payload = [GDCStorage mergeDictionaryRecursively:origin.payload with:isEntry ? [payload toDictionary] : payload];
+      } else if ([origin.payload conformsToProtocol:@protocol(GDCEntry)]) {
+        if (isEntry) {
+          id<GDCEntry> originalEntry = origin.payload;
+          [originalEntry mergeValuesForKeysFromModel:payload];
+          message.payload = originalEntry;
+        } else {
+
+        }
+      }
+    }
+    if (message.options.retained) {
+      if (payload) {
+        [self.storage save:message];
+      } else {
+        [self.storage remove:message.topic];
+      }
+    } else {
+      [self.storage cache:message];
+    }
+  }
+
   NSSet *topicsToPublish = [self.topicsManager calculateTopicsToPublish:message.topic];
-  BOOL first = YES;
   for (NSString *filter in topicsToPublish) {
-    [self.notificationCenter postNotificationName:filter object:object userInfo:@{messageKey : first ? message : message.copy}];
-    first = NO;
+    [self.notificationCenter postNotificationName:filter object:object userInfo:@{messageKey : message}];
   }
 }
 
@@ -128,6 +162,11 @@ static const NSString *messageKey = @"msg";
       [weakSelf.notificationCenter removeObserver:observer];
       [weakSelf.topicsManager removeSubscribedTopic:topicFilter];
   };
+
+  id <GDCMessage> retained = [self.storage get:topicFilter];
+  if (retained) {
+    [self publishLocal:retained.topic payload:retained.payload options:retained.options];
+  }
   return consumer;
 }
 

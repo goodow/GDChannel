@@ -20,7 +20,7 @@ static const NSString *optionsKey = @"options";
 @property(nonatomic, strong) NSString *replyTopic;
 @property(nonatomic) BOOL local;
 @property(nonatomic) BOOL send;
-@property(nonatomic, strong) NSDictionary *options;
+@property(nonatomic, strong) GDCOptions *options;
 
 @property(nonatomic, strong) id<GDCBus> bus;
 
