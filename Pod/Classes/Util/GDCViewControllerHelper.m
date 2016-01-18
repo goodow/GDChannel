@@ -27,17 +27,17 @@
   if (!controller) {
     return;
   }
-  objc_setAssociatedObject(controller, _GDCMessageAssociatedKey, message, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
   GDCViewOptions *viewOptions = message.options.viewOptions;
   if (viewOptions && !viewOptions.redirect) {
 //    [controller view]; // force viewDidLoad to be called
+//    [self config:controller options:message.options];
     [controller handleMessage:message];
     return;
   }
 
   UIViewController *found = [self find:controller in:UIApplication.sharedApplication.keyWindow.rootViewController instanceOrClass:YES];
   if (found) {
-    [self config:controller message:message];
+    [self config:controller viewOptions:viewOptions];
     void (^block)() = ^{
         UIViewController *current = controller;
         while (current.parentViewController) {
@@ -63,6 +63,7 @@
   BOOL forcePresent = NO, forcePresentWithoutNav = NO;
   /* config new controller */
   if (viewOptions) {
+    objc_setAssociatedObject(controller, _GDCViewOptionsAssociatedKey, viewOptions, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     controller.edgesForExtendedLayout = viewOptions.edgesForExtendedLayout;
     controller.hidesBottomBarWhenPushed = viewOptions.hidesBottomBarWhenPushed;
     if ([viewOptions.display isEqualToString:@"present"]) {
@@ -86,7 +87,7 @@
   if (!forcePresent && top.navigationController) {
     [top.navigationController pushViewController:controller animated:YES];
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self config:controller message:message];
+        [self config:controller viewOptions:viewOptions];
         [controller view]; // force viewDidLoad to be called
         [controller handleMessage:message];
     });
@@ -94,7 +95,7 @@
   }
 
   [top presentViewController:forcePresentWithoutNav ? controller : [[UINavigationController alloc] initWithRootViewController:controller] animated:YES completion:^{
-      [self config:controller message:message];
+      [self config:controller viewOptions:viewOptions];
       [controller handleMessage:message];
   }];
 }
@@ -112,11 +113,12 @@
   return child ? [self findTopViewController:child] : parent;
 }
 
-+ (void)config:(UIViewController *)controller message:(id <GDCMessage>)message {
-  GDCViewOptions *viewOptions = message.options.viewOptions;
++ (void)config:(UIViewController *)controller viewOptions:(GDCViewOptions *)viewOptions {
   if (!viewOptions) {
     return;
   }
+  objc_setAssociatedObject(controller, _GDCViewOptionsAssociatedKey, viewOptions, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+
   [controller.navigationController setNavigationBarHidden:!viewOptions.navBar animated:NO];
   [controller.navigationController setToolbarHidden:!viewOptions.toolBar animated:NO];
   controller.tabBarController.tabBar.hidden = !viewOptions.tabBar;
@@ -175,7 +177,7 @@
       if (child) {
         toRtn = [child shouldAutorotate];
       } else {
-        GDCViewOptions *viewOptions = instance.message.options.viewOptions;
+        GDCViewOptions *viewOptions = instance.viewOptions;
         if (viewOptions) {
           toRtn = viewOptions.autorotate;
         } else {
@@ -193,7 +195,7 @@
       if (child) {
         toRtn = [child supportedInterfaceOrientations];
       } else {
-        GDCViewOptions *viewOptions = instance.message.options.viewOptions;
+        GDCViewOptions *viewOptions = instance.viewOptions;
         if (viewOptions) {
           toRtn = viewOptions.supportedInterfaceOrientations;
         } else {
@@ -211,7 +213,7 @@
       if (child) {
         toRtn = [child preferredInterfaceOrientationForPresentation];
       } else {
-        GDCViewOptions *viewOptions = instance.message.options.viewOptions;
+        GDCViewOptions *viewOptions = instance.viewOptions;
         if (viewOptions) {
           toRtn = viewOptions.preferredInterfaceOrientationForPresentation;
         } else {
@@ -226,7 +228,7 @@
       NSInvocation *invocation = info.originalInvocation;
       UIViewController *instance = info.instance;
       BOOL toRtn;
-      GDCViewOptions *viewOptions = instance.message.options.viewOptions;
+      GDCViewOptions *viewOptions = instance.viewOptions;
       if (viewOptions) {
         toRtn = !viewOptions.statusBar;
       } else {
@@ -239,7 +241,7 @@
       NSInvocation *invocation = info.originalInvocation;
       UIViewController *instance = info.instance;
       UIStatusBarStyle toRtn;
-      GDCViewOptions *viewOptions = instance.message.options.viewOptions;
+      GDCViewOptions *viewOptions = instance.viewOptions;
       if (viewOptions) {
         toRtn = viewOptions.statusBarStyle;
       } else {

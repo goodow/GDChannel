@@ -51,7 +51,7 @@
 }
 
 + (instancetype)of:(id)payload {
-  if ([payload isKindOfClass:self]) {
+  if (!payload || [payload isKindOfClass:self]) {
     return payload;
   }
   if (![self conformsToProtocol:@protocol(GDCEntry)]) {
@@ -59,12 +59,20 @@
   }
   NSDictionary *dict = [payload isKindOfClass:NSDictionary.class] ? payload : [payload toDictionary];
   NSError *error = nil;
-  return [MTLJSONAdapter modelOfClass:self fromJSONDictionary:dict error:&error];
+  GDCEntry *toRtn = [MTLJSONAdapter modelOfClass:self fromJSONDictionary:dict error:&error];
+  if (error) {
+    NSLog(@"[%s] Error creating entry: %@", __PRETTY_FUNCTION__, error);
+  }
+  return toRtn;
 }
 
 - (NSDictionary *)toDictionary {
   NSError *error = nil;
-  return [MTLJSONAdapter JSONDictionaryFromModel:self error:&error];
+  NSDictionary *toRtn = [MTLJSONAdapter JSONDictionaryFromModel:self error:&error];
+  if (error) {
+    NSLog(@"[%s] Error serializing entry: %@", __PRETTY_FUNCTION__, error);
+  }
+  return toRtn;
 }
 
 
@@ -81,6 +89,7 @@
   NSDictionary *topics = [_topics copy];
   [GDCNotificationBus scheduleDeferred:^(id o) {
       for (NSString *topic in topics) {
+//        [keyPath description];
         [weak.bus publishLocal:topic payload:weak options:topics[topic] == [NSNull null] ? nil : topics[topic]];
       }
       _scheduled = NO;

@@ -1,6 +1,6 @@
 source 'https://github.com/CocoaPods/Specs.git'
 
-target 'GDChannel', :exclusive => true do
+target 'GDChannel' do
   pod "GDChannel", :path => "../"
 end
 

@@ -14,7 +14,7 @@
 + (NSDictionary *)flattedDictionary:(NSDictionary *)toFlat parentKey:(NSString *)parentKey;
 - (instancetype)initWithBaseDirectory:(NSString *)baseDir;
 
-- (void)cachePayload:(id <GDCMessage>)message;
+- (void)cache:(NSString *)topic payload:(id)payload;
 
 - (void)save:(id <GDCMessage>)message;
 

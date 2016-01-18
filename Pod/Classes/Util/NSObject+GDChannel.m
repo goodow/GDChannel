@@ -13,12 +13,16 @@
   return [GDCBusProvider instance];
 }
 
-- (id <GDCMessage>)message {
-  return objc_getAssociatedObject(self, _GDCMessageAssociatedKey);
+- (void)handleMessage:(id <GDCMessage>)message {
+
 }
 
-- (void)handleMessage:(id <GDCMessage>)message {
-  objc_setAssociatedObject(self, _GDCMessageAssociatedKey, message, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+@end
+
+@implementation UIViewController (GDChannel)
+
+- (GDCViewOptions *)viewOptions {
+  return objc_getAssociatedObject(self, _GDCViewOptionsAssociatedKey);;
 }
 
 @end

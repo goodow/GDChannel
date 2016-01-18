@@ -123,7 +123,7 @@ static const NSString *messageKey = @"msg";
         [self.storage remove:message.topic];
       }
     } else {
-      [self.storage cachePayload:message];
+      [self.storage cache:message.topic payload:message.payload];
     }
   }
 
@@ -184,7 +184,10 @@ static const NSString *messageKey = @"msg";
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
       GDCMessageImpl *retained = [self.storage getRetainedMessage:topicFilter];
       if (retained) {
-        [self.notificationCenter postNotificationName:retained.topic object:object userInfo:@{messageKey : retained.copy}];
+        if ([retained.payload conformsToProtocol:@protocol(GDCEntry)]) {
+          [retained.payload addTopic:retained.topic options:retained.options];
+        }
+        [GDCNotificationBus scheduleDeferred:handler argument:retained];
       }
   });
   return consumer;

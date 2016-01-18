@@ -52,12 +52,12 @@ static NSString *const fileExtension = @"archive";
   return self;
 }
 
-- (void)cachePayload:(id <GDCMessage>)message {
-  [_cache setObject:message.payload forKey:message.topic];
+- (void)cache:(NSString *)topic payload:(id)payload {
+  [_cache setObject:payload forKey:topic];
 }
 
 - (void)save:(id <GDCMessage>)message {
-  [self cachePayload:message];
+  [self cache:message.topic payload:message.payload];
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
       if (![NSKeyedArchiver archiveRootObject:message toFile:[self getPath:message.topic]]) {
         NSLog(@"%s failed, message: %@", __PRETTY_FUNCTION__, message);
@@ -71,6 +71,9 @@ static NSString *const fileExtension = @"archive";
     return payload;
   }
   id <GDCMessage> msg = [self getRetainedMessage:topic];
+  if (msg.payload) {
+    [self cache:topic payload:msg.payload];
+  }
   return msg.payload;
 }
 

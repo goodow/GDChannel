@@ -18,6 +18,8 @@ static NSString *const optionStatusBarOrientation = @"_statusBarOrientation";
 
 + (void)show:(UIViewController *)controller message:(id <GDCMessage>)message;
 
++ (void)config:(UIViewController *)controller viewOptions:(GDCViewOptions *)viewOptions;
+
 + (UIViewController *)findViewController:(Class)viewControllerClass;
 
 + (void)aspect_hookSelector;
