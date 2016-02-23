@@ -18,7 +18,8 @@
   if (navViewControllers.count > 1) {
     return navViewControllers[navViewControllers.count - 2];
   } else if (top.presentingViewController) {
-    return top.presentingViewController;
+    UIViewController *child = [self getVisibleOrChildViewController:top.presentingViewController forceChild:YES];
+    return child ?: top.presentingViewController;
   }
   return nil;
 }
@@ -109,7 +110,7 @@
   if (parent.presentedViewController) {
     return [self findTopViewController:parent.presentedViewController];
   }
-  UIViewController *child = [self getVisibleChildViewController:parent];
+  UIViewController *child = [self getVisibleOrChildViewController:parent forceChild:NO];
   return child ? [self findTopViewController:child] : parent;
 }
 
@@ -123,10 +124,13 @@
   [controller.navigationController setToolbarHidden:!viewOptions.toolBar animated:NO];
   controller.tabBarController.tabBar.hidden = !viewOptions.tabBar;
   [controller setNeedsStatusBarAppearanceUpdate];
+  if (controller.navigationController) {
+    controller.navigationController.navigationBar.barStyle = viewOptions.navBarStyle;
+  }
 //  if (options[optionStatusBarOrientation]) {
 //    [[UIApplication sharedApplication] setStatusBarOrientation:(UIInterfaceOrientation) [options[optionStatusBarOrientation] integerValue]];
 //  }
-  if (!viewOptions.deviceOrientation) {
+  if (viewOptions.deviceOrientation) {
     [[UIDevice currentDevice] setValue:@(viewOptions.deviceOrientation) forKey:@"orientation"];
   }
   if (viewOptions.attemptRotationToDeviceOrientation) {
@@ -172,7 +176,7 @@
   [UIViewController aspect_hookSelector:@selector(shouldAutorotate) withOptions:AspectPositionInstead usingBlock:^(id <AspectInfo> info) {
       NSInvocation *invocation = info.originalInvocation;
       UIViewController *instance = info.instance;
-      UIViewController *child = [GDCViewControllerHelper getVisibleChildViewController:instance];
+      UIViewController *child = [GDCViewControllerHelper getVisibleOrChildViewController:instance forceChild:YES];
       BOOL toRtn;
       if (child) {
         toRtn = [child shouldAutorotate];
@@ -190,7 +194,7 @@
   [UIViewController aspect_hookSelector:@selector(supportedInterfaceOrientations) withOptions:AspectPositionInstead usingBlock:^(id <AspectInfo> info) {
       NSInvocation *invocation = info.originalInvocation;
       UIViewController *instance = info.instance;
-      UIViewController *child = [GDCViewControllerHelper getVisibleChildViewController:instance];
+      UIViewController *child = [GDCViewControllerHelper getVisibleOrChildViewController:instance forceChild:YES];
       UIInterfaceOrientationMask toRtn;
       if (child) {
         toRtn = [child supportedInterfaceOrientations];
@@ -208,7 +212,7 @@
   [UIViewController aspect_hookSelector:@selector(preferredInterfaceOrientationForPresentation) withOptions:AspectPositionInstead usingBlock:^(id <AspectInfo> info) {
       NSInvocation *invocation = info.originalInvocation;
       UIViewController *instance = info.instance;
-      UIViewController *child = [GDCViewControllerHelper getVisibleChildViewController:instance];
+      UIViewController *child = [GDCViewControllerHelper getVisibleOrChildViewController:instance forceChild:YES];
       UIInterfaceOrientation toRtn;
       if (child) {
         toRtn = [child preferredInterfaceOrientationForPresentation];
@@ -252,9 +256,10 @@
   }                               error:nil];
 }
 
-+ (UIViewController *)getVisibleChildViewController:(UIViewController *)parent {
++ (UIViewController *)getVisibleOrChildViewController:(UIViewController *)parent forceChild:(BOOL)forceChild {
   if ([parent isKindOfClass:UINavigationController.class]) {
-    return ((UINavigationController *) parent).visibleViewController;
+    UINavigationController *navigationController = (UINavigationController *) parent;
+    return forceChild ? navigationController.topViewController : navigationController.visibleViewController;
   } else if ([parent isKindOfClass:UITabBarController.class]) {
     return ((UITabBarController *) parent).selectedViewController;
   } else {

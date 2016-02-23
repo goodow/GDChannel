@@ -3,21 +3,19 @@
 #import "GDCAsyncResultImpl.h"
 #import "GDCMqttBus.h"
 #import "MQTTKit.h"
-#import "GDCNotificationBus.h"
 #import "GDCTopicsManager.h"
 
 @interface GDCMqttBus ()
-@property(nonatomic, readonly, strong) GDCNotificationBus *localBus;
 @property(nonatomic, readonly, strong) MQTTClient *mqtt;
 @property(nonatomic, readonly, strong) dispatch_queue_t queue;
 @end
 
 @implementation GDCMqttBus
 
-- (instancetype)initWithHost:(NSString *)host port:(int)port clientId:(NSString *)clientId {
+- (instancetype)initWithHost:(NSString *)host port:(int)port localBus:(GDCNotificationBus *)localBus clientId:(NSString *)clientId {
   self = [super init];
   if (self) {
-    _localBus = [[GDCNotificationBus alloc] init];
+    _localBus = localBus ?: [[GDCNotificationBus alloc] init];
     _mqtt = [[MQTTClient alloc] initWithClientId:clientId];
     _mqtt.port = (unsigned short) port;
     _queue = dispatch_queue_create("com.goodow.realtime.channel.queue", DISPATCH_QUEUE_SERIAL);
@@ -80,7 +78,7 @@
 
 - (instancetype)init {
   @throw [NSException exceptionWithName:@"Singleton"
-                                 reason:[NSString stringWithFormat:@"Use %@ %@", NSStringFromClass(GDCMqttBus.class), NSStringFromSelector(@selector(initWithHost:port:clientId:))]
+                                 reason:[NSString stringWithFormat:@"Use %@ %@", NSStringFromClass(GDCMqttBus.class), NSStringFromSelector(@selector(initWithHost:port:localBus:clientId:))]
                                userInfo:nil];
 }
 

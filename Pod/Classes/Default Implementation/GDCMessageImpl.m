@@ -33,7 +33,7 @@
 }
 
 - (NSDictionary *)toDictWithTopic:(BOOL)containsTopic {
-  NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:5];
+  NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:7];
   if (containsTopic) {
     dict[topicKey] = self.topic;
   }

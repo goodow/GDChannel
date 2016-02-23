@@ -7,11 +7,11 @@
 
 @interface GDCTopicsManager : NSObject
 
-- (void)addSubscribedTopic:(NSString *)topicFilter;
+- (void)addSubscribedTopicFilter:(NSString *)topicFilter;
 
-- (NSSet *)calculateTopicsToPublish:(NSString *)topicOfPublishMessage;
+- (NSSet *)calculateTopicFiltersToPublish:(NSString *)topic;
 
-- (void)removeSubscribedTopic:(NSString *)topicFilter;
+- (void)removeSubscribedTopicFilter:(NSString *)topicFilter;
 
 - (int)retainCountOfTopic:(NSString *)topicFilter;
 @end

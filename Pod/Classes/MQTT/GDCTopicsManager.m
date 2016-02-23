@@ -19,7 +19,7 @@
   return self;
 }
 
-- (void)addSubscribedTopic:(NSString *)topicFilter {
+- (void)addSubscribedTopicFilter:(NSString *)topicFilter {
   topicsRetainCounter[topicFilter] = @([self retainCountOfTopic:topicFilter] + 1);
   NSString *pattern = topicFilter;
   if ([topicFilter isEqualToString:@"#"]) {
@@ -43,13 +43,13 @@
   }
 }
 
-- (NSSet *)calculateTopicsToPublish:(NSString *)topicOfPublishMessage {
+- (NSSet *)calculateTopicFiltersToPublish:(NSString *)topic {
   NSMutableSet *matches = [NSMutableSet set];
-  if (topicsRetainCounter[topicOfPublishMessage]) {
-    [matches addObject:topicOfPublishMessage];
+  if (topicsRetainCounter[topic]) {
+    [matches addObject:topic];
   }
   for (NSString *filter in topicToPattern) {
-    NSTextCheckingResult *match = [topicToPattern[filter] firstMatchInString:topicOfPublishMessage options:0 range:NSMakeRange(0, topicOfPublishMessage.length)];
+    NSTextCheckingResult *match = [topicToPattern[filter] firstMatchInString:topic options:0 range:NSMakeRange(0, topic.length)];
     if (match) {
       [matches addObject:filter];
     }
@@ -57,7 +57,7 @@
   return matches;
 }
 
-- (void)removeSubscribedTopic:(NSString *)topicFilter {
+- (void)removeSubscribedTopicFilter:(NSString *)topicFilter {
   int retain = [self retainCountOfTopic:topicFilter];
   if (retain == 1) {
     [topicsRetainCounter removeObjectForKey:topicFilter];

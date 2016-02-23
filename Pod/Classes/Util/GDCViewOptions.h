@@ -8,13 +8,14 @@
 
 @interface GDCViewOptions : GDCEntry
 
-// {push, present, presentWithoutNav}
+// 仅初始化时有效 {push, present, presentWithoutNav}
 @property(nonatomic, strong) NSString *display;
 // 界面是否跳转
 @property(nonatomic) BOOL redirect;
 
+// 仅初始化时有效
 @property(nonatomic) UIRectEdge edgesForExtendedLayout;
-
+// 仅初始化时有效
 @property(nonatomic) BOOL hidesBottomBarWhenPushed;
 // 是否显示NavigationBar
 @property(nonatomic) BOOL navBar;
@@ -26,6 +27,7 @@
 @property(nonatomic) BOOL statusBar;
 
 @property(nonatomic) UIStatusBarStyle statusBarStyle;
+@property(nonatomic) UIBarStyle navBarStyle;
 // 更改设备的朝向
 @property(nonatomic) UIDeviceOrientation deviceOrientation;
 @property(nonatomic) BOOL attemptRotationToDeviceOrientation;
@@ -33,7 +35,7 @@
 @property(nonatomic) UIInterfaceOrientationMask supportedInterfaceOrientations;
 @property(nonatomic) UIInterfaceOrientation preferredInterfaceOrientationForPresentation;
 
-/* present 显示时的动画 */
+/* present 显示时的动画, 仅初始化时有效 */
 @property(nonatomic) id <UIViewControllerTransitioningDelegate> transition;
 @property(nonatomic) UIModalPresentationStyle modalPresentationStyle;
 @property(nonatomic) UIModalTransitionStyle modalTransitionStyle;

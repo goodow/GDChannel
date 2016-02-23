@@ -127,7 +127,7 @@ static const NSString *messageKey = @"msg";
     }
   }
 
-  NSSet *topicsToPublish = [self.topicsManager calculateTopicsToPublish:message.topic];
+  NSSet *topicsToPublish = [self.topicsManager calculateTopicFiltersToPublish:message.topic];
   for (NSString *filter in topicsToPublish) {
     // Each handler gets a fresh copy
     GDCMessageImpl *copied = message.copy;
@@ -173,12 +173,12 @@ static const NSString *messageKey = @"msg";
       GDCMessageImpl *message = note.userInfo[messageKey];
       [GDCNotificationBus scheduleDeferred:handler argument:message];
   }];
-  [self.topicsManager addSubscribedTopic:topicFilter];
+  [self.topicsManager addSubscribedTopicFilter:topicFilter];
 
   GDCMessageConsumerImpl *consumer = [[GDCMessageConsumerImpl alloc] initWithTopic:topicFilter];
   consumer.unsubscribeBlock = ^{
       [weakSelf.notificationCenter removeObserver:observer];
-      [weakSelf.topicsManager removeSubscribedTopic:topicFilter];
+      [weakSelf.topicsManager removeSubscribedTopicFilter:topicFilter];
   };
 
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -197,13 +197,13 @@ static const NSString *messageKey = @"msg";
   __weak GDCNotificationBus *weakSelf = self;
   __weak __block id <NSObject> observer = [self.notificationCenter addObserverForName:replyTopic object:object queue:self.queue usingBlock:^(NSNotification *note) {
       [weakSelf.notificationCenter removeObserver:observer];
-      [weakSelf.topicsManager removeSubscribedTopic:replyTopic];
+      [weakSelf.topicsManager removeSubscribedTopicFilter:replyTopic];
 
       GDCMessageImpl *message = note.userInfo[messageKey];
       GDCAsyncResultImpl *asyncResult = [[GDCAsyncResultImpl alloc] initWithMessage:message];
       [GDCNotificationBus scheduleDeferred:replyHandler argument:asyncResult];
   }];
-  [self.topicsManager addSubscribedTopic:replyTopic];
+  [self.topicsManager addSubscribedTopicFilter:replyTopic];
 }
 
 + (void)scheduleDeferred:(void (^)(id))block argument:(id)argument {

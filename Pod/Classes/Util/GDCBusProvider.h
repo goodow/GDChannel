@@ -5,6 +5,10 @@
 
 + (id <GDCBus>)instance;
 
-+ (NSString *)clientId:(NSString *)newClientId;
++ (NSString *)clientId;
+
++ (void)setInstance:(id <GDCBus>)bus;
+
++ (void)setClientId:(NSString *)clientId;
 
 @end

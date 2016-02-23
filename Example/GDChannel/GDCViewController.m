@@ -19,11 +19,25 @@
 @implementation GDCViewController {
   id <GDCMessageConsumer> consumer;
   GDCSampleEntry *_entry;
+  NSThread *thread;
 }
 
 - (void)viewDidLoad {
   [super viewDidLoad];
   // Do any additional setup after loading the view, typically from a nib.
+
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+      thread = [NSThread currentThread];
+      [self performSelector:@selector(test) onThread:thread withObject:nil waitUntilDone:NO modes:@[NSDefaultRunLoopMode]];
+  });
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+      thread = [NSThread currentThread];
+      [self performSelector:@selector(test) onThread:thread withObject:nil waitUntilDone:NO modes:@[NSDefaultRunLoopMode]];
+  });
+}
+
+- (id)test {
+  return @"saa";
 }
 
 - (void)viewWillAppear:(BOOL)animated {
