@@ -11,4 +11,5 @@
 
 + (void)setClientId:(NSString *)clientId;
 
++ (void)redirectTopic:(NSString *)from to:(NSString *)to;
 @end

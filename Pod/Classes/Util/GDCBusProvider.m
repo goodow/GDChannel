@@ -1,5 +1,6 @@
 #import "GDCBusProvider.h"
 #import "GDCMqttBus.h"
+#import "GDCMessageImpl.h"
 
 @implementation GDCBusProvider
 
@@ -43,5 +44,35 @@ static id <GDCBus> instance;
     return;
   }
   clientId = newClientId;
+}
+
++ (void)redirectTopic:(NSString *)from to:(NSString *)to {
+  [instance subscribeLocal:from handler:^(id <GDCMessage> message) {
+      GDCMessageImpl *msg = message;
+      if (!msg.send) {
+        [instance publishLocal:to payload:message.payload options:message.options];
+        return;
+      }
+      [self send:message replaceTopicWith:to local:YES];
+  }];
+}
+
++ (void)send:(id <GDCMessage>)message replaceTopicWith:(NSString *)topic local:(BOOL)local {
+  GDCMessageImpl *msg = message;
+  GDCAsyncResultBlock replyHandler = nil;
+  if (msg.replyTopic) {
+    replyHandler = ^(id <GDCAsyncResult> asyncResult) {
+        if (asyncResult.failed) {
+          [message fail:asyncResult.cause];
+          return;
+        }
+        [self send:asyncResult.result replaceTopicWith:msg.replyTopic local:msg.local];
+    };
+  }
+  if (local) {
+    [instance sendLocal:topic payload:message.payload options:message.options replyHandler:replyHandler];
+  } else {
+    [instance send:topic payload:message.payload options:message.options replyHandler:replyHandler];
+  }
 }
 @end
