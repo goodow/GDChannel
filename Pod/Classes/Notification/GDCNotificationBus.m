@@ -137,33 +137,46 @@ static const NSString *messageKey = @"msg";
 }
 
 - (id)typeCastAndPatch:(GDCMessageImpl *)message {
-  id payload = message.payload;
+  id newPayload = message.payload;
+  if (!newPayload) {
+    return nil;
+  }
   NSString *type = message.options.type;
   BOOL patch = message.options.patch;
-  id originalPayload;
-  if (!type) {
-    if (!patch || !(originalPayload = [self.storage getPayload:message.topic])) {
-      return payload;
+  BOOL isEntry = [newPayload conformsToProtocol:@protocol(GDCEntry)];
+  id oldPayload;
+  BOOL shouldInferType = !isEntry && !type;
+  if (shouldInferType || patch) {
+    oldPayload = [self.storage getPayload:message.topic];
+    if (shouldInferType && [oldPayload conformsToProtocol:@protocol(GDCEntry)]) {
+      // 根据 oldPayload 推断 type 和 patch
+      type = NSStringFromClass([oldPayload class]);
+      patch = YES;
     }
-    BOOL isEntry = [payload conformsToProtocol:@protocol(GDCEntry)];
-    id toRtn = [GDCStorage patchRecursively:originalPayload with:payload];
-    return isEntry ? [[payload class] of:toRtn] : toRtn;
+  }
+
+  if (!type) {
+    if (!patch || !oldPayload) {
+      return newPayload;
+    }
+    id toRtn = [GDCStorage patchRecursively:oldPayload with:newPayload];
+    return isEntry ? [[newPayload class] of:toRtn] : toRtn;
   }
 
   // 设置了 type
   Class clz = NSClassFromString(type);
-  if (!patch || !(originalPayload = [self.storage getPayload:message.topic])) {
-    if ([payload isKindOfClass:clz]) {
-      return payload;
+  if (!patch || !oldPayload) {
+    if ([newPayload isKindOfClass:clz]) {
+      return newPayload;
     }
-    if ([payload conformsToProtocol:@protocol(GDCEntry)]) {
-      payload = [(GDCEntry *) payload toDictionary];
+    if (isEntry) {
+      newPayload = [(GDCEntry *) newPayload toDictionary];
     }
-    return [clz of:payload];
+    return [clz of:newPayload];
   }
 
   // 设置了 type 和 patch
-  NSDictionary *toRtn = [GDCStorage patchRecursively:originalPayload with:payload];
+  NSDictionary *toRtn = [GDCStorage patchRecursively:oldPayload with:newPayload];
   return [clz of:toRtn];
 }
 

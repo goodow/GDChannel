@@ -24,18 +24,30 @@
   NSString *pattern = topicFilter;
   if ([topicFilter isEqualToString:@"#"]) {
     pattern = @".*";
-  } else if ([topicFilter isEqualToString:@"+"]) {
-    pattern = @"[^/]*";
   } else {
-    if ([topicFilter hasSuffix:@"/#"]) {
-      pattern = [pattern stringByReplacingCharactersInRange:NSMakeRange(topicFilter.length - 2, 2) withString:@"(/.*)?"];
-    } else if ([topicFilter hasSuffix:@"/+"]) {
-      pattern = [pattern stringByReplacingCharactersInRange:NSMakeRange(topicFilter.length - 1, 1) withString:@"[^/]*"];
+    BOOL hasMultiLevelWildcard = [topicFilter hasSuffix:@"/#"];
+    if (hasMultiLevelWildcard) {
+      pattern = [topicFilter substringToIndex:topicFilter.length - 2];
     }
-    if ([topicFilter hasPrefix:@"+/"]) {
-      pattern = [pattern stringByReplacingCharactersInRange:NSMakeRange(0, 1) withString:@"[^/]*"];
+    static NSString *const singleLevelWildcardPattern = @"[^/]*";
+    if ([pattern isEqualToString:@"+"]) {
+      pattern = singleLevelWildcardPattern;
+    } else {
+      if ([pattern hasSuffix:@"/+"]) {
+        pattern = [pattern stringByReplacingCharactersInRange:NSMakeRange(pattern.length - 1, 1) withString:singleLevelWildcardPattern];
+      }
+      if ([pattern hasPrefix:@"+/"]) {
+        pattern = [pattern stringByReplacingCharactersInRange:NSMakeRange(0, 1) withString:singleLevelWildcardPattern];
+      }
+      for (NSRange range = [pattern rangeOfString:@"/+/"]; range.location != NSNotFound; range = [pattern rangeOfString:@"/+/"]) {
+        range.location = range.location + 1;
+        range.length = 1;
+        pattern = [pattern stringByReplacingCharactersInRange:range withString:singleLevelWildcardPattern];
+      }
     }
-    pattern = [pattern stringByReplacingOccurrencesOfString:@"/+/" withString:@"/[^/]*/"];
+    if (hasMultiLevelWildcard) {
+      pattern = [pattern stringByAppendingString:@"(/.*)?"];
+    }
   }
   if (pattern != topicFilter) {
     pattern = [NSString stringWithFormat:@"^%@$", pattern];
