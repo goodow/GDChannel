@@ -10,7 +10,7 @@
 
 + (GDCStorage *)instance;
 
-+ (id)patchRecursively:(id)original with:(id)patch;
++ (BOOL)patchRecursively:(id)original with:(id)patch;
 + (NSDictionary *)flattedDictionary:(NSDictionary *)toFlat parentKey:(NSString *)parentKey;
 - (instancetype)initWithBaseDirectory:(NSString *)baseDir;
 

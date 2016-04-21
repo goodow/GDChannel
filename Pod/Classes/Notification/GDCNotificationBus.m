@@ -111,6 +111,7 @@ static const NSString *messageKey = @"msg";
   }
 
   if (!message.send || !message.local) {
+    // 如果没有订阅, 应该短路返回
     id payload = message.payload = [self typeCastAndPatch:message];
     if ([payload conformsToProtocol:@protocol(GDCEntry)]) {
       [payload addTopic:message.topic options:message.options];
@@ -138,14 +139,13 @@ static const NSString *messageKey = @"msg";
 
 - (id)typeCastAndPatch:(GDCMessageImpl *)message {
   id newPayload = message.payload;
-  if (!newPayload) {
+  BOOL patch = message.options.patch;
+  if (!newPayload && !patch) {
     return nil;
   }
   NSString *type = message.options.type;
-  BOOL patch = message.options.patch;
-  BOOL isEntry = [newPayload conformsToProtocol:@protocol(GDCEntry)];
   id oldPayload;
-  BOOL shouldInferType = !isEntry && !type;
+  BOOL shouldInferType = !type && [newPayload isKindOfClass:NSDictionary.class];
   if (shouldInferType || patch) {
     oldPayload = [self.storage getPayload:message.topic];
     if (shouldInferType && [oldPayload conformsToProtocol:@protocol(GDCEntry)]) {
@@ -159,8 +159,8 @@ static const NSString *messageKey = @"msg";
     if (!patch || !oldPayload) {
       return newPayload;
     }
-    id toRtn = [GDCStorage patchRecursively:oldPayload with:newPayload];
-    return isEntry ? [[newPayload class] of:toRtn] : toRtn;
+    [GDCStorage patchRecursively:oldPayload with:newPayload];
+    return oldPayload;
   }
 
   // 设置了 type
@@ -169,15 +169,15 @@ static const NSString *messageKey = @"msg";
     if ([newPayload isKindOfClass:clz]) {
       return newPayload;
     }
-    if (isEntry) {
+    if ([newPayload conformsToProtocol:@protocol(GDCEntry)]) {
       newPayload = [(GDCEntry *) newPayload toDictionary];
     }
     return [clz of:newPayload];
   }
 
   // 设置了 type 和 patch
-  NSDictionary *toRtn = [GDCStorage patchRecursively:oldPayload with:newPayload];
-  return [clz of:toRtn];
+  [GDCStorage patchRecursively:oldPayload with:newPayload];
+  return oldPayload;
 }
 
 - (GDCMessageConsumerImpl *)subscribeToTopic:(NSString *)topicFilter handler:(GDCMessageBlock)handler {

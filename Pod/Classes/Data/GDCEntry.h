@@ -8,6 +8,8 @@
 
 @class GDCOptions;
 
+static NSString *const watchChanges = @"_watch";
+
 @protocol GDCEntry <MTLModel>
 @end
 

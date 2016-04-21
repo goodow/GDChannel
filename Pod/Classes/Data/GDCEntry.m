@@ -17,11 +17,14 @@
 @implementation GDCEntry {
   NSMutableDictionary *_topics;
   BOOL _scheduled;
+  BOOL _inhibitNotify;
+  NSMutableDictionary *_changes;
 }
 - (instancetype)init {
   self = [super init];
   if (self) {
     _topics = [NSMutableDictionary dictionary];
+    _changes = [NSMutableDictionary dictionary];
     [self addOrRemoveObserverForEntry:self.class parentKey:nil isAdd:YES];
   }
 
@@ -86,11 +89,18 @@
     return;
   }
   _scheduled = YES;
+  _changes[keyPath] = change[NSKeyValueChangeNewKey];
   NSDictionary *topics = [_topics copy];
+  BOOL inhibitNotify = _inhibitNotify;
   [GDCNotificationBus scheduleDeferred:^(id o) {
+      NSMutableDictionary *changes = _changes.copy;
+      [_changes removeAllObjects];
       for (NSString *topic in topics) {
 //        [keyPath description];
-        [weak.bus publishLocal:topic payload:weak options:topics[topic] == [NSNull null] ? nil : topics[topic]];
+        if (!inhibitNotify) {
+          [weak.bus publishLocal:topic payload:weak options:topics[topic] == [NSNull null] ? nil : topics[topic]];
+        }
+        [weak.bus publishLocal:[topic stringByAppendingPathComponent:watchChanges] payload:changes];
       }
       _scheduled = NO;
   } argument:nil];
@@ -99,4 +109,5 @@
 - (void)addTopic:(NSString *)topic options:(GDCOptions *)options {
   _topics[topic] = options ?: [NSNull null];
 }
+
 @end
