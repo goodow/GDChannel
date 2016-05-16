@@ -11,7 +11,8 @@
 static NSString *const fileExtension = @"archive";
 
 @interface MTLJSONAdapter (MergeFromDictionary)
-- (void)patchRecursively:(NSObject <MTLModel, MTLJSONSerializing> *)original with:(NSDictionary *)patch;
++ (NSDictionary *)valueTransformersForModelClass:(Class)modelClass;
+
 @end
 
 @implementation GDCStorage {
@@ -139,11 +140,6 @@ static NSString *const fileExtension = @"archive";
   return YES;
 }
 
-+ (void)patchEntry:(GDCEntry *)original withDictionary:(NSDictionary *)patch {
-  MTLJSONAdapter *adapter = [[MTLJSONAdapter alloc] initWithModelClass:original.class];
-  [adapter patchRecursively:original with:patch];
-}
-
 + (void)expandDictionary:(NSDictionary *)dict to:(NSMutableDictionary *)toRtn {
   void (^block)() = ^(NSMutableDictionary *res, NSString *key, id value) {
       if (![value isKindOfClass:NSDictionary.class]) {
@@ -188,25 +184,21 @@ static NSString *const fileExtension = @"archive";
   return dict;
 }
 
-@end
-
-@implementation MTLJSONAdapter (MergeFromDictionary)
-
-- (void)patchRecursively:(NSObject <MTLModel, MTLJSONSerializing> *)original with:(NSDictionary *)patch {
++ (void)patchEntry:(NSObject <MTLModel, MTLJSONSerializing> *)original withDictionary:(NSDictionary *)patch {
   NSError *error;
-  NSDictionary *JSONKeyPathsByPropertyKey = [self valueForKey:@"JSONKeyPathsByPropertyKey"];
-  NSDictionary *valueTransformersByPropertyKey = [self valueForKey:@"valueTransformersByPropertyKey"];
-  for (NSString *propertyKey in [original.class propertyKeys]) {
-    id JSONKeyPaths = JSONKeyPathsByPropertyKey[propertyKey];
-    if (JSONKeyPaths == nil) {
+  Class modelClass = original.class;
+  NSDictionary *keyPathsByPropertyKey = [modelClass JSONKeyPathsByPropertyKey];
+  NSDictionary *valueTransformersByPropertyKey = [MTLJSONAdapter valueTransformersForModelClass:modelClass];
+  for (NSString *propertyKey in [modelClass propertyKeys]) {
+    id keyPaths = keyPathsByPropertyKey[propertyKey];
+    if (keyPaths == nil) {
       continue;
     }
+
     id value;
-
-    if ([JSONKeyPaths isKindOfClass:NSArray.class]) {
+    if ([keyPaths isKindOfClass:NSArray.class]) {
       NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-
-      for (NSString *keyPath in JSONKeyPaths) {
+      for (NSString *keyPath in keyPaths) {
         BOOL success = NO;
         id value = [patch mtl_valueForJSONKeyPath:keyPath success:&success error:&error];
         if (!success) {
@@ -219,12 +211,17 @@ static NSString *const fileExtension = @"archive";
       value = dictionary;
     } else {
       BOOL success = NO;
-      value = [patch mtl_valueForJSONKeyPath:JSONKeyPaths success:&success error:&error];
+      value = [patch mtl_valueForJSONKeyPath:keyPaths success:&success error:&error];
       if (!success) {
         continue;
       }
     }
     if (value == nil) {
+      continue;
+    }
+    id originalVal = [original valueForKey:propertyKey];
+    if ([originalVal conformsToProtocol:@protocol(GDCEntry)]) {
+      [self patchEntry:originalVal withDictionary:value];
       continue;
     }
 
@@ -256,7 +253,7 @@ static NSString *const fileExtension = @"archive";
 
       [original setValue:value forKey:propertyKey];
     } @catch (NSException *ex) {
-      NSLog(@"*** Caught exception %@ parsing JSON key path \"%@\" from: %@", ex, JSONKeyPaths, patch);
+      NSLog(@"*** Caught exception %@ parsing JSON key path \"%@\" from: %@", ex, keyPaths, patch);
 
       // Fail fast in Debug builds.
 #if DEBUG
@@ -276,5 +273,16 @@ static NSString *const fileExtension = @"archive";
 #endif
     }
   }
+}
+
++ (NSMutableDictionary *)mutableContainersAndLeaves:(NSDictionary *)dict {
+  NSMutableDictionary *toRtn = [dict isKindOfClass:NSMutableDictionary.class] ? dict : [dict mutableCopy];
+  [dict enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
+      if (![value isKindOfClass:NSDictionary.class]) {
+        return;
+      }
+      toRtn[key] = [self mutableContainersAndLeaves:value];
+  }];
+  return toRtn;
 }
 @end
