@@ -19,13 +19,12 @@ Pod::Spec.new do |s|
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.platform     = :ios, '7.0'
-  s.requires_arc = true
 
-  s.source_files = 'Pod/Classes/**/*'
+  s.source_files = 'Pod/Classes/**/*', 'Pod/Generated/**/*'
+  s.requires_arc = ['Pod/Classes/**/*']
 
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
   s.dependency 'MQTTKit', '~> 0.1.0'
   s.dependency 'Mantle', '~> 2.0.6'
   s.dependency 'Aspects', '~> 1.4.1'
+  s.dependency 'Protobuf', '~> 3.0.0-beta-3.1'
 end

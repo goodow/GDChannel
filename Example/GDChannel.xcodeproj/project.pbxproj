@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3F85BD61B5D0E2D0539D9F1A /* libPods-GDChannel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F004427CEBD8F8E6C19B36D /* libPods-GDChannel.a */; };
+		46A1B8391D2A4DE4004A586A /* channel.proto in Resources */ = {isa = PBXBuildFile; fileRef = 46A1B8371D2A21F0004A586A /* channel.proto */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
@@ -24,6 +25,7 @@
 
 /* Begin PBXFileReference section */
 		2F004427CEBD8F8E6C19B36D /* libPods-GDChannel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GDChannel.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		46A1B8371D2A21F0004A586A /* channel.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = channel.proto; path = ../channel.proto; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* GDChannel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GDChannel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -80,6 +82,7 @@
 				6003F58C195388D20070C39A /* Frameworks */,
 				6003F58B195388D20070C39A /* Products */,
 				61FBCFCF310915F3538710F3 /* protocol.yml */,
+				46A1B8371D2A21F0004A586A /* channel.proto */,
 				75AD4A9BD67BD51579FF4533 /* Pods */,
 			);
 			indentWidth = 2;
@@ -181,12 +184,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6003F5BF195388D20070C39A /* Build configuration list for PBXNativeTarget "GDChannel" */;
 			buildPhases = (
-				9CF0E8BE1BD7CE21718C90E7 /* 📦 Check Pods Manifest.lock */,
+				9CF0E8BE1BD7CE21718C90E7 /* [CP] Check Pods Manifest.lock */,
 				6003F586195388D20070C39A /* Sources */,
 				6003F587195388D20070C39A /* Frameworks */,
 				6003F588195388D20070C39A /* Resources */,
-				AD56EE2887ECE8D9665C0C9F /* 📦 Embed Pods Frameworks */,
-				ABA24814AC07BC1C13ADE6D4 /* 📦 Copy Pods Resources */,
+				AD56EE2887ECE8D9665C0C9F /* [CP] Embed Pods Frameworks */,
+				ABA24814AC07BC1C13ADE6D4 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -230,6 +233,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				46A1B8391D2A4DE4004A586A /* channel.proto in Resources */,
 				6003F5A4195388D20070C39A /* Main_iPad.storyboard in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F5A1195388D20070C39A /* Main_iPhone.storyboard in Resources */,
@@ -240,14 +244,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		9CF0E8BE1BD7CE21718C90E7 /* 📦 Check Pods Manifest.lock */ = {
+		9CF0E8BE1BD7CE21718C90E7 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -255,14 +259,14 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		ABA24814AC07BC1C13ADE6D4 /* 📦 Copy Pods Resources */ = {
+		ABA24814AC07BC1C13ADE6D4 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -270,14 +274,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-GDChannel/Pods-GDChannel-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		AD56EE2887ECE8D9665C0C9F /* 📦 Embed Pods Frameworks */ = {
+		AD56EE2887ECE8D9665C0C9F /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,0 +1,13 @@
+syntax = 'proto3';
+package goodow.channel;
+
+option objc_class_prefix = 'GDCPB';
+
+message ViewOptions {
+  bool nav_bar = 1;
+  int32 statusBarStyle = 2;
+}
+
+message Options {
+  ViewOptions view_options = 1;
+}
