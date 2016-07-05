@@ -5,6 +5,7 @@
 #import "GDCAsyncResultImpl.h"
 #import "GDCTopicsManager.h"
 #import "GDCStorage.h"
+#import "GPBMessage+JsonFormat.h"
 
 static const NSString *object = @"GDCNotificationBus/object";
 static const NSString *messageKey = @"msg";
@@ -148,7 +149,7 @@ static const NSString *messageKey = @"msg";
   BOOL shouldInferType = !type && [newPayload isKindOfClass:NSDictionary.class];
   if (shouldInferType || patch) {
     oldPayload = [self.storage getPayload:message.topic];
-    if (shouldInferType && [oldPayload conformsToProtocol:@protocol(GDCEntry)]) {
+    if (shouldInferType && ([oldPayload conformsToProtocol:@protocol(GDCEntry)] || [oldPayload isKindOfClass:GPBMessage.class])) {
       // 根据 oldPayload 推断 type 和 patch
       type = NSStringFromClass([oldPayload class]);
       patch = YES;
@@ -169,6 +170,14 @@ static const NSString *messageKey = @"msg";
     if ([newPayload isKindOfClass:clz]) {
       return newPayload;
     }
+    if ([clz isSubclassOfClass:GPBMessage.class]) {
+      NSError *error = nil;
+      GPBMessage *gpbMessage = [clz parseFromJson:newPayload error:&error];
+      if (error) {
+        NSLog(@"Can't parse JSON: %@", error);
+      }
+      return gpbMessage;
+    }
     if ([newPayload conformsToProtocol:@protocol(GDCEntry)]) {
       newPayload = [(GDCEntry *) newPayload toDictionary];
     }
@@ -176,7 +185,15 @@ static const NSString *messageKey = @"msg";
   }
 
   // 设置了 type 和 patch
-  [GDCStorage patchRecursively:oldPayload with:newPayload];
+  if ([oldPayload isKindOfClass:GPBMessage.class] && [clz isSubclassOfClass:GPBMessage.class]) {
+    if ([newPayload isKindOfClass:GPBMessage.class]) {
+      [oldPayload mergeFrom:newPayload];
+    } else {
+      [oldPayload mergeFromJson:newPayload];
+    }
+  } else {
+    [GDCStorage patchRecursively:oldPayload with:newPayload];
+  }
   return oldPayload;
 }
 

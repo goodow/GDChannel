@@ -14,7 +14,9 @@
 ///                 the data can not be parsed.
 ///
 /// @return A new instance of the class messaged.
-+ (instancetype)parseFromJson:(NSData *)json error:(NSError **)errorPtr;
++ (instancetype)parseFromJson:(NSDictionary *)json error:(NSError **)errorPtr;
+
+- (instancetype)mergeFromJson:(NSDictionary *)json;
 
 /// Serializes the message to Json.
 ///
@@ -22,5 +24,5 @@
 ///
 /// @note This value is not cached, so if you are using it repeatedly, cache
 ///       it yourself.
-- (nullable NSData *)json;
+- (nullable NSDictionary *)json;
 @end

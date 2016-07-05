@@ -1,4 +1,5 @@
 #import "GDCMessageImpl.h"
+#import "GPBMessage+JsonFormat.h"
 
 @implementation GDCMessageImpl
 
@@ -49,6 +50,8 @@
   if ([self.payload isKindOfClass:NSError.class]) {
     NSError *error = self.payload;
     dict[errorKey] = @{errorDomainKey : error.domain, errorCodeKey : @(error.code), errorUserInfoKey : error.userInfo};
+  } else if ([self.payload isKindOfClass:GPBMessage.class]) {
+    dict[payloadKey] = [self.payload json];
   } else if ([self.payload conformsToProtocol:@protocol(GDCEntry)]) {
     dict[payloadKey] = [self.payload toDictionary];
   } else if (self.payload) {
