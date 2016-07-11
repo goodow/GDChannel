@@ -126,7 +126,6 @@
   [controller setNeedsStatusBarAppearanceUpdate];
   if (controller.navigationController) {
     controller.navigationController.navigationBar.barStyle = viewOptions.navBarStyle;
-		controller.navigationController.navigationBar.translucent = viewOptions.navBarTranslucent;
   }
 //  if (options[optionStatusBarOrientation]) {
 //    [[UIApplication sharedApplication] setStatusBarOrientation:(UIInterfaceOrientation) [options[optionStatusBarOrientation] integerValue]];

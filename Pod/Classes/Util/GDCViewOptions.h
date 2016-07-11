@@ -28,7 +28,6 @@
 
 @property(nonatomic) UIStatusBarStyle statusBarStyle;
 @property(nonatomic) UIBarStyle navBarStyle;
-@property(nonatomic) BOOL navBarTranslucent;
 // 更改设备的朝向
 @property(nonatomic) UIDeviceOrientation deviceOrientation;
 @property(nonatomic) BOOL attemptRotationToDeviceOrientation;
