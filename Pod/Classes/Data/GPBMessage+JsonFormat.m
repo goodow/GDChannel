@@ -10,27 +10,58 @@
 
 @implementation GPBMessage (JsonFormat)
 
-+ (instancetype)parseFromJson:(NSDictionary *)json error:(NSError **)errorPtr {
-  GPBMessage *msg = [[self alloc] init];
-  return [msg mergeFromJson:json];
++ (instancetype)parseFromJson:(nullable NSDictionary *)json error:(NSError **)errorPtr {
+  @try {
+    GPBMessage *msg = [[self alloc] init];
+    [self merge:json message:msg ignoreDefaultValue:YES];
+    if (errorPtr) {
+      *errorPtr = nil;
+    }
+    return msg;
+  } @catch (NSException *exception) {
+    if (errorPtr) {
+      NSDictionary *userInfo = exception.reason.length ? @{@"Reason" : exception.reason} : nil;
+      *errorPtr = [NSError errorWithDomain:GPBMessageErrorDomain code:-105 userInfo:userInfo];
+    }
+  }
+  return nil;
 }
 
-- (instancetype)mergeFromJson:(NSDictionary *)json {
-  [self.class merge:json message:self];
+- (instancetype)mergeFromJson:(nullable NSDictionary *)json {
+  [self.class merge:json message:self ignoreDefaultValue:NO];
   return self;
 }
 
 - (NSDictionary *)json {
-  NSDictionary *json = [self.class printMessage:self];
-  return json;
+  @try {
+    NSDictionary *json = [self.class printMessage:self];
+    return json;
+  } @catch (NSException *exception) {
+    // This really shouldn't happen. The only way printMessage:
+    // could throw is if something in the library has a bug.
+#ifdef DEBUG
+    NSLog(@"%@: Internal exception while building message json: %@", self.class, exception);
+#endif
+  }
+  return nil;
 }
 
 #pragma mark  Parses from JSON into a protobuf message.
 
-+ (void)merge:(NSDictionary *)json message:(GPBMessage *)msg {
++ (void)merge:(nullable NSDictionary *)json message:(GPBMessage *)msg ignoreDefaultValue:(BOOL)ignoreDefVal {
+  if (!json || json == NSNull.null) {
+    if (!ignoreDefVal) {
+      [msg clear];
+    }
+    return;
+  }
   [self assert:json isKindOfClass:NSDictionary.class];
   GPBDescriptor *descriptor = [msg.class descriptor];
   for (NSString *key in json) {
+    id val = json[key];
+    if (ignoreDefVal && val == NSNull.null) {
+      continue;
+    }
     GPBFieldDescriptor *field = [descriptor fieldWithName:key];
     if (!field) {
       field = [self fieldWithTextFormatName:key inDescriptor:descriptor];
@@ -39,29 +70,30 @@
         continue;
       }
     }
-    [self mergeField:field json:json[key] message:msg];
+    if (val == NSNull.null) {
+      id defVal = [self defaultValueForField:field];
+      [msg setValue:defVal forKey:field.name];
+    } else {
+      [self mergeField:field json:val message:msg ignoreDefaultValue:ignoreDefVal];
+    }
   }
 }
 
-+ (void)mergeField:(GPBFieldDescriptor *)field json:(id)json message:(GPBMessage *)msg {
-  if (json == NSNull.null) {
-    return;
-  }
-
++ (void)mergeField:(GPBFieldDescriptor *)field json:(nonnull id)json message:(GPBMessage *)msg ignoreDefaultValue:(BOOL)ignoreDefVal {
   switch (field.fieldType) {
     case GPBFieldTypeSingle:
-      [self parseFieldValue:field json:json message:msg];
+      [self parseFieldValue:field json:json message:msg ignoreDefaultValue:ignoreDefVal];
       break;
     case GPBFieldTypeRepeated:
-      [self mergeRepeatedField:field json:json message:msg];
+      [self mergeRepeatedField:field json:json message:msg ignoreDefaultValue:ignoreDefVal];
       break;
     case GPBFieldTypeMap:
-      [self mergeMapField:field json:json message:msg];
+      [self mergeMapField:field json:json message:msg ignoreDefaultValue:ignoreDefVal];
       break;
   }
 }
 
-+ (void)parseFieldValue:(GPBFieldDescriptor *)field json:(id)json message:(GPBMessage *)msg {
++ (void)parseFieldValue:(GPBFieldDescriptor *)field json:(nonnull id)json message:(GPBMessage *)msg ignoreDefaultValue:(BOOL)ignoreDefVal {
   switch (field.dataType) {
     case GPBDataTypeBool:
     case GPBDataTypeSFixed32:
@@ -77,7 +109,7 @@
     case GPBDataTypeFloat:
     case GPBDataTypeDouble:
       [self assert:json isKindOfClass:NSNumber.class];
-      if ([json isEqualToNumber:@(0)]) {
+      if (ignoreDefVal && [json isEqualToNumber:@(0)]) {
         return;
       }
       [msg setValue:[json copy] forKey:field.name];
@@ -91,7 +123,7 @@
     case GPBDataTypeBytes: // todo: convert NSString to NSData
     case GPBDataTypeString:
       [self assert:json isKindOfClass:NSString.class];
-      if ([json length] == 0) {
+      if (ignoreDefVal && [json length] == 0) {
         return;
       }
       [msg setValue:[json copy] forKey:field.name];
@@ -99,24 +131,26 @@
     case GPBDataTypeGroup:
     case GPBDataTypeMessage: {
       [self assert:json isKindOfClass:NSDictionary.class];
-      if ([json count] == 0) {
+      if (ignoreDefVal && [json count] == 0) {
         return;
       }
-      GPBMessage *message = [[field.msgClass alloc] init];
-      [self merge:json message:message];
-      [msg setValue:message forKey:field.name];
+      GPBMessage *message = [msg valueForKey:field.name];
+      [self merge:json message:message ignoreDefaultValue:ignoreDefVal];
       break;
     }
   }
 }
 
-+ (void)mergeRepeatedField:(GPBFieldDescriptor *)field json:(id)json message:(GPBMessage *)msg {
++ (void)mergeRepeatedField:(GPBFieldDescriptor *)field json:(nonnull id)json message:(GPBMessage *)msg ignoreDefaultValue:(BOOL)ignoreDefVal {
   [self assert:json isKindOfClass:NSArray.class];
   if ([json count] <= 0) {
     return;
   }
   id genericArray = [msg valueForKey:field.name];
   for (id ele in json) {
+    if (ignoreDefVal && ele == NSNull.null) {
+      continue;
+    }
     switch (field.dataType) {
       case GPBDataTypeBool:
       case GPBDataTypeSFixed32:
@@ -130,66 +164,96 @@
       case GPBDataTypeFixed64:
       case GPBDataTypeUInt64:
       case GPBDataTypeFloat:
-      case GPBDataTypeDouble:
-        [self assert:ele isKindOfClass:NSNumber.class];
-        [(GPBInt32Array *) genericArray addValue:[ele doubleValue]];
+      case GPBDataTypeDouble: {
+        double val = 0;
+        if (ele != NSNull.null) {
+          [self assert:ele isKindOfClass:NSNumber.class];
+          val = [ele doubleValue];
+        }
+        [(GPBInt32Array *) genericArray addValue:val];
         break;
-      case GPBDataTypeEnum:
-        [self assert:ele isKindOfClass:NSString.class];
-        int32_t outValue;
-        [field.enumDescriptor getValue:&outValue forEnumName:ele];
+      }
+      case GPBDataTypeEnum: {
+        int32_t outValue = 0;
+        if (ele != NSNull.null) {
+          [self assert:ele isKindOfClass:NSString.class];
+          [field.enumDescriptor getValue:&outValue forEnumName:ele];
+        }
         [(GPBEnumArray *) genericArray addRawValue:outValue];
         break;
+      }
       case GPBDataTypeBytes: // todo: convert NSString to NSData
       case GPBDataTypeString: {
-        [self assert:ele isKindOfClass:NSString.class];
-        [(NSMutableArray *) genericArray addObject:[ele copy]];
+        NSString *val = @"";
+        if (ele != NSNull.null) {
+          [self assert:ele isKindOfClass:NSString.class];
+          val = [ele copy];
+        }
+        [(NSMutableArray *) genericArray addObject:val];
         break;
       }
       case GPBDataTypeGroup:
       case GPBDataTypeMessage: {
-        [self assert:ele isKindOfClass:NSDictionary.class];
-        GPBMessage *message = [[field.msgClass alloc] init];
-        [self merge:ele message:message];
-        [(NSMutableArray *) genericArray addObject:message];
+        GPBMessage *val = [[field.msgClass alloc] init];
+        if (ele != NSNull.null) {
+          [self assert:ele isKindOfClass:NSDictionary.class];
+          [self merge:ele message:val ignoreDefaultValue:ignoreDefVal];
+        }
+        [(NSMutableArray *) genericArray addObject:val];
         break;
       }
     }
   }
 }
 
-+ (void)mergeMapField:(GPBFieldDescriptor *)field json:(id)json message:(GPBMessage *)msg {
++ (void)mergeMapField:(GPBFieldDescriptor *)field json:(nonnull id)json message:(GPBMessage *)msg ignoreDefaultValue:(BOOL)ignoreDefVal {
   [self assert:json isKindOfClass:NSDictionary.class];
   id map = [msg valueForKey:field.name];
   GPBDataType keyDataType = field.mapKeyDataType;
   GPBDataType valueDataType = field.dataType;
-  if (keyDataType == GPBDataTypeString && (valueDataType == GPBDataTypeString || valueDataType == GPBDataTypeBytes || valueDataType == GPBDataTypeMessage)) {
+  if (keyDataType == GPBDataTypeString &&
+      (valueDataType == GPBDataTypeString || valueDataType == GPBDataTypeBytes || valueDataType == GPBDataTypeMessage || valueDataType == GPBDataTypeGroup)) {
     // Cases where keys are strings and values are strings, bytes, or messages are handled by NSMutableDictionary.
     for (NSString *key in json) {
-      id val = json[key];
+      id value = json[key];
+      if (ignoreDefVal && value == NSNull.null) {
+        continue;
+      }
       switch (valueDataType) {
         case GPBDataTypeBytes:
-        case GPBDataTypeString:
-          [self assert:val isKindOfClass:NSString.class];
-          ((NSMutableDictionary *) map)[key] = [val copy];
+        case GPBDataTypeString: {
+          NSString *val = @"";
+          if (value != NSNull.null) {
+            [self assert:value isKindOfClass:NSString.class];
+            val = [value copy];
+          }
+          ((NSMutableDictionary *) map)[key] = val;
           break;
-//        case GPBDataTypeGroup:
+        }
+        case GPBDataTypeGroup:
         case GPBDataTypeMessage: {
-          [self assert:val isKindOfClass:NSDictionary.class];
-          GPBMessage *message = [[field.msgClass alloc] init];
-          [self merge:val message:message];
-          ((NSMutableDictionary *) map)[key] = message;
+          GPBMessage *val = ((NSMutableDictionary *) map)[key] ?: [[field.msgClass alloc] init];
+          if (value != NSNull.null) {
+            [self assert:value isKindOfClass:NSDictionary.class];
+            [self merge:value message:val ignoreDefaultValue:ignoreDefVal];
+          } else {
+            [val clear];
+          }
+          ((NSMutableDictionary *) map)[key] = val;
           break;
         }
       }
     }
     return;
   }
-  // Other cases are: GBP<KEY><VALUE>Dictionary
+  // Other cases are: GPB<KEY><VALUE>Dictionary
   for (NSString *key in json) {
-    id val = json[key];
+    id value = json[key];
+    if (ignoreDefVal && value == NSNull.null) {
+      continue;
+    }
     GPBGenericValue genericKey = [self readValue:key dataType:keyDataType field:field];
-    GPBGenericValue genericValue = [self readValue:val dataType:valueDataType field:field];
+    GPBGenericValue genericValue = value == NSNull.null ? field.defaultValue : [self readValue:value dataType:valueDataType field:field];
     [map setGPBGenericValue:&genericValue forGPBGenericValueKey:&genericKey];
   }
 }
@@ -199,6 +263,38 @@
     if ([field.textFormatName isEqual:name]) {
       return field;
     }
+  }
+  return nil;
+}
+
++ (nullable id)defaultValueForField:(GPBFieldDescriptor *)field {
+  switch (field.fieldType) {
+    case GPBFieldTypeSingle:
+      switch (field.dataType) {
+        case GPBDataTypeBool:
+        case GPBDataTypeSFixed32:
+        case GPBDataTypeInt32:
+        case GPBDataTypeSInt32:
+        case GPBDataTypeFixed32:
+        case GPBDataTypeUInt32:
+        case GPBDataTypeSFixed64:
+        case GPBDataTypeInt64:
+        case GPBDataTypeSInt64:
+        case GPBDataTypeFixed64:
+        case GPBDataTypeUInt64:
+        case GPBDataTypeFloat:
+        case GPBDataTypeDouble:
+        case GPBDataTypeEnum:
+          return @0;
+        case GPBDataTypeBytes:
+        case GPBDataTypeString:
+        case GPBDataTypeGroup:
+        case GPBDataTypeMessage:
+          break;
+      }
+    case GPBFieldTypeRepeated:
+    case GPBFieldTypeMap:
+      break;
   }
   return nil;
 }
@@ -259,7 +355,7 @@
       break;
     case GPBDataTypeMessage: {
       GPBMessage *message = [[field.msgClass alloc] init];
-      [self merge:val message:message];
+      [self merge:val message:message ignoreDefaultValue:YES];
       valueToFill.valueMessage = message;
       break;
     }
@@ -378,7 +474,8 @@
   NSMutableDictionary *json = [NSMutableDictionary dictionary];
   GPBDataType keyDataType = field.mapKeyDataType;
   GPBDataType valueDataType = field.dataType;
-  if (keyDataType == GPBDataTypeString && (valueDataType == GPBDataTypeString || valueDataType == GPBDataTypeBytes || valueDataType == GPBDataTypeMessage)) {
+  if (keyDataType == GPBDataTypeString &&
+      (valueDataType == GPBDataTypeString || valueDataType == GPBDataTypeBytes || valueDataType == GPBDataTypeMessage || valueDataType == GPBDataTypeGroup)) {
     // Cases where keys are strings and values are strings, bytes, or messages are handled by NSMutableDictionary.
     [self assert:mapVal isKindOfClass:NSDictionary.class];
     for (NSString *key in mapVal) {
@@ -388,7 +485,7 @@
         case GPBDataTypeString:
           jsonVal = [mapVal[key] copy];
           break;
-//        case GPBDataTypeGroup:
+        case GPBDataTypeGroup:
         case GPBDataTypeMessage:
           jsonVal = [self printMessage:mapVal[key]];
           break;
@@ -398,7 +495,7 @@
     return json;
   }
 
-  // Other cases are: GBP<KEY><VALUE>Dictionary
+  // Other cases are: GPB<KEY><VALUE>Dictionary
   switch (field.dataType) {
     case GPBDataTypeBool:
     case GPBDataTypeDouble:

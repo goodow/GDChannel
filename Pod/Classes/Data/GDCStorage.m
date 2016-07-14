@@ -106,6 +106,10 @@ static NSString *const fileExtension = @"archive";
 }
 
 + (BOOL)patchRecursively:(id)original with:(id)patch {
+  if ([original isKindOfClass:NSMutableArray.class] && [patch isKindOfClass:NSArray.class]) {
+    [original addObjectsFromArray:patch];
+    return YES;
+  }
   BOOL originalIsEntry = [original conformsToProtocol:@protocol(GDCEntry)];
   BOOL patchIsEntry = [patch conformsToProtocol:@protocol(GDCEntry)];
   if ((!originalIsEntry && ![original isKindOfClass:NSMutableDictionary.class]) || (!patchIsEntry && ![patch isKindOfClass:NSDictionary.class])) {
