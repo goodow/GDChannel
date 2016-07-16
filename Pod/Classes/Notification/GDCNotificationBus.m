@@ -6,6 +6,7 @@
 #import "GDCTopicsManager.h"
 #import "GDCStorage.h"
 #import "GPBMessage.h"
+#import "GPBDictionary.h"
 
 static const NSString *object = @"GDCNotificationBus/object";
 static const NSString *messageKey = @"msg";
@@ -156,43 +157,65 @@ static const NSString *messageKey = @"msg";
     }
   }
 
-  if (!type) {
+  if (!type) { // type 不存在
     if (!patch || !oldPayload) {
       return newPayload;
     }
+    // 存在 oldPayload
     if ([oldPayload conformsToProtocol:@protocol(GDCSerializable)]) {
       [oldPayload mergeFrom:newPayload];
     } else {
       [GDCStorage patchJsonRecursively:oldPayload with:newPayload];
-    }
+    } // 存在 oldPayload
     return oldPayload;
-  }
+  } // type 不存在
 
   // 设置了 type
   Class <GDCSerializable> clz = NSClassFromString(type);
-  if (!patch || !oldPayload) {
-    if ([newPayload isKindOfClass:clz]) {
+  if (!patch || !oldPayload) { // oldPayload 不存在
+    if ([newPayload isKindOfClass:clz]) { // newPayload 就是type
       return newPayload;
     }
-    if ([newPayload conformsToProtocol:@protocol(GDCSerializable)]) {
+    if ([newPayload isKindOfClass:NSArray.class]) { // newPayload 是数组
+      if ([newPayload count] == 0 || [newPayload[0] isKindOfClass:clz]) {
+        return newPayload;
+      }
+      NSMutableArray *array = [NSMutableArray arrayWithCapacity:[newPayload count]];
+      NSError *error = nil;
+      for (id ele in newPayload) {
+        [array addObject:[clz parseFromJson:ele error:&error]];
+      }
+      return array;
+    } // newPayload 是数组
+    if ([newPayload conformsToProtocol:@protocol(GDCSerializable)]) { // newPayload 是GDCSerializable
       newPayload = [newPayload toJson];
     }
+    // newPayload 是字典
     NSError *error = nil;
     id <GDCSerializable> obj = [clz parseFromJson:newPayload error:&error];
     if (error) {
       NSLog(@"Can't parse JSON: %@", error);
     }
     return obj;
-  }
+  } // oldPayload 不存在
 
-  // 设置了 type 和 patch
-  if ([oldPayload conformsToProtocol:@protocol(GDCSerializable)]) {
+  // 设置了 type 和 patch, 且存在 oldPayload
+  if ([oldPayload conformsToProtocol:@protocol(GDCSerializable)]) { // oldPayload 是GDCSerializable
     if ([newPayload isKindOfClass:NSDictionary.class]) {
       [oldPayload mergeFromJson:newPayload];
     } else {
       [oldPayload mergeFrom:newPayload];
     }
-  } else {
+  } else if ([oldPayload isKindOfClass:NSMutableArray.class] && [newPayload isKindOfClass:NSArray.class]) {  // oldPayload 是数组
+    if ([newPayload count] == 0 || [newPayload[0] isKindOfClass:clz]) {
+      [oldPayload addObjectsFromArray:newPayload];
+    } else {
+      NSError *error = nil;
+      for (id ele in newPayload) {
+        [oldPayload addObject:[clz parseFromJson:ele error:&error]];
+      }
+    }
+  } else { // oldPayload 是字典
     [GDCStorage patchJsonRecursively:oldPayload with:newPayload];
   }
   return oldPayload;

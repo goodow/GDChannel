@@ -25,6 +25,5 @@ Pod::Spec.new do |s|
 
   s.dependency 'MQTTKit', '~> 0.1.0'
   s.dependency 'Mantle', '~> 2.0.6'
-  s.dependency 'Aspects', '~> 1.4.1'
   s.dependency 'Protobuf', '~> 3.0.0-beta-3.1'
 end
