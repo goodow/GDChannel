@@ -26,5 +26,5 @@ static const NSString *optionsKey = @"options";
 
 + (NSString *)generateReplyTopic:(NSString *)topic;
 
-- (NSDictionary *)toDictWithTopic:(BOOL)containsTopic;
+- (NSDictionary *)toJsonWithTopic:(BOOL)containsTopic;
 @end

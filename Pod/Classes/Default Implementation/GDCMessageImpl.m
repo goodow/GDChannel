@@ -1,5 +1,5 @@
 #import "GDCMessageImpl.h"
-#import "GPBMessage+JsonFormat.h"
+#import "GDCSerializable.h"
 
 @implementation GDCMessageImpl
 
@@ -33,7 +33,7 @@
   [self reply:error ?: [NSError errorWithDomain:NSStringFromClass(self.class) code:-1 userInfo:nil] replyHandler:nil];
 }
 
-- (NSDictionary *)toDictWithTopic:(BOOL)containsTopic {
+- (NSDictionary *)toJsonWithTopic:(BOOL)containsTopic {
   NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:7];
   if (containsTopic) {
     dict[topicKey] = self.topic;
@@ -50,21 +50,19 @@
   if ([self.payload isKindOfClass:NSError.class]) {
     NSError *error = self.payload;
     dict[errorKey] = @{errorDomainKey : error.domain, errorCodeKey : @(error.code), errorUserInfoKey : error.userInfo};
-  } else if ([self.payload isKindOfClass:GPBMessage.class]) {
-    dict[payloadKey] = [self.payload json];
-  } else if ([self.payload conformsToProtocol:@protocol(GDCEntry)]) {
-    dict[payloadKey] = [self.payload toDictionary];
+  } else if ([self.payload conformsToProtocol:@protocol(GDCSerializable)]) {
+    dict[payloadKey] = [self.payload toJson];
   } else if (self.payload) {
     dict[payloadKey] = self.payload;
   }
   if (self.options) {
-    dict[optionsKey] = [self.options toDictionary];
+    dict[optionsKey] = [self.options toJson];
   }
   return dict;
 }
 
 - (NSString *)description {
-  NSString *description = [self toDictWithTopic:YES].description;
+  NSString *description = [self toJsonWithTopic:YES].description;
   // avoid Mojibake
   NSString *desc = [NSString stringWithCString:[description cStringUsingEncoding:NSUTF8StringEncoding] encoding:NSNonLossyASCIIStringEncoding];
 //  desc = [NSString stringWithUTF8String:[description cStringUsingEncoding:[NSString defaultCStringEncoding]]];

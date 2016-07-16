@@ -4,8 +4,8 @@
 
 #import "GPBMessage+JsonFormat.h"
 #import "GPBDescriptor.h"
+#import "GPBArray.h"
 #import "GPBUtilities.h"
-#import "GPBDictionary.h"
 #import "GPBDictionary_PackagePrivate.h"
 
 @implementation GPBMessage (JsonFormat)
@@ -27,12 +27,11 @@
   return nil;
 }
 
-- (instancetype)mergeFromJson:(nullable NSDictionary *)json {
+- (void)mergeFromJson:(nullable NSDictionary *)json {
   [self.class merge:json message:self ignoreDefaultValue:NO];
-  return self;
 }
 
-- (NSDictionary *)json {
+- (NSDictionary *)toJson {
   @try {
     NSDictionary *json = [self.class printMessage:self];
     return json;
@@ -253,7 +252,20 @@
       continue;
     }
     GPBGenericValue genericKey = [self readValue:key dataType:keyDataType field:field];
-    GPBGenericValue genericValue = value == NSNull.null ? field.defaultValue : [self readValue:value dataType:valueDataType field:field];
+    GPBGenericValue genericValue = field.defaultValue;
+    if (value != NSNull.null) {
+      if (valueDataType == GPBDataTypeMessage) {
+        int numKey = key.intValue;
+        GPBMessage *msgVal = [(GPBUInt32ObjectDictionary *) map objectForKey:numKey];
+        msgVal = msgVal ?: [[field.msgClass alloc] init];
+        [self merge:value message:msgVal ignoreDefaultValue:ignoreDefVal];
+        genericValue.valueMessage = msgVal;
+        // must hold msgVal which is declared in a if block until the use of outside scope(setGPBGenericValue:forGPBGenericValueKey)
+        value = msgVal;
+      } else {
+        genericValue = [self readValue:value dataType:valueDataType field:field];
+      }
+    }
     [map setGPBGenericValue:&genericValue forGPBGenericValueKey:&genericKey];
   }
 }
@@ -353,12 +365,7 @@
     case GPBDataTypeString:
       valueToFill.valueString = [val copy];
       break;
-    case GPBDataTypeMessage: {
-      GPBMessage *message = [[field.msgClass alloc] init];
-      [self merge:val message:message ignoreDefaultValue:YES];
-      valueToFill.valueMessage = message;
-      break;
-    }
+    case GPBDataTypeMessage:
     case GPBDataTypeGroup:
       NSCAssert(NO, @"Can't happen");
       break;
@@ -496,38 +503,22 @@
   }
 
   // Other cases are: GPB<KEY><VALUE>Dictionary
-  switch (field.dataType) {
-    case GPBDataTypeBool:
-    case GPBDataTypeDouble:
-    case GPBDataTypeFixed32:
-    case GPBDataTypeFixed64:
-    case GPBDataTypeFloat:
-    case GPBDataTypeInt32:
-    case GPBDataTypeInt64:
-    case GPBDataTypeSFixed32:
-    case GPBDataTypeSFixed64:
-    case GPBDataTypeSInt32:
-    case GPBDataTypeSInt64:
-    case GPBDataTypeUInt32:
-    case GPBDataTypeUInt64:
-    case GPBDataTypeEnum:
-    case GPBDataTypeBytes:
-    case GPBDataTypeString:
-    case GPBDataTypeGroup:
-    case GPBDataTypeMessage: {
-      // The exact type doesn't matter, they all implement -enumerateForTextFormat:.
-      id <GPBDictionaryInternalsProtocol> dict = (GPBStringInt32Dictionary *) mapVal;
-      [dict enumerateForTextFormat:^(id keyObj, id valueObj) {
-          if (field.dataType == GPBDataTypeEnum) {
-            NSString *valueStr = [field.enumDescriptor textFormatNameForValue:[valueObj intValue]];
-            json[keyObj] = valueStr ?: valueObj;
-          } else {
-            json[keyObj] = valueObj;
-          }
-      }];
-      break;
-    }
-  }
+  // The exact type doesn't matter, they all implement -enumerateForTextFormat:.
+  [(GPBStringInt32Dictionary *) mapVal enumerateForTextFormat:^(id keyObj, id valueObj) {
+      switch (field.dataType) {
+        case GPBDataTypeEnum: {
+          NSString *valueStr = [field.enumDescriptor textFormatNameForValue:[valueObj intValue]];
+          valueObj = valueStr ?: valueObj;
+        }
+        case GPBDataTypeGroup:
+        case GPBDataTypeMessage: {
+          valueObj = [valueObj toJson];
+        }
+        default:
+          json[keyObj] = valueObj;
+          break;
+      }
+  }];
   return json;
 }
 

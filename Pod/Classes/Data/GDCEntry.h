@@ -5,6 +5,7 @@
 
 #import <Foundation/Foundation.h>
 #import "MTLModel.h"
+#import "GDCSerializable.h"
 
 @class GDCOptions;
 
@@ -13,10 +14,7 @@ static NSString *const watchChanges = @"_watch";
 @protocol GDCEntry <MTLModel>
 @end
 
-@interface GDCEntry : MTLModel <GDCEntry>
-+ (instancetype)of:(id)payload;
-
-- (NSDictionary *)toDictionary;
+@interface GDCEntry : MTLModel <GDCEntry, GDCSerializable>
 
 - (void)addTopic:(NSString *)topic options:(GDCOptions *)options;
 

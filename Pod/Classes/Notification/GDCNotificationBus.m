@@ -5,7 +5,7 @@
 #import "GDCAsyncResultImpl.h"
 #import "GDCTopicsManager.h"
 #import "GDCStorage.h"
-#import "GPBMessage+JsonFormat.h"
+#import "GPBMessage.h"
 
 static const NSString *object = @"GDCNotificationBus/object";
 static const NSString *messageKey = @"msg";
@@ -149,7 +149,7 @@ static const NSString *messageKey = @"msg";
   BOOL shouldInferType = !type && [newPayload isKindOfClass:NSDictionary.class];
   if (shouldInferType || patch) {
     oldPayload = [self.storage getPayload:message.topic];
-    if (shouldInferType && ([oldPayload conformsToProtocol:@protocol(GDCEntry)] || [oldPayload isKindOfClass:GPBMessage.class])) {
+    if (shouldInferType && ([oldPayload conformsToProtocol:@protocol(GDCSerializable)])) {
       // 根据 oldPayload 推断 type 和 patch
       type = NSStringFromClass([oldPayload class]);
       patch = YES;
@@ -160,39 +160,40 @@ static const NSString *messageKey = @"msg";
     if (!patch || !oldPayload) {
       return newPayload;
     }
-    [GDCStorage patchRecursively:oldPayload with:newPayload];
+    if ([oldPayload conformsToProtocol:@protocol(GDCSerializable)]) {
+      [oldPayload mergeFrom:newPayload];
+    } else {
+      [GDCStorage patchJsonRecursively:oldPayload with:newPayload];
+    }
     return oldPayload;
   }
 
   // 设置了 type
-  Class clz = NSClassFromString(type);
+  Class <GDCSerializable> clz = NSClassFromString(type);
   if (!patch || !oldPayload) {
     if ([newPayload isKindOfClass:clz]) {
       return newPayload;
     }
-    if ([clz isSubclassOfClass:GPBMessage.class]) {
-      NSError *error = nil;
-      GPBMessage *gpbMessage = [clz parseFromJson:newPayload error:&error];
-      if (error) {
-        NSLog(@"Can't parse JSON: %@", error);
-      }
-      return gpbMessage;
+    if ([newPayload conformsToProtocol:@protocol(GDCSerializable)]) {
+      newPayload = [newPayload toJson];
     }
-    if ([newPayload conformsToProtocol:@protocol(GDCEntry)]) {
-      newPayload = [(GDCEntry *) newPayload toDictionary];
+    NSError *error = nil;
+    id <GDCSerializable> obj = [clz parseFromJson:newPayload error:&error];
+    if (error) {
+      NSLog(@"Can't parse JSON: %@", error);
     }
-    return [clz of:newPayload];
+    return obj;
   }
 
   // 设置了 type 和 patch
-  if ([oldPayload isKindOfClass:GPBMessage.class] && [clz isSubclassOfClass:GPBMessage.class]) {
-    if ([newPayload isKindOfClass:GPBMessage.class]) {
-      [oldPayload mergeFrom:newPayload];
-    } else {
+  if ([oldPayload conformsToProtocol:@protocol(GDCSerializable)]) {
+    if ([newPayload isKindOfClass:NSDictionary.class]) {
       [oldPayload mergeFromJson:newPayload];
+    } else {
+      [oldPayload mergeFrom:newPayload];
     }
   } else {
-    [GDCStorage patchRecursively:oldPayload with:newPayload];
+    [GDCStorage patchJsonRecursively:oldPayload with:newPayload];
   }
   return oldPayload;
 }

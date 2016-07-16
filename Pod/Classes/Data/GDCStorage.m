@@ -4,16 +4,8 @@
 
 #import "GDCStorage.h"
 #import "GDCMessage.h"
-#import "MTLJSONAdapter.h"
-#import "NSDictionary+MTLJSONKeyPath.h"
-#import "MTLTransformerErrorHandling.h"
 
 static NSString *const fileExtension = @"archive";
-
-@interface MTLJSONAdapter (MergeFromDictionary)
-+ (NSDictionary *)valueTransformersForModelClass:(Class)modelClass;
-
-@end
 
 @implementation GDCStorage {
   NSString *_baseDir;
@@ -105,39 +97,24 @@ static NSString *const fileExtension = @"archive";
   return [[_baseDir stringByAppendingPathComponent:topic] stringByAppendingPathExtension:fileExtension];
 }
 
-+ (BOOL)patchRecursively:(id)original with:(id)patch {
-  if ([original isKindOfClass:NSMutableArray.class] && [patch isKindOfClass:NSArray.class]) {
-    [original addObjectsFromArray:patch];
-    return YES;
-  }
-  BOOL originalIsEntry = [original conformsToProtocol:@protocol(GDCEntry)];
-  BOOL patchIsEntry = [patch conformsToProtocol:@protocol(GDCEntry)];
-  if ((!originalIsEntry && ![original isKindOfClass:NSMutableDictionary.class]) || (!patchIsEntry && ![patch isKindOfClass:NSDictionary.class])) {
++ (BOOL)patchJsonRecursively:(id)original with:(id)patch {
+  if ([original isKindOfClass:NSMutableArray.class]) {
+    if ([patch isKindOfClass:NSArray.class]) {
+      [original addObjectsFromArray:patch];
+      return YES;
+    }
     return NO;
   }
-  if (originalIsEntry) {
-    [original setValue:@YES forKey:@"_inhibitNotify"];
-    if (patchIsEntry) {
-      [((MTLModel *) original) mergeValuesForKeysFromModel:patch];
-    } else {
-      NSMutableDictionary *expandedPatch = [NSMutableDictionary dictionary];
-      [self expandDictionary:patch to:expandedPatch];
-      [self patchEntry:original withDictionary:expandedPatch];
-    }
-    [original setValue:@NO forKey:@"_inhibitNotify"];
-    return YES;
+  if (![original isKindOfClass:NSMutableDictionary.class] || ![patch isKindOfClass:NSDictionary.class]) {
+    return NO;
   }
 
-  if (patchIsEntry) {
-    patch = [(GDCEntry *) patch toDictionary];
-  } else {
-    NSMutableDictionary *expandedPatch = [NSMutableDictionary dictionary];
-    [self expandDictionary:patch to:expandedPatch];
-    patch = expandedPatch;
-  }
+  NSMutableDictionary *expandedPatch = [NSMutableDictionary dictionary];
+  [self expandDictionary:patch to:expandedPatch];
+  patch = expandedPatch;
   for (NSString *key in patch) {
     id value = patch[key];
-    if (!original[key] || ![self patchRecursively:original[key] with:value]) {
+    if (!original[key] || ![self patchJsonRecursively:original[key] with:value]) {
       original[key] = value;
     }
   }
@@ -186,97 +163,6 @@ static NSString *const fileExtension = @"archive";
     }
   }
   return dict;
-}
-
-+ (void)patchEntry:(NSObject <MTLModel, MTLJSONSerializing> *)original withDictionary:(NSDictionary *)patch {
-  NSError *error;
-  Class modelClass = original.class;
-  NSDictionary *keyPathsByPropertyKey = [modelClass JSONKeyPathsByPropertyKey];
-  NSDictionary *valueTransformersByPropertyKey = [MTLJSONAdapter valueTransformersForModelClass:modelClass];
-  for (NSString *propertyKey in [modelClass propertyKeys]) {
-    id keyPaths = keyPathsByPropertyKey[propertyKey];
-    if (keyPaths == nil) {
-      continue;
-    }
-
-    id value;
-    if ([keyPaths isKindOfClass:NSArray.class]) {
-      NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-      for (NSString *keyPath in keyPaths) {
-        BOOL success = NO;
-        id value = [patch mtl_valueForJSONKeyPath:keyPath success:&success error:&error];
-        if (!success) {
-          continue;
-        }
-        if (value != nil) {
-          dictionary[keyPath] = value;
-        }
-      }
-      value = dictionary;
-    } else {
-      BOOL success = NO;
-      value = [patch mtl_valueForJSONKeyPath:keyPaths success:&success error:&error];
-      if (!success) {
-        continue;
-      }
-    }
-    if (value == nil) {
-      continue;
-    }
-    id originalVal = [original valueForKey:propertyKey];
-    if ([originalVal conformsToProtocol:@protocol(GDCEntry)]) {
-      [self patchEntry:originalVal withDictionary:value];
-      continue;
-    }
-
-    @try {
-      NSValueTransformer *transformer = valueTransformersByPropertyKey[propertyKey];
-      if (transformer != nil) {
-        // Map NSNull -> nil for the transformer, and then back for the
-        // dictionary we're going to insert into.
-        if ([value isEqual:NSNull.null]) {
-          value = nil;
-        }
-
-        if ([transformer respondsToSelector:@selector(transformedValue:success:error:)]) {
-          id <MTLTransformerErrorHandling> errorHandlingTransformer = (id) transformer;
-
-          BOOL success = YES;
-          value = [errorHandlingTransformer transformedValue:value success:&success error:&error];
-
-          if (!success) {
-            continue;
-          }
-        } else {
-          value = [transformer transformedValue:value];
-        }
-        if (value == nil) {
-          value = NSNull.null;
-        }
-      }
-
-      [original setValue:value forKey:propertyKey];
-    } @catch (NSException *ex) {
-      NSLog(@"*** Caught exception %@ parsing JSON key path \"%@\" from: %@", ex, keyPaths, patch);
-
-      // Fail fast in Debug builds.
-#if DEBUG
-      @throw ex;
-#else
-      if (error != NULL) {
-        NSDictionary *userInfo = @{
-          NSLocalizedDescriptionKey: ex.description,
-          NSLocalizedFailureReasonErrorKey: ex.reason,
-          MTLJSONAdapterThrownExceptionErrorKey: ex
-        };
-
-        error = [NSError errorWithDomain:MTLJSONAdapterErrorDomain code:MTLJSONAdapterErrorExceptionThrown userInfo:userInfo];
-      }
-
-      return;
-#endif
-    }
-  }
 }
 
 + (NSMutableDictionary *)mutableContainersAndLeaves:(NSDictionary *)dict {

@@ -48,7 +48,7 @@
             }
             msg.local = [json[localKey] boolValue];
             msg.send = [json[sendKey] boolValue];
-            msg.options = [GDCOptions of:json[optionsKey]];
+            msg.options = [GDCOptions parseFromJson:json[optionsKey] error:nil];
             msg.replyTopic = json[replyTopicKey];
             if (msg.replyTopic && msg.send) {
               msg.bus = weakSelf;
@@ -170,7 +170,7 @@
 
 - (void)sendOrPub:(GDCMessageImpl *)message {
   NSError *error;
-  NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[message toDictWithTopic:NO]
+  NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[message toJsonWithTopic:NO]
                                                      options:0
                                                        error:&error];
   if (!jsonData) {

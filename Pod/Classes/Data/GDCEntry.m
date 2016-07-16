@@ -10,6 +10,13 @@
 #import "NSObject+GDChannel.h"
 #import "GDCNotificationBus.h"
 #import "MTLModel+NSCoding.h"
+#import "GDCStorage.h"
+#import "MTLTransformerErrorHandling.h"
+#import "NSDictionary+MTLJSONKeyPath.h"
+
+@interface MTLJSONAdapter (MergeFromDictionary)
++ (NSDictionary *)valueTransformersForModelClass:(Class)modelClass;
+@end
 
 @interface GDCEntry () <MTLJSONSerializing>
 @end
@@ -53,23 +60,22 @@
   }
 }
 
-+ (instancetype)of:(id)payload {
-  if (!payload || [payload isKindOfClass:self]) {
-    return payload;
++ (instancetype)parseFromJson:(nullable NSDictionary *)json error:(NSError **)errorPtr {
+  if (!json || [json isKindOfClass:self]) {
+    return json;
   }
   if (![self conformsToProtocol:@protocol(GDCEntry)]) {
     return nil;
   }
-  NSDictionary *dict = [payload isKindOfClass:NSDictionary.class] ? payload : [payload toDictionary];
   NSError *error = nil;
-  GDCEntry *toRtn = [MTLJSONAdapter modelOfClass:self fromJSONDictionary:dict error:&error];
+  GDCEntry *toRtn = [MTLJSONAdapter modelOfClass:self fromJSONDictionary:json error:&error];
   if (error) {
     NSLog(@"[%s] Error creating entry: %@", __PRETTY_FUNCTION__, error);
   }
   return toRtn;
 }
 
-- (NSDictionary *)toDictionary {
+- (NSDictionary *)toJson {
   NSError *error = nil;
   NSDictionary *toRtn = [MTLJSONAdapter JSONDictionaryFromModel:self error:&error];
   if (error) {
@@ -108,6 +114,111 @@
 
 - (void)addTopic:(NSString *)topic options:(GDCOptions *)options {
   _topics[topic] = options ?: [NSNull null];
+}
+
+- (void)mergeFromJson:(NSDictionary *)json {
+  _inhibitNotify = YES;
+  NSMutableDictionary *expandedPatch = [NSMutableDictionary dictionary];
+  [GDCStorage expandDictionary:json to:expandedPatch];
+  [self.class patchEntry:self withDictionary:expandedPatch];
+  _inhibitNotify = NO;
+}
+
+- (void)mergeFrom:(GDCEntry *)other {
+  _inhibitNotify = YES;
+  [self mergeValuesForKeysFromModel:other];
+  _inhibitNotify = NO;
+}
+
++ (void)patchEntry:(NSObject <MTLModel, MTLJSONSerializing> *)original withDictionary:(NSDictionary *)patch {
+  NSError *error;
+  Class modelClass = original.class;
+  NSDictionary *keyPathsByPropertyKey = [modelClass JSONKeyPathsByPropertyKey];
+  NSDictionary *valueTransformersByPropertyKey = [MTLJSONAdapter valueTransformersForModelClass:modelClass];
+  for (NSString *propertyKey in [modelClass propertyKeys]) {
+    id keyPaths = keyPathsByPropertyKey[propertyKey];
+    if (keyPaths == nil) {
+      continue;
+    }
+
+    id value;
+    if ([keyPaths isKindOfClass:NSArray.class]) {
+      NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+      for (NSString *keyPath in keyPaths) {
+        BOOL success = NO;
+        id value = [patch mtl_valueForJSONKeyPath:keyPath success:&success error:&error];
+        if (!success) {
+          continue;
+        }
+        if (value != nil) {
+          dictionary[keyPath] = value;
+        }
+      }
+      value = dictionary;
+    } else {
+      BOOL success = NO;
+      value = [patch mtl_valueForJSONKeyPath:keyPaths success:&success error:&error];
+      if (!success) {
+        continue;
+      }
+    }
+    if (value == nil) {
+      continue;
+    }
+    id originalVal = [original valueForKey:propertyKey];
+    if ([originalVal conformsToProtocol:@protocol(GDCEntry)]) {
+      [self patchEntry:originalVal withDictionary:value];
+      continue;
+    }
+
+    @try {
+      NSValueTransformer *transformer = valueTransformersByPropertyKey[propertyKey];
+      if (transformer != nil) {
+        // Map NSNull -> nil for the transformer, and then back for the
+        // dictionary we're going to insert into.
+        if ([value isEqual:NSNull.null]) {
+          value = nil;
+        }
+
+        if ([transformer respondsToSelector:@selector(transformedValue:success:error:)]) {
+          id <MTLTransformerErrorHandling> errorHandlingTransformer = (id) transformer;
+
+          BOOL success = YES;
+          value = [errorHandlingTransformer transformedValue:value success:&success error:&error];
+
+          if (!success) {
+            continue;
+          }
+        } else {
+          value = [transformer transformedValue:value];
+        }
+        if (value == nil) {
+          value = NSNull.null;
+        }
+      }
+
+      [original setValue:value forKey:propertyKey];
+    } @catch (NSException *ex) {
+      NSLog(@"*** Caught exception %@ parsing JSON key path \"%@\" from: %@", ex, keyPaths, patch);
+
+      // Fail fast in Debug builds.
+#if DEBUG
+      @throw ex;
+#else
+      if (error != NULL) {
+        NSDictionary *userInfo = @{
+          NSLocalizedDescriptionKey: ex.description,
+          NSLocalizedFailureReasonErrorKey: ex.reason,
+          MTLJSONAdapterThrownExceptionErrorKey: ex
+        };
+
+        error = [NSError errorWithDomain:MTLJSONAdapterErrorDomain code:MTLJSONAdapterErrorExceptionThrown userInfo:userInfo];
+      }
+
+      return;
+#endif
+    }
+  }
 }
 
 @end

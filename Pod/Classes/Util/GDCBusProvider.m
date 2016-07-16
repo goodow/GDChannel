@@ -14,7 +14,7 @@ static id <GDCBus> instance;
         return;
       }
 #ifdef DEBUG
-      instance = [[GDCMqttBus alloc] initWithHost:@"realtime.goodow.com" port:1883 localBus:nil clientId:[GDCBusProvider clientId]];
+      instance = [[GDCMqttBus alloc] initWithHost:@"iot.eclipse.org" port:1883 localBus:nil clientId:[GDCBusProvider clientId]];
 #else
       instance = [[GDCNotificationBus alloc] init];
 #endif
