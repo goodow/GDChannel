@@ -97,30 +97,6 @@ static NSString *const fileExtension = @"archive";
   return [[_baseDir stringByAppendingPathComponent:topic] stringByAppendingPathExtension:fileExtension];
 }
 
-+ (BOOL)patchJsonRecursively:(id)original with:(id)patch {
-  if ([original isKindOfClass:NSMutableArray.class]) {
-    if ([patch isKindOfClass:NSArray.class]) {
-      [original addObjectsFromArray:patch];
-      return YES;
-    }
-    return NO;
-  }
-  if (![original isKindOfClass:NSMutableDictionary.class] || ![patch isKindOfClass:NSDictionary.class]) {
-    return NO;
-  }
-
-  NSMutableDictionary *expandedPatch = [NSMutableDictionary dictionary];
-  [self expandDictionary:patch to:expandedPatch];
-  patch = expandedPatch;
-  for (NSString *key in patch) {
-    id value = patch[key];
-    if (!original[key] || ![self patchJsonRecursively:original[key] with:value]) {
-      original[key] = value;
-    }
-  }
-  return YES;
-}
-
 + (void)expandDictionary:(NSDictionary *)dict to:(NSMutableDictionary *)toRtn {
   void (^block)() = ^(NSMutableDictionary *res, NSString *key, id value) {
       if (![value isKindOfClass:NSDictionary.class]) {

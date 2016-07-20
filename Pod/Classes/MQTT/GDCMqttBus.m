@@ -29,7 +29,7 @@
     [_mqtt setMessageHandler:^(MQTTMessage *message) {
         NSError *error = nil;
         id json = [NSJSONSerialization JSONObjectWithData:message.payload
-                                                  options:NSJSONReadingAllowFragments
+                                                  options:NSJSONReadingAllowFragments | NSJSONReadingMutableContainers
                                                     error:&error];
         if (!json) {
           @throw [NSException exceptionWithName:@"JSON" reason:[NSString stringWithFormat:@"Can't parse JSON string: %@", error] userInfo:nil];

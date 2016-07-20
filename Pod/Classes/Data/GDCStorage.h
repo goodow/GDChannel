@@ -10,8 +10,6 @@
 
 + (GDCStorage *)instance;
 
-+ (BOOL)patchJsonRecursively:(id)original with:(id)patch;
-
 + (void)expandDictionary:(NSDictionary *)dict to:(NSMutableDictionary *)toRtn;
 + (NSDictionary *)flattedDictionary:(NSDictionary *)toFlat parentKey:(NSString *)parentKey;
 

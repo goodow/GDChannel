@@ -5,8 +5,9 @@
 #import "GDCAsyncResultImpl.h"
 #import "GDCTopicsManager.h"
 #import "GDCStorage.h"
-#import "GPBMessage.h"
-#import "GPBDictionary.h"
+#import "GPBMessage+JsonFormat.h"
+#import "NSMutableArray+GDCSerializable.h"
+#import "NSMutableDictionary+GDCSerializable.h"
 
 static const NSString *object = @"GDCNotificationBus/object";
 static const NSString *messageKey = @"msg";
@@ -146,16 +147,7 @@ static const NSString *messageKey = @"msg";
     return nil;
   }
   NSString *type = message.options.type;
-  id oldPayload;
-  BOOL shouldInferType = !type && [newPayload isKindOfClass:NSDictionary.class];
-  if (shouldInferType || patch) {
-    oldPayload = [self.storage getPayload:message.topic];
-    if (shouldInferType && ([oldPayload conformsToProtocol:@protocol(GDCSerializable)])) {
-      // 根据 oldPayload 推断 type 和 patch
-      type = NSStringFromClass([oldPayload class]);
-      patch = YES;
-    }
-  }
+  id oldPayload = patch ? [self.storage getPayload:message.topic] : nil;
 
   if (!type) { // type 不存在
     if (!patch || !oldPayload) {
@@ -163,10 +155,12 @@ static const NSString *messageKey = @"msg";
     }
     // 存在 oldPayload
     if ([oldPayload conformsToProtocol:@protocol(GDCSerializable)]) {
-      [oldPayload mergeFrom:newPayload];
-    } else {
-      [GDCStorage patchJsonRecursively:oldPayload with:newPayload];
-    } // 存在 oldPayload
+      if ([newPayload isKindOfClass:NSDictionary.class]) {
+        [oldPayload mergeFromJson:newPayload];
+      } else {
+        [oldPayload mergeFrom:newPayload];
+      }
+    }
     return oldPayload;
   } // type 不存在
 
@@ -187,10 +181,10 @@ static const NSString *messageKey = @"msg";
       }
       return array;
     } // newPayload 是数组
-    if ([newPayload conformsToProtocol:@protocol(GDCSerializable)]) { // newPayload 是GDCSerializable
+    if ([newPayload conformsToProtocol:@protocol(GDCSerializable)]) {
       newPayload = [newPayload toJson];
     }
-    // newPayload 是字典
+    // newPayload 已转换为字典
     NSError *error = nil;
     id <GDCSerializable> obj = [clz parseFromJson:newPayload error:&error];
     if (error) {
@@ -200,13 +194,7 @@ static const NSString *messageKey = @"msg";
   } // oldPayload 不存在
 
   // 设置了 type 和 patch, 且存在 oldPayload
-  if ([oldPayload conformsToProtocol:@protocol(GDCSerializable)]) { // oldPayload 是GDCSerializable
-    if ([newPayload isKindOfClass:NSDictionary.class]) {
-      [oldPayload mergeFromJson:newPayload];
-    } else {
-      [oldPayload mergeFrom:newPayload];
-    }
-  } else if ([oldPayload isKindOfClass:NSMutableArray.class] && [newPayload isKindOfClass:NSArray.class]) {  // oldPayload 是数组
+  if ([oldPayload isKindOfClass:NSMutableArray.class] && [newPayload isKindOfClass:NSArray.class]) {  // oldPayload 是数组
     if ([newPayload count] == 0 || [newPayload[0] isKindOfClass:clz]) {
       [oldPayload addObjectsFromArray:newPayload];
     } else {
@@ -215,8 +203,12 @@ static const NSString *messageKey = @"msg";
         [oldPayload addObject:[clz parseFromJson:ele error:&error]];
       }
     }
-  } else { // oldPayload 是字典
-    [GDCStorage patchJsonRecursively:oldPayload with:newPayload];
+  } else if ([oldPayload conformsToProtocol:@protocol(GDCSerializable)]) {
+    if ([newPayload isKindOfClass:NSDictionary.class]) {
+      [oldPayload mergeFromJson:newPayload];
+    } else {
+      [oldPayload mergeFrom:newPayload];
+    }
   }
   return oldPayload;
 }
