@@ -4,17 +4,21 @@
 
 #import <Foundation/Foundation.h>
 #import "GDCEntry.h"
-#import "GDCViewOptions.h"
 
-@interface GDCOptions : GDCEntry
+@interface GDCOptions : NSObject <GDCSerializable>
 
 @property(nonatomic) BOOL retained;
 @property(nonatomic) BOOL patch;
 // 若希望订阅者接收到的是强类型, 则指定类型名
-@property(nonatomic) NSString *type;
-@property(nonatomic, strong) GDCViewOptions *viewOptions;
-@property(nonatomic, strong) id extras;
+@property(nonatomic) Class <GDCSerializable> type;
+/**
+ * Set the send timeout.
+ *
+ * @param timeout  the timeout value, in ms.
+ */
+@property(nonatomic) long timeout;
+@property(nonatomic, strong) __kindof NSObject <GDCSerializable> *extras;
 
-+ (GDCOptions *)createWithViewOptions;
++ (GDCOptions *)optionWithExtras:(NSObject <GDCSerializable> *)extras;
 
 @end

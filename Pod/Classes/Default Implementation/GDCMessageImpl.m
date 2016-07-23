@@ -77,7 +77,7 @@
   copy.bus = self.bus;
   copy.local = self.local;
   copy.send = self.send;
-  copy.options = [self.options copyWithZone:zone];
+  copy.options = self.options;
   return copy;
 }
 
@@ -87,7 +87,7 @@
   [coder encodeObject:self.replyTopic forKey:replyTopicKey];
   [coder encodeBool:self.local forKey:localKey];
   [coder encodeBool:self.send forKey:sendKey];
-  [coder encodeObject:self.options forKey:optionsKey];
+//  [coder encodeObject:self.options forKey:optionsKey];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
@@ -96,7 +96,7 @@
   self.replyTopic = [coder decodeObjectForKey:replyTopicKey];
   self.local = [coder decodeBoolForKey:localKey];
   self.send = [coder decodeBoolForKey:sendKey];
-  self.options = [coder decodeObjectForKey:optionsKey];
+//  self.options = [coder decodeObjectForKey:optionsKey];
   return self;
 }
 

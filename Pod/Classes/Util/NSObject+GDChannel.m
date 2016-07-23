@@ -18,11 +18,3 @@
 }
 
 @end
-
-@implementation UIViewController (GDChannel)
-
-- (GDCViewOptions *)viewOptions {
-  return objc_getAssociatedObject(self, _GDCViewOptionsAssociatedKey);;
-}
-
-@end

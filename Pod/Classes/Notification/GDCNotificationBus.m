@@ -111,6 +111,13 @@ static const NSString *messageKey = @"msg";
 - (void)sendOrPub:(GDCMessageImpl *)message replyHandler:(GDCAsyncResultBlock)replyHandler {
   if (replyHandler) {
     [self subscribeToReplyTopic:message.replyTopic replyHandler:replyHandler];
+    if (message.options.timeout != -1) {
+      __weak id <GDCBus> weakBus = self;
+      dispatch_after(dispatch_time(DISPATCH_TIME_NOW, message.options.timeout * NSEC_PER_MSEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+          NSError *error = [NSError errorWithDomain:NSStringFromClass(weakBus.class) code:NSURLErrorTimedOut userInfo:@{NSLocalizedDescriptionKey : @"Timed out waiting for a reply"}];
+          [weakBus sendLocal:message.replyTopic payload:error replyHandler:nil];
+      });
+    }
   }
 
   if (!message.send || !message.local) {
@@ -146,10 +153,10 @@ static const NSString *messageKey = @"msg";
   if (!newPayload && !patch) {
     return nil;
   }
-  NSString *type = message.options.type;
+  Class <GDCSerializable> typeClz = message.options.type;
   id oldPayload = patch ? [self.storage getPayload:message.topic] : nil;
 
-  if (!type) { // type 不存在
+  if (!typeClz) { // type 不存在
     if (!patch || !oldPayload) {
       return newPayload;
     }
@@ -165,19 +172,18 @@ static const NSString *messageKey = @"msg";
   } // type 不存在
 
   // 设置了 type
-  Class <GDCSerializable> clz = NSClassFromString(type);
   if (!patch || !oldPayload) { // oldPayload 不存在
-    if ([newPayload isKindOfClass:clz]) { // newPayload 就是type
+    if ([newPayload isKindOfClass:typeClz]) { // newPayload 就是type
       return newPayload;
     }
     if ([newPayload isKindOfClass:NSArray.class]) { // newPayload 是数组
-      if ([newPayload count] == 0 || [newPayload[0] isKindOfClass:clz]) {
+      if ([newPayload count] == 0 || [newPayload[0] isKindOfClass:typeClz]) {
         return newPayload;
       }
       NSMutableArray *array = [NSMutableArray arrayWithCapacity:[newPayload count]];
       NSError *error = nil;
       for (id ele in newPayload) {
-        [array addObject:[clz parseFromJson:ele error:&error]];
+        [array addObject:[typeClz parseFromJson:ele error:&error]];
       }
       return array;
     } // newPayload 是数组
@@ -186,7 +192,7 @@ static const NSString *messageKey = @"msg";
     }
     // newPayload 已转换为字典
     NSError *error = nil;
-    id <GDCSerializable> obj = [clz parseFromJson:newPayload error:&error];
+    id <GDCSerializable> obj = [typeClz parseFromJson:newPayload error:&error];
     if (error) {
       NSLog(@"Can't parse JSON: %@", error);
     }
@@ -195,12 +201,12 @@ static const NSString *messageKey = @"msg";
 
   // 设置了 type 和 patch, 且存在 oldPayload
   if ([oldPayload isKindOfClass:NSMutableArray.class] && [newPayload isKindOfClass:NSArray.class]) {  // oldPayload 是数组
-    if ([newPayload count] == 0 || [newPayload[0] isKindOfClass:clz]) {
+    if ([newPayload count] == 0 || [newPayload[0] isKindOfClass:typeClz]) {
       [oldPayload addObjectsFromArray:newPayload];
     } else {
       NSError *error = nil;
       for (id ele in newPayload) {
-        [oldPayload addObject:[clz parseFromJson:ele error:&error]];
+        [oldPayload addObject:[typeClz parseFromJson:ele error:&error]];
       }
     }
   } else if ([oldPayload conformsToProtocol:@protocol(GDCSerializable)]) {
@@ -227,7 +233,7 @@ static const NSString *messageKey = @"msg";
       [weakSelf.topicsManager removeSubscribedTopicFilter:topicFilter];
   };
 
-  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
       GDCMessageImpl *retained = [self.storage getRetainedMessage:topicFilter];
       if (retained) {
         if ([retained.payload conformsToProtocol:@protocol(GDCEntry)]) {

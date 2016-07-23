@@ -62,7 +62,7 @@
   GDCTestEntry *testEntry = [[GDCTestEntry alloc] init];
   testEntry.entryList = @[entry, subEntry];
   [self.bus publishLocal:@"chao" payload:testEntry options:options];
-  NSDictionary *a = testEntry.toDictionary;
+  NSDictionary *a = testEntry.toJson;
 }
 
 - (IBAction)subscribe:(UIButton *)sender {
@@ -71,9 +71,8 @@
         NSLog(@"test: %@", message);
         GDCStorage *storage = [[GDCStorage alloc] initWithBaseDirectory:nil];
         id o = [storage getPayload:message.topic];
-        GDCSampleEntry *entry = [GDCSampleEntry of:message.payload];
-        GDCOptions *options = [GDCOptions createWithViewOptions];
-        options.extras = @{@"optRe" : @YES};
+        GDCSampleEntry *entry = [GDCSampleEntry parseFromJson:message.payload error:nil];
+        GDCOptions *options = [GDCOptions optionWithExtras:@{@"optRe" : @YES}];
         [message reply:@"re" options:options replyHandler:^(id <GDCAsyncResult> asyncResult) {
             id <GDCMessage> result = asyncResult.result;
             NSLog(@"asyncResult2: %@", result);
@@ -98,8 +97,9 @@
   GDCSampleEntry *subEntry = [[GDCSampleEntry alloc] init];
   subEntry.floatA = -1.1;
 //  _entry.entry = subEntry;
-  GDCOptions *options = [GDCOptions createWithViewOptions];
+  GDCOptions *options = [GDCOptions optionWithExtras:@{@"testExtras" : @"xxx"}];
   options.retained = YES;
+  options.timeout = 1;
   [self.bus publishLocal:@"sometopic1" payload:_entry options:options];
 //  [self.bus send:@"sometopic1" payload:_entry options:options replyHandler:^(id <GDCAsyncResult> asyncResult) {
 //      id <GDCMessage> o = asyncResult.result;
