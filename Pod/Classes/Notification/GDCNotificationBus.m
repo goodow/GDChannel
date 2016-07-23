@@ -115,7 +115,7 @@ static const NSString *messageKey = @"msg";
       __weak id <GDCBus> weakBus = self;
       dispatch_after(dispatch_time(DISPATCH_TIME_NOW, message.options.timeout * NSEC_PER_MSEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
           NSError *error = [NSError errorWithDomain:NSStringFromClass(weakBus.class) code:NSURLErrorTimedOut userInfo:@{NSLocalizedDescriptionKey : @"Timed out waiting for a reply"}];
-          [weakBus sendLocal:message.replyTopic payload:error replyHandler:nil];
+//          [weakBus sendLocal:message.replyTopic payload:error replyHandler:nil];
       });
     }
   }
@@ -141,7 +141,7 @@ static const NSString *messageKey = @"msg";
   NSSet *topicsToPublish = [self.topicsManager calculateTopicFiltersToPublish:message.topic];
   for (NSString *filter in topicsToPublish) {
     // Each handler gets a fresh copy
-    GDCMessageImpl *copied = message.copy;
+    id <GDCMessage> copied = message.copy;
     copied.options.retained = NO;
     [self.notificationCenter postNotificationName:filter object:object userInfo:@{messageKey : copied}];
   }
@@ -222,7 +222,7 @@ static const NSString *messageKey = @"msg";
 - (GDCMessageConsumerImpl *)subscribeToTopic:(NSString *)topicFilter handler:(GDCMessageBlock)handler {
   __weak GDCNotificationBus *weakSelf = self;
   __weak id observer = [self.notificationCenter addObserverForName:topicFilter object:object queue:self.queue usingBlock:^(NSNotification *note) {
-      GDCMessageImpl *message = note.userInfo[messageKey];
+      id <GDCMessage> message = note.userInfo[messageKey];
       [GDCNotificationBus scheduleDeferred:handler argument:message];
   }];
   [self.topicsManager addSubscribedTopicFilter:topicFilter];
@@ -234,7 +234,7 @@ static const NSString *messageKey = @"msg";
   };
 
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-      GDCMessageImpl *retained = [self.storage getRetainedMessage:topicFilter];
+      id <GDCMessage> retained = [self.storage getRetainedMessage:topicFilter];
       if (retained) {
         if ([retained.payload conformsToProtocol:@protocol(GDCEntry)]) {
           [retained.payload addTopic:retained.topic options:retained.options];
@@ -251,7 +251,7 @@ static const NSString *messageKey = @"msg";
       [weakSelf.notificationCenter removeObserver:observer];
       [weakSelf.topicsManager removeSubscribedTopicFilter:replyTopic];
 
-      GDCMessageImpl *message = note.userInfo[messageKey];
+      id <GDCMessage> message = note.userInfo[messageKey];
       GDCAsyncResultImpl *asyncResult = [[GDCAsyncResultImpl alloc] initWithMessage:message];
       [GDCNotificationBus scheduleDeferred:replyHandler argument:asyncResult];
   }];

@@ -3,14 +3,14 @@
 #import "GDCMessageImpl.h"
 
 @implementation GDCAsyncResultImpl
-- (instancetype)initWithMessage:(GDCMessageImpl *)message {
+- (instancetype)initWithMessage:(id <GDCMessage>)message {
   self = [super init];
   if (self) {
     _result = message;
     if ([message.payload isKindOfClass:NSError.class]) {
       _cause = message.payload;
       _failed = YES;
-      message.payload = nil;
+//      message.payload = nil;
     }
   }
 
