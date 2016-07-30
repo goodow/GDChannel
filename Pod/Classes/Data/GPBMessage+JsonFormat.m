@@ -70,7 +70,7 @@
       }
     }
     if (val == NSNull.null) {
-      id defVal = [self defaultValueForField:field];
+      id defVal = field.fieldType == GPBFieldTypeSingle ? [self defaultValueForFieldDataType:field.dataType] : nil;
       [msg setValue:defVal forKey:field.name];
     } else {
       [self mergeField:field json:val message:msg ignoreDefaultValue:ignoreDefVal];
@@ -119,14 +119,21 @@
       [field.enumDescriptor getValue:&outValue forEnumName:json];
       [msg setValue:@(outValue) forKey:field.name];
       break;
-    case GPBDataTypeBytes: // todo: convert NSString to NSData
-    case GPBDataTypeString:
+    case GPBDataTypeBytes:
+    case GPBDataTypeString: {
       [self assert:json isKindOfClass:NSString.class];
       if (ignoreDefVal && [json length] == 0) {
         return;
       }
-      [msg setValue:[json copy] forKey:field.name];
+      id value;
+      if (field.dataType == GPBDataTypeBytes) {
+        value = [[NSData alloc] initWithBase64EncodedString:json options:NSDataBase64DecodingIgnoreUnknownCharacters];
+      } else {
+        value = [json copy];
+      }
+      [msg setValue:value forKey:field.name];
       break;
+    }
     case GPBDataTypeGroup:
     case GPBDataTypeMessage: {
       [self assert:json isKindOfClass:NSDictionary.class];
@@ -181,12 +188,18 @@
         [(GPBEnumArray *) genericArray addRawValue:outValue];
         break;
       }
-      case GPBDataTypeBytes: // todo: convert NSString to NSData
+      case GPBDataTypeBytes:
       case GPBDataTypeString: {
-        NSString *val = @"";
+        id val;
         if (ele != NSNull.null) {
           [self assert:ele isKindOfClass:NSString.class];
-          val = [ele copy];
+          if (field.dataType == GPBDataTypeBytes) {
+            val = [[NSData alloc] initWithBase64EncodedString:ele options:NSDataBase64DecodingIgnoreUnknownCharacters];
+          } else {
+            val = [ele copy];
+          }
+        } else {
+          val = [self defaultValueForFieldDataType:field.dataType];
         }
         [(NSMutableArray *) genericArray addObject:val];
         break;
@@ -221,10 +234,16 @@
       switch (valueDataType) {
         case GPBDataTypeBytes:
         case GPBDataTypeString: {
-          NSString *val = @"";
+          NSString *val;
           if (value != NSNull.null) {
             [self assert:value isKindOfClass:NSString.class];
-            val = [value copy];
+            if (field.dataType == GPBDataTypeBytes) {
+              val = [[NSData alloc] initWithBase64EncodedString:value options:NSDataBase64DecodingIgnoreUnknownCharacters];
+            } else {
+              val = [value copy];
+            }
+          } else {
+            val = [self defaultValueForFieldDataType:valueDataType];
           }
           ((NSMutableDictionary *) map)[key] = val;
           break;
@@ -279,33 +298,29 @@
   return nil;
 }
 
-+ (nullable id)defaultValueForField:(GPBFieldDescriptor *)field {
-  switch (field.fieldType) {
-    case GPBFieldTypeSingle:
-      switch (field.dataType) {
-        case GPBDataTypeBool:
-        case GPBDataTypeSFixed32:
-        case GPBDataTypeInt32:
-        case GPBDataTypeSInt32:
-        case GPBDataTypeFixed32:
-        case GPBDataTypeUInt32:
-        case GPBDataTypeSFixed64:
-        case GPBDataTypeInt64:
-        case GPBDataTypeSInt64:
-        case GPBDataTypeFixed64:
-        case GPBDataTypeUInt64:
-        case GPBDataTypeFloat:
-        case GPBDataTypeDouble:
-        case GPBDataTypeEnum:
-          return @0;
-        case GPBDataTypeBytes:
-        case GPBDataTypeString:
-        case GPBDataTypeGroup:
-        case GPBDataTypeMessage:
-          break;
-      }
-    case GPBFieldTypeRepeated:
-    case GPBFieldTypeMap:
++ (nullable id)defaultValueForFieldDataType:(GPBDataType)dataType {
+  switch (dataType) {
+    case GPBDataTypeBool:
+    case GPBDataTypeSFixed32:
+    case GPBDataTypeInt32:
+    case GPBDataTypeSInt32:
+    case GPBDataTypeFixed32:
+    case GPBDataTypeUInt32:
+    case GPBDataTypeSFixed64:
+    case GPBDataTypeInt64:
+    case GPBDataTypeSInt64:
+    case GPBDataTypeFixed64:
+    case GPBDataTypeUInt64:
+    case GPBDataTypeFloat:
+    case GPBDataTypeDouble:
+    case GPBDataTypeEnum:
+      return @0;
+    case GPBDataTypeBytes:
+      return [NSData data];
+    case GPBDataTypeString:
+      return @"";
+    case GPBDataTypeGroup:
+    case GPBDataTypeMessage:
       break;
   }
   return nil;
@@ -360,7 +375,7 @@
       valueToFill.valueDouble = [val doubleValue];
       break;
     case GPBDataTypeBytes:
-      valueToFill.valueData = [val copy]; // todo: convert NSString to NSData
+      valueToFill.valueData = [[NSData alloc] initWithBase64EncodedString:val options:NSDataBase64DecodingIgnoreUnknownCharacters];
       break;
     case GPBDataTypeString:
       valueToFill.valueString = [val copy];
@@ -417,8 +432,9 @@
     case GPBDataTypeUInt32:
     case GPBDataTypeUInt64:
     case GPBDataTypeString:
-    case GPBDataTypeBytes:
       return [val copy];
+    case GPBDataTypeBytes:
+      return [(NSData *) val base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
     case GPBDataTypeEnum: {
       NSString *valueStr = [field.enumDescriptor textFormatNameForValue:[val intValue]];
       return valueStr ?: [val copy];
@@ -460,6 +476,11 @@
       break;
     }
     case GPBDataTypeBytes:
+      [self assert:arrayVal isKindOfClass:NSArray.class];
+      for (id ele in arrayVal) {
+        [json addObject:[(NSData *) ele base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength]];
+      }
+      break;
     case GPBDataTypeString:
       [self assert:arrayVal isKindOfClass:NSArray.class];
       for (id ele in arrayVal) {
@@ -489,6 +510,8 @@
       id jsonVal;
       switch (valueDataType) {
         case GPBDataTypeBytes:
+          jsonVal = [(NSData *) mapVal[key] base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+          break;
         case GPBDataTypeString:
           jsonVal = [mapVal[key] copy];
           break;
