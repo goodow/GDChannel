@@ -2,12 +2,12 @@ PODS:
   - GDChannel (0.6.0):
     - Mantle (~> 2.0.6)
     - MQTTKit (~> 0.1.0)
-    - Protobuf (~> 3.0.0-beta-3.1)
+    - Protobuf (~> 3.0)
   - Mantle (2.0.7):
     - Mantle/extobjc (= 2.0.7)
   - Mantle/extobjc (2.0.7)
   - MQTTKit (0.1.0)
-  - Protobuf (3.0.0-beta-4)
+  - Protobuf (3.0.0)
 
 DEPENDENCIES:
   - GDChannel (from `../`)
@@ -17,10 +17,10 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  GDChannel: 400f6e092bb498434e49e2c5a1d9786a82fb0084
+  GDChannel: e26b61a1f156eb4b657516d80d90bdad2db46c56
   Mantle: bc40bb061d8c2c6fb48d5083e04d928c3b7f73d9
   MQTTKit: a4e6b8aa92db1aeae917d2b773fd72a7749937c4
-  Protobuf: ec704f0045f7a30e1686fbb3994f43f689a0021b
+  Protobuf: c032ce1bdf7a266acfd640fbfd8bdb166127c7f5
 
 PODFILE CHECKSUM: d43afe03f564aee89085e35ebd1c8d15ec07a300
 
