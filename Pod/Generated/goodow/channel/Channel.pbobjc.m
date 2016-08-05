@@ -13,6 +13,12 @@
  #import "GPBProtocolBuffers_RuntimeSupport.h"
 #endif
 
+#if GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS
+ #import <Protobuf/Any.pbobjc.h>
+#else
+ #import "Any.pbobjc.h"
+#endif
+
  #import "Channel.pbobjc.h"
 // @@protoc_insertion_point(imports)
 
@@ -22,6 +28,18 @@
 #pragma mark - GDCPBChannelRoot
 
 @implementation GDCPBChannelRoot
+
++ (GPBExtensionRegistry*)extensionRegistry {
+  // This is called by +initialize so there is no need to worry
+  // about thread safety and initialization of registry.
+  static GPBExtensionRegistry* registry = nil;
+  if (!registry) {
+    GPBDebugCheckRuntimeVersion();
+    registry = [[GPBExtensionRegistry alloc] init];
+    [registry addExtensions:[GPBAnyRoot extensionRegistry]];
+  }
+  return registry;
+}
 
 @end
 
@@ -39,17 +57,24 @@ static GPBFileDescriptor *GDCPBChannelRoot_FileDescriptor(void) {
   return descriptor;
 }
 
-#pragma mark - GDCPBViewOptions
+#pragma mark - GDCPBMessage
 
-@implementation GDCPBViewOptions
+@implementation GDCPBMessage
 
-@dynamic navBar;
-@dynamic statusBarStyle;
+@dynamic topic;
+@dynamic hasPayload, payload;
+@dynamic hasOptions, options;
+@dynamic replyTopic;
+@dynamic local;
+@dynamic send;
 
-typedef struct GDCPBViewOptions__storage_ {
+typedef struct GDCPBMessage__storage_ {
   uint32_t _has_storage_[1];
-  int32_t statusBarStyle;
-} GDCPBViewOptions__storage_;
+  NSString *topic;
+  GPBAny *payload;
+  GDCPBMessage_Options *options;
+  NSString *replyTopic;
+} GDCPBMessage__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -58,35 +83,71 @@ typedef struct GDCPBViewOptions__storage_ {
   if (!descriptor) {
     static GPBMessageFieldDescription fields[] = {
       {
-        .name = "navBar",
+        .name = "topic",
         .dataTypeSpecific.className = NULL,
-        .number = GDCPBViewOptions_FieldNumber_NavBar,
+        .number = GDCPBMessage_FieldNumber_Topic,
         .hasIndex = 0,
-        .offset = 1,  // Stored in _has_storage_ to save space.
+        .offset = (uint32_t)offsetof(GDCPBMessage__storage_, topic),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "payload",
+        .dataTypeSpecific.className = GPBStringifySymbol(GPBAny),
+        .number = GDCPBMessage_FieldNumber_Payload,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(GDCPBMessage__storage_, payload),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "options",
+        .dataTypeSpecific.className = GPBStringifySymbol(GDCPBMessage_Options),
+        .number = GDCPBMessage_FieldNumber_Options,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(GDCPBMessage__storage_, options),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "replyTopic",
+        .dataTypeSpecific.className = NULL,
+        .number = GDCPBMessage_FieldNumber_ReplyTopic,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(GDCPBMessage__storage_, replyTopic),
+        .flags = GPBFieldOptional | GPBFieldTextFormatNameCustom,
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "local",
+        .dataTypeSpecific.className = NULL,
+        .number = GDCPBMessage_FieldNumber_Local,
+        .hasIndex = 4,
+        .offset = 5,  // Stored in _has_storage_ to save space.
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeBool,
       },
       {
-        .name = "statusBarStyle",
+        .name = "send",
         .dataTypeSpecific.className = NULL,
-        .number = GDCPBViewOptions_FieldNumber_StatusBarStyle,
-        .hasIndex = 2,
-        .offset = (uint32_t)offsetof(GDCPBViewOptions__storage_, statusBarStyle),
-        .flags = GPBFieldOptional | GPBFieldTextFormatNameCustom,
-        .dataType = GPBDataTypeInt32,
+        .number = GDCPBMessage_FieldNumber_Send,
+        .hasIndex = 6,
+        .offset = 7,  // Stored in _has_storage_ to save space.
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeBool,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:[GDCPBViewOptions class]
+        [GPBDescriptor allocDescriptorForClass:[GDCPBMessage class]
                                      rootClass:[GDCPBChannelRoot class]
                                           file:GDCPBChannelRoot_FileDescriptor()
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(GDCPBViewOptions__storage_)
+                                   storageSize:sizeof(GDCPBMessage__storage_)
                                          flags:0];
 #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     static const char *extraTextFormatInfo =
-        "\001\002\016\000";
+        "\001\004\n\000";
     [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
 #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     NSAssert(descriptor == nil, @"Startup recursed!");
@@ -97,16 +158,20 @@ typedef struct GDCPBViewOptions__storage_ {
 
 @end
 
-#pragma mark - GDCPBOptions
+#pragma mark - GDCPBMessage_Options
 
-@implementation GDCPBOptions
+@implementation GDCPBMessage_Options
 
-@dynamic hasViewOptions, viewOptions;
+@dynamic retained;
+@dynamic patch;
+@dynamic timeout;
+@dynamic hasExtras, extras;
 
-typedef struct GDCPBOptions__storage_ {
+typedef struct GDCPBMessage_Options__storage_ {
   uint32_t _has_storage_[1];
-  GDCPBViewOptions *viewOptions;
-} GDCPBOptions__storage_;
+  GPBAny *extras;
+  int64_t timeout;
+} GDCPBMessage_Options__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -115,28 +180,50 @@ typedef struct GDCPBOptions__storage_ {
   if (!descriptor) {
     static GPBMessageFieldDescription fields[] = {
       {
-        .name = "viewOptions",
-        .dataTypeSpecific.className = GPBStringifySymbol(GDCPBViewOptions),
-        .number = GDCPBOptions_FieldNumber_ViewOptions,
+        .name = "retained",
+        .dataTypeSpecific.className = NULL,
+        .number = GDCPBMessage_Options_FieldNumber_Retained,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(GDCPBOptions__storage_, viewOptions),
-        .flags = GPBFieldOptional | GPBFieldTextFormatNameCustom,
+        .offset = 1,  // Stored in _has_storage_ to save space.
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeBool,
+      },
+      {
+        .name = "patch",
+        .dataTypeSpecific.className = NULL,
+        .number = GDCPBMessage_Options_FieldNumber_Patch,
+        .hasIndex = 2,
+        .offset = 3,  // Stored in _has_storage_ to save space.
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeBool,
+      },
+      {
+        .name = "timeout",
+        .dataTypeSpecific.className = NULL,
+        .number = GDCPBMessage_Options_FieldNumber_Timeout,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(GDCPBMessage_Options__storage_, timeout),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeInt64,
+      },
+      {
+        .name = "extras",
+        .dataTypeSpecific.className = GPBStringifySymbol(GPBAny),
+        .number = GDCPBMessage_Options_FieldNumber_Extras,
+        .hasIndex = 5,
+        .offset = (uint32_t)offsetof(GDCPBMessage_Options__storage_, extras),
+        .flags = GPBFieldOptional,
         .dataType = GPBDataTypeMessage,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:[GDCPBOptions class]
+        [GPBDescriptor allocDescriptorForClass:[GDCPBMessage_Options class]
                                      rootClass:[GDCPBChannelRoot class]
                                           file:GDCPBChannelRoot_FileDescriptor()
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(GDCPBOptions__storage_)
+                                   storageSize:sizeof(GDCPBMessage_Options__storage_)
                                          flags:0];
-#if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
-    static const char *extraTextFormatInfo =
-        "\001\001\013\000";
-    [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
-#endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }

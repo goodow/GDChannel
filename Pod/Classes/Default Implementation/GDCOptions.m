@@ -3,6 +3,7 @@
 //
 
 #import "GDCOptions.h"
+#import "GDCNotificationBus.h"
 
 static long const kDefaultTimeout = 30 * 1000;
 
@@ -33,43 +34,35 @@ static long const kDefaultTimeout = 30 * 1000;
 #pragma mark GDCSerializable
 static NSString *const kRetainedKey = @"retained";
 static NSString *const kPatchKey = @"patch";
-static NSString *const kTypeKey = @"type";
 static NSString *const kTimeoutKey = @"timeout";
 static NSString *const kExtrasKey = @"extras";
-static NSString *const kExtrasTypeKey = @"@type";
 
 + (instancetype)parseFromJson:(NSDictionary *)json error:(NSError **)errorPtr {
   GDCOptions *options = [[self alloc] init];
   options.retained = [json[kRetainedKey] boolValue];
   options.patch = [json[kPatchKey] boolValue];
-  options.type = NSClassFromString(json[kTypeKey]);
   options.timeout = [json[kTimeoutKey] longValue];
 
-  id extras = json[kExtrasKey];
-  if ([extras isKindOfClass:NSDictionary.class]) {
-    NSString *typeUrl = extras[kExtrasTypeKey];
-    Class dataClass = NSClassFromString(typeUrl.lastPathComponent);
-    if ([dataClass conformsToProtocol:@protocol(GDCSerializable)]) {
-      NSError *error = nil;
-      extras = [dataClass parseFromJson:extras error:&error];
-    }
-  }
-  options.extras = extras;
+  options.extras = [GDCNotificationBus parseAnyType:json[kExtrasKey]];
   return options;
 }
 
 - (NSDictionary *)toJson {
   NSMutableDictionary *json = [NSMutableDictionary dictionary];
-  json[kRetainedKey] = @(self.retained);
-  json[kPatchKey] = @(self.patch);
-  json[kTypeKey] = NSStringFromClass(self.type);
+  if (self.retained) {
+    json[kRetainedKey] = @(self.retained);
+  }
+  if (self.patch) {
+    json[kPatchKey] = @(self.patch);
+  }
   if (self.timeout != kDefaultTimeout) {
     json[kTimeoutKey] = @(self.timeout);
   }
-
-  json[kExtrasKey] = self.extras.toJson.mutableCopy;
-  if (![self.extras isKindOfClass:NSMutableDictionary.class] && ![self.extras isKindOfClass:NSMutableArray.class]) {
-    json[kExtrasKey][kExtrasTypeKey] = [NSString stringWithFormat:@"gdc://any/%@", NSStringFromClass([self.extras class])];
+  if (self.extras) {
+    json[kExtrasKey] = self.extras.toJson.mutableCopy;
+    if (![self.extras isKindOfClass:NSMutableDictionary.class] && ![self.extras isKindOfClass:NSMutableArray.class]) {
+      json[kExtrasKey][kJsonTypeKey] = [NSString stringWithFormat:@"gdc://any/%@", NSStringFromClass([self.extras class])];
+    }
   }
   return json;
 }

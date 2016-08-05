@@ -4,6 +4,8 @@
 
 #import <Foundation/Foundation.h>
 
+static NSString *const kJsonTypeKey = @"@type";
+
 @protocol GDCSerializable <NSObject>
 /// Creates a new instance by parsing Json format. If
 /// there is an error the method returns nil and the error is returned in

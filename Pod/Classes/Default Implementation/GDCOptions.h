@@ -9,8 +9,6 @@
 
 @property(nonatomic) BOOL retained;
 @property(nonatomic) BOOL patch;
-// 若希望订阅者接收到的是强类型, 则指定类型名
-@property(nonatomic) Class <GDCSerializable> type;
 /**
  * Set the send timeout.
  *

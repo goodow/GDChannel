@@ -24,7 +24,8 @@
 
 CF_EXTERN_C_BEGIN
 
-@class GDCPBViewOptions;
+@class GDCPBMessage_Options;
+@class GPBAny;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -41,32 +42,57 @@ NS_ASSUME_NONNULL_BEGIN
 @interface GDCPBChannelRoot : GPBRootObject
 @end
 
-#pragma mark - GDCPBViewOptions
+#pragma mark - GDCPBMessage
 
-typedef GPB_ENUM(GDCPBViewOptions_FieldNumber) {
-  GDCPBViewOptions_FieldNumber_NavBar = 1,
-  GDCPBViewOptions_FieldNumber_StatusBarStyle = 2,
+typedef GPB_ENUM(GDCPBMessage_FieldNumber) {
+  GDCPBMessage_FieldNumber_Topic = 1,
+  GDCPBMessage_FieldNumber_Payload = 2,
+  GDCPBMessage_FieldNumber_Options = 3,
+  GDCPBMessage_FieldNumber_ReplyTopic = 4,
+  GDCPBMessage_FieldNumber_Local = 5,
+  GDCPBMessage_FieldNumber_Send = 6,
 };
 
-@interface GDCPBViewOptions : GPBMessage
+@interface GDCPBMessage : GPBMessage
 
-@property(nonatomic, readwrite) BOOL navBar;
+@property(nonatomic, readwrite, copy, null_resettable) NSString *topic;
 
-@property(nonatomic, readwrite) int32_t statusBarStyle;
+@property(nonatomic, readwrite, strong, null_resettable) GPBAny *payload;
+/// Test to see if @c payload has been set.
+@property(nonatomic, readwrite) BOOL hasPayload;
+
+@property(nonatomic, readwrite, strong, null_resettable) GDCPBMessage_Options *options;
+/// Test to see if @c options has been set.
+@property(nonatomic, readwrite) BOOL hasOptions;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *replyTopic;
+
+@property(nonatomic, readwrite) BOOL local;
+
+@property(nonatomic, readwrite) BOOL send;
 
 @end
 
-#pragma mark - GDCPBOptions
+#pragma mark - GDCPBMessage_Options
 
-typedef GPB_ENUM(GDCPBOptions_FieldNumber) {
-  GDCPBOptions_FieldNumber_ViewOptions = 1,
+typedef GPB_ENUM(GDCPBMessage_Options_FieldNumber) {
+  GDCPBMessage_Options_FieldNumber_Retained = 1,
+  GDCPBMessage_Options_FieldNumber_Patch = 2,
+  GDCPBMessage_Options_FieldNumber_Timeout = 3,
+  GDCPBMessage_Options_FieldNumber_Extras = 4,
 };
 
-@interface GDCPBOptions : GPBMessage
+@interface GDCPBMessage_Options : GPBMessage
 
-@property(nonatomic, readwrite, strong, null_resettable) GDCPBViewOptions *viewOptions;
-/// Test to see if @c viewOptions has been set.
-@property(nonatomic, readwrite) BOOL hasViewOptions;
+@property(nonatomic, readwrite) BOOL retained;
+
+@property(nonatomic, readwrite) BOOL patch;
+
+@property(nonatomic, readwrite) int64_t timeout;
+
+@property(nonatomic, readwrite, strong, null_resettable) GPBAny *extras;
+/// Test to see if @c extras has been set.
+@property(nonatomic, readwrite) BOOL hasExtras;
 
 @end
 

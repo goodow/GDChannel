@@ -13,4 +13,6 @@
 - (void)sendOrPub:(GDCMessageImpl *)message replyHandler:(GDCAsyncResultBlock)replyHandler;
 
 + (void)scheduleDeferred:(void (^)(id))block argument:(id)argument;
+
++ (id)parseAnyType:(id)any;
 @end

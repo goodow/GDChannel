@@ -148,68 +148,31 @@ static const NSString *messageKey = @"msg";
 }
 
 - (id)typeCastAndPatch:(GDCMessageImpl *)message {
-  id newPayload = message.payload;
+  id newPayload = [GDCNotificationBus parseAnyType:message.payload];
   BOOL patch = message.options.patch;
   if (!newPayload && !patch) {
     return nil;
   }
-  Class <GDCSerializable> typeClz = message.options.type;
   id oldPayload = patch ? [self.storage getPayload:message.topic] : nil;
-
-  if (!typeClz) { // type 不存在
-    if (!patch || !oldPayload) {
-      return newPayload;
-    }
-    // 存在 oldPayload
-    if ([oldPayload conformsToProtocol:@protocol(GDCSerializable)]) {
-      if ([newPayload isKindOfClass:NSDictionary.class]) {
-        [oldPayload mergeFromJson:newPayload];
-      } else {
-        [oldPayload mergeFrom:newPayload];
-      }
-    }
-    return oldPayload;
-  } // type 不存在
-
-  // 设置了 type
-  if (!patch || !oldPayload) { // oldPayload 不存在
-    if ([newPayload isKindOfClass:typeClz]) { // newPayload 就是type
-      return newPayload;
-    }
-    if ([newPayload isKindOfClass:NSArray.class]) { // newPayload 是数组
-      if ([newPayload count] == 0 || [newPayload[0] isKindOfClass:typeClz]) {
-        return newPayload;
-      }
+  if (!patch || !oldPayload) {
+    if ([newPayload isKindOfClass:NSArray.class] && [newPayload count] > 0) { // newPayload 是数组
       NSMutableArray *array = [NSMutableArray arrayWithCapacity:[newPayload count]];
-      NSError *error = nil;
       for (id ele in newPayload) {
-        [array addObject:[typeClz parseFromJson:ele error:&error]];
+        [array addObject:[GDCNotificationBus parseAnyType:ele]];
       }
       return array;
     } // newPayload 是数组
-    if ([newPayload conformsToProtocol:@protocol(GDCSerializable)]) {
-      newPayload = [newPayload toJson];
-    }
-    // newPayload 已转换为字典
-    NSError *error = nil;
-    id <GDCSerializable> obj = [typeClz parseFromJson:newPayload error:&error];
-    if (error) {
-      NSLog(@"Can't parse JSON: %@", error);
-    }
-    return obj;
-  } // oldPayload 不存在
+    return newPayload;
+  }
 
-  // 设置了 type 和 patch, 且存在 oldPayload
+  // 存在 oldPayload 且是 patch
   if ([oldPayload isKindOfClass:NSMutableArray.class] && [newPayload isKindOfClass:NSArray.class]) {  // oldPayload 是数组
-    if ([newPayload count] == 0 || [newPayload[0] isKindOfClass:typeClz]) {
-      [oldPayload addObjectsFromArray:newPayload];
-    } else {
-      NSError *error = nil;
-      for (id ele in newPayload) {
-        [oldPayload addObject:[typeClz parseFromJson:ele error:&error]];
-      }
+    for (id ele in newPayload) {
+      [oldPayload addObject:[GDCNotificationBus parseAnyType:ele]];
     }
-  } else if ([oldPayload conformsToProtocol:@protocol(GDCSerializable)]) {
+    return oldPayload;
+  }
+  if ([oldPayload conformsToProtocol:@protocol(GDCSerializable)]) {
     if ([newPayload isKindOfClass:NSDictionary.class]) {
       [oldPayload mergeFromJson:newPayload];
     } else {
@@ -266,5 +229,27 @@ static const NSString *messageKey = @"msg";
 + (void)performBlock:(NSArray *)arguments {
   void (^block)(id) = arguments[0];
   block(arguments[1]);
+}
+
+#pragma mark Well-known types
+
++ (id)parseAnyType:(id)any {
+  if ([any isKindOfClass:NSDictionary.class] && any[kJsonTypeKey]) {
+    Class<GDCSerializable> dataClass = NSClassFromString([self getType:any[kJsonTypeKey]]);
+    if ([dataClass conformsToProtocol:@protocol(GDCSerializable)]) {
+      NSError *error = nil;
+      any = [dataClass parseFromJson:any error:&error];
+    }
+  }
+  return any;
+}
+
++ (NSString *)getType:(NSString *)typeUrl {
+  NSArray<NSString *> *parts = [typeUrl componentsSeparatedByString:@"/"];
+  if (parts.count == 1) {
+    NSLog(@"Invalid type url found: %@", typeUrl);
+  }
+  parts = [parts.lastObject componentsSeparatedByString:@"."];
+  return parts.lastObject;
 }
 @end

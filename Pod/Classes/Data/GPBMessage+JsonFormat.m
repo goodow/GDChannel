@@ -127,7 +127,7 @@
       }
       id value;
       if (field.dataType == GPBDataTypeBytes) {
-        value = [[NSData alloc] initWithBase64EncodedString:json options:NSDataBase64DecodingIgnoreUnknownCharacters];
+        value = [[NSData alloc] initWithBase64EncodedString:json options:0];
       } else {
         value = [json copy];
       }
@@ -194,7 +194,7 @@
         if (ele != NSNull.null) {
           [self assert:ele isKindOfClass:NSString.class];
           if (field.dataType == GPBDataTypeBytes) {
-            val = [[NSData alloc] initWithBase64EncodedString:ele options:NSDataBase64DecodingIgnoreUnknownCharacters];
+            val = [[NSData alloc] initWithBase64EncodedString:ele options:0];
           } else {
             val = [ele copy];
           }
@@ -223,8 +223,7 @@
   id map = [msg valueForKey:field.name];
   GPBDataType keyDataType = field.mapKeyDataType;
   GPBDataType valueDataType = field.dataType;
-  if (keyDataType == GPBDataTypeString &&
-      (valueDataType == GPBDataTypeString || valueDataType == GPBDataTypeBytes || valueDataType == GPBDataTypeMessage || valueDataType == GPBDataTypeGroup)) {
+  if (keyDataType == GPBDataTypeString && GPBDataTypeIsObject(valueDataType)) {
     // Cases where keys are strings and values are strings, bytes, or messages are handled by NSMutableDictionary.
     for (NSString *key in json) {
       id value = json[key];
@@ -238,7 +237,7 @@
           if (value != NSNull.null) {
             [self assert:value isKindOfClass:NSString.class];
             if (field.dataType == GPBDataTypeBytes) {
-              val = [[NSData alloc] initWithBase64EncodedString:value options:NSDataBase64DecodingIgnoreUnknownCharacters];
+              val = [[NSData alloc] initWithBase64EncodedString:value options:0];
             } else {
               val = [value copy];
             }
@@ -375,7 +374,7 @@
       valueToFill.valueDouble = [val doubleValue];
       break;
     case GPBDataTypeBytes:
-      valueToFill.valueData = [[NSData alloc] initWithBase64EncodedString:val options:NSDataBase64DecodingIgnoreUnknownCharacters];
+      valueToFill.valueData = [[NSData alloc] initWithBase64EncodedString:val options:0];
       break;
     case GPBDataTypeString:
       valueToFill.valueString = [val copy];
@@ -434,7 +433,7 @@
     case GPBDataTypeString:
       return [val copy];
     case GPBDataTypeBytes:
-      return [(NSData *) val base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+      return [(NSData *) val base64EncodedStringWithOptions:0];
     case GPBDataTypeEnum: {
       NSString *valueStr = [field.enumDescriptor textFormatNameForValue:[val intValue]];
       return valueStr ?: [val copy];
@@ -478,7 +477,7 @@
     case GPBDataTypeBytes:
       [self assert:arrayVal isKindOfClass:NSArray.class];
       for (id ele in arrayVal) {
-        [json addObject:[(NSData *) ele base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength]];
+        [json addObject:[(NSData *) ele base64EncodedStringWithOptions:0]];
       }
       break;
     case GPBDataTypeString:
@@ -502,15 +501,14 @@
   NSMutableDictionary *json = [NSMutableDictionary dictionary];
   GPBDataType keyDataType = field.mapKeyDataType;
   GPBDataType valueDataType = field.dataType;
-  if (keyDataType == GPBDataTypeString &&
-      (valueDataType == GPBDataTypeString || valueDataType == GPBDataTypeBytes || valueDataType == GPBDataTypeMessage || valueDataType == GPBDataTypeGroup)) {
+  if (keyDataType == GPBDataTypeString && GPBDataTypeIsObject(valueDataType)) {
     // Cases where keys are strings and values are strings, bytes, or messages are handled by NSMutableDictionary.
     [self assert:mapVal isKindOfClass:NSDictionary.class];
     for (NSString *key in mapVal) {
       id jsonVal;
       switch (valueDataType) {
         case GPBDataTypeBytes:
-          jsonVal = [(NSData *) mapVal[key] base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+          jsonVal = [(NSData *) mapVal[key] base64EncodedStringWithOptions:0];
           break;
         case GPBDataTypeString:
           jsonVal = [mapVal[key] copy];
@@ -543,6 +541,19 @@
       }
   }];
   return json;
+}
+
+// copied from GPBUtilities_PackagePrivate.h
+BOOL GPBDataTypeIsObject(GPBDataType type) {
+  switch (type) {
+    case GPBDataTypeBytes:
+    case GPBDataTypeString:
+    case GPBDataTypeMessage:
+    case GPBDataTypeGroup:
+      return YES;
+    default:
+      return NO;
+  }
 }
 
 #pragma mark  Exception assert
