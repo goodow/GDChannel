@@ -177,7 +177,7 @@
     @throw [NSException exceptionWithName:@"JSON" reason:[NSString stringWithFormat:@"Failed to encode as JSON: %@", error] userInfo:nil];
   }
   dispatch_async(self.queue, ^{
-      [self.mqtt publishData:jsonData toTopic:message.topic withQos:AtMostOnce retain:NO completionHandler:^(int mid) {
+      [self.mqtt publishData:jsonData toTopic:message.topic withQos:message.options.qos retain:NO completionHandler:^(int mid) {
       }];
   });
 }

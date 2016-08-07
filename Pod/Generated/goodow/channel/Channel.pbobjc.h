@@ -79,7 +79,8 @@ typedef GPB_ENUM(GDCPBMessage_Options_FieldNumber) {
   GDCPBMessage_Options_FieldNumber_Retained = 1,
   GDCPBMessage_Options_FieldNumber_Patch = 2,
   GDCPBMessage_Options_FieldNumber_Timeout = 3,
-  GDCPBMessage_Options_FieldNumber_Extras = 4,
+  GDCPBMessage_Options_FieldNumber_Qos = 4,
+  GDCPBMessage_Options_FieldNumber_Extras = 5,
 };
 
 @interface GDCPBMessage_Options : GPBMessage
@@ -89,6 +90,8 @@ typedef GPB_ENUM(GDCPBMessage_Options_FieldNumber) {
 @property(nonatomic, readwrite) BOOL patch;
 
 @property(nonatomic, readwrite) int64_t timeout;
+
+@property(nonatomic, readwrite) int32_t qos;
 
 @property(nonatomic, readwrite, strong, null_resettable) GPBAny *extras;
 /// Test to see if @c extras has been set.

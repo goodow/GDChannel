@@ -35,6 +35,7 @@ static long const kDefaultTimeout = 30 * 1000;
 static NSString *const kRetainedKey = @"retained";
 static NSString *const kPatchKey = @"patch";
 static NSString *const kTimeoutKey = @"timeout";
+static NSString *const kQosKey = @"qos";
 static NSString *const kExtrasKey = @"extras";
 
 + (instancetype)parseFromJson:(NSDictionary *)json error:(NSError **)errorPtr {
@@ -42,6 +43,7 @@ static NSString *const kExtrasKey = @"extras";
   options.retained = [json[kRetainedKey] boolValue];
   options.patch = [json[kPatchKey] boolValue];
   options.timeout = [json[kTimeoutKey] longValue];
+  options.qos = [json[kQosKey] intValue];
 
   options.extras = [GDCNotificationBus parseAnyType:json[kExtrasKey]];
   return options;
@@ -57,6 +59,9 @@ static NSString *const kExtrasKey = @"extras";
   }
   if (self.timeout != kDefaultTimeout) {
     json[kTimeoutKey] = @(self.timeout);
+  }
+  if (self.qos) {
+    json[kQosKey] = @(self.qos);
   }
   if (self.extras) {
     json[kExtrasKey] = self.extras.toJson.mutableCopy;

@@ -16,7 +16,8 @@ message Message {
     bool retained = 1;
     bool patch = 2;
     int64 timeout = 3;
-    google.protobuf.Any extras = 4;
+    int32 qos = 4;
+    google.protobuf.Any extras = 5;
   }
 }
 

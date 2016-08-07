@@ -5,6 +5,9 @@
 #import <Foundation/Foundation.h>
 #import "GDCEntry.h"
 
+enum GDCQualityOfService {
+    AtMostOnce, AtLeastOnce, ExactlyOnce
+};
 @interface GDCOptions : NSObject <GDCSerializable>
 
 @property(nonatomic) BOOL retained;
@@ -15,6 +18,7 @@
  * @param timeout  the timeout value, in ms.
  */
 @property(nonatomic) long timeout;
+@property(nonatomic) enum GDCQualityOfService qos;
 @property(nonatomic, strong) __kindof NSObject <GDCSerializable> *extras;
 
 + (GDCOptions *)optionWithExtras:(NSObject <GDCSerializable> *)extras;

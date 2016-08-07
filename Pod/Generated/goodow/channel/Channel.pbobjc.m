@@ -165,10 +165,12 @@ typedef struct GDCPBMessage__storage_ {
 @dynamic retained;
 @dynamic patch;
 @dynamic timeout;
+@dynamic qos;
 @dynamic hasExtras, extras;
 
 typedef struct GDCPBMessage_Options__storage_ {
   uint32_t _has_storage_[1];
+  int32_t qos;
   GPBAny *extras;
   int64_t timeout;
 } GDCPBMessage_Options__storage_;
@@ -207,10 +209,19 @@ typedef struct GDCPBMessage_Options__storage_ {
         .dataType = GPBDataTypeInt64,
       },
       {
+        .name = "qos",
+        .dataTypeSpecific.className = NULL,
+        .number = GDCPBMessage_Options_FieldNumber_Qos,
+        .hasIndex = 5,
+        .offset = (uint32_t)offsetof(GDCPBMessage_Options__storage_, qos),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeInt32,
+      },
+      {
         .name = "extras",
         .dataTypeSpecific.className = GPBStringifySymbol(GPBAny),
         .number = GDCPBMessage_Options_FieldNumber_Extras,
-        .hasIndex = 5,
+        .hasIndex = 6,
         .offset = (uint32_t)offsetof(GDCPBMessage_Options__storage_, extras),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeMessage,

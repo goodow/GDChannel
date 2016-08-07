@@ -4,6 +4,8 @@
 
 #import "GDCStorage.h"
 #import "GDCMessage.h"
+#import "GDCMessageImpl.h"
+#import "Channel.pbobjc.h"
 
 static NSString *const fileExtension = @"archive";
 
@@ -150,5 +152,47 @@ static NSString *const fileExtension = @"archive";
       toRtn[key] = [self mutableContainersAndLeaves:value];
   }];
   return toRtn;
+}
+
+- (GDCPBMessage *)convertMessageToProtobuf:(GDCMessageImpl *)msg {
+  GDCPBMessage *message = [GDCPBMessage message];
+  message.topic = msg.topic;
+  message.replyTopic = msg.replyTopic;
+  message.local = msg.local;
+  message.send = msg.send;
+
+  if (msg.payload) {
+    GPBAny *payload = message.payload;
+    payload.typeURL = [NSString stringWithFormat:@"gdc://any/%@", [msg.payload class]];
+    if ([msg.payload isKindOfClass:GPBMessage.class]) {
+      payload.value = ((GPBMessage *) msg.payload).data;
+    } else {
+      NSError *error;
+      payload.value = [NSJSONSerialization dataWithJSONObject:msg.payload
+                                                      options:0
+                                                        error:&error];
+    }
+  }
+
+  if (msg.options) {
+    GDCPBMessage_Options *options = message.options;
+    GDCOptions *opt = msg.options;
+    options.retained = opt.retained;
+    options.patch = opt.patch;
+    options.timeout = opt.timeout;
+    options.qos = opt.qos;
+    if (opt.extras) {
+      GPBAny *extras = options.extras;
+      extras.typeURL = [NSString stringWithFormat:@"gdc://any/%@", [opt.extras class]];
+      if ([opt.extras isKindOfClass:GPBMessage.class]) {
+        extras.value = ((GPBMessage *) opt.extras).data;
+      } else {
+        NSError *error;
+        extras.value = [NSJSONSerialization dataWithJSONObject:opt.extras
+                                                        options:0
+                                                          error:&error];
+      }
+    }
+  }
 }
 @end
