@@ -8,6 +8,7 @@
 #import "GPBMessage+JsonFormat.h"
 #import "NSMutableArray+GDCSerializable.h"
 #import "NSMutableDictionary+GDCSerializable.h"
+#import "GPBAny+GDChannel.h"
 
 static const NSString *object = @"GDCNotificationBus/object";
 static const NSString *messageKey = @"msg";
@@ -148,7 +149,7 @@ static const NSString *messageKey = @"msg";
 }
 
 - (id)typeCastAndPatch:(GDCMessageImpl *)message {
-  id newPayload = [GDCNotificationBus parseAnyType:message.payload];
+  id newPayload = [GPBAny unpackFromJson:message.payload error:nil];
   BOOL patch = message.options.patch;
   if (!newPayload && !patch) {
     return nil;
@@ -158,7 +159,7 @@ static const NSString *messageKey = @"msg";
     if ([newPayload isKindOfClass:NSArray.class] && [newPayload count] > 0) { // newPayload 是数组
       NSMutableArray *array = [NSMutableArray arrayWithCapacity:[newPayload count]];
       for (id ele in newPayload) {
-        [array addObject:[GDCNotificationBus parseAnyType:ele]];
+        [array addObject:[GPBAny unpackFromJson:ele error:nil]];
       }
       return array;
     } // newPayload 是数组
@@ -168,7 +169,7 @@ static const NSString *messageKey = @"msg";
   // 存在 oldPayload 且是 patch
   if ([oldPayload isKindOfClass:NSMutableArray.class] && [newPayload isKindOfClass:NSArray.class]) {  // oldPayload 是数组
     for (id ele in newPayload) {
-      [oldPayload addObject:[GDCNotificationBus parseAnyType:ele]];
+      [oldPayload addObject:[GPBAny unpackFromJson:ele error:nil]];
     }
     return oldPayload;
   }
@@ -231,25 +232,4 @@ static const NSString *messageKey = @"msg";
   block(arguments[1]);
 }
 
-#pragma mark Well-known types
-
-+ (id)parseAnyType:(id)any {
-  if ([any isKindOfClass:NSDictionary.class] && any[kJsonTypeKey]) {
-    Class<GDCSerializable> dataClass = NSClassFromString([self getType:any[kJsonTypeKey]]);
-    if ([dataClass conformsToProtocol:@protocol(GDCSerializable)]) {
-      NSError *error = nil;
-      any = [dataClass parseFromJson:any error:&error];
-    }
-  }
-  return any;
-}
-
-+ (NSString *)getType:(NSString *)typeUrl {
-  NSArray<NSString *> *parts = [typeUrl componentsSeparatedByString:@"/"];
-  if (parts.count == 1) {
-    NSLog(@"Invalid type url found: %@", typeUrl);
-  }
-  parts = [parts.lastObject componentsSeparatedByString:@"."];
-  return parts.lastObject;
-}
 @end

@@ -6,6 +6,8 @@
 #import "GDCMessage.h"
 #import "GDCMessageImpl.h"
 #import "Channel.pbobjc.h"
+#import "GPBAny+GDChannel.h"
+
 
 static NSString *const fileExtension = @"archive";
 
@@ -162,16 +164,7 @@ static NSString *const fileExtension = @"archive";
   message.send = msg.send;
 
   if (msg.payload) {
-    GPBAny *payload = message.payload;
-    payload.typeURL = [NSString stringWithFormat:@"gdc://any/%@", [msg.payload class]];
-    if ([msg.payload isKindOfClass:GPBMessage.class]) {
-      payload.value = ((GPBMessage *) msg.payload).data;
-    } else {
-      NSError *error;
-      payload.value = [NSJSONSerialization dataWithJSONObject:msg.payload
-                                                      options:0
-                                                        error:&error];
-    }
+    message.payload = [GPBAny pack:msg.payload withTypeUrlPrefix:nil];
   }
 
   if (msg.options) {
@@ -182,16 +175,32 @@ static NSString *const fileExtension = @"archive";
     options.timeout = opt.timeout;
     options.qos = opt.qos;
     if (opt.extras) {
-      GPBAny *extras = options.extras;
-      extras.typeURL = [NSString stringWithFormat:@"gdc://any/%@", [opt.extras class]];
-      if ([opt.extras isKindOfClass:GPBMessage.class]) {
-        extras.value = ((GPBMessage *) opt.extras).data;
-      } else {
-        NSError *error;
-        extras.value = [NSJSONSerialization dataWithJSONObject:opt.extras
-                                                        options:0
-                                                          error:&error];
-      }
+      options.extras = [GPBAny pack:opt.extras withTypeUrlPrefix:nil];
+    }
+  }
+}
+
+- (id <GDCMessage>)convertProtobufToMessage:(GDCPBMessage *)message {
+  GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
+  msg.topic = message.topic;
+  msg.replyTopic = message.replyTopic;
+  msg.local = message.local;
+  msg.send = message.send;
+
+  if (message.hasPayload) {
+    msg.payload = [message.payload unpack];
+  }
+
+  if (message.hasOptions) {
+    GDCOptions *opt = [[GDCOptions alloc] init];
+    msg.options = opt;
+    GDCPBMessage_Options *options = message.options;
+    opt.retained = options.retained;
+    opt.patch = options.patch;
+    opt.timeout = options.timeout;
+    opt.qos = options.qos;
+    if (options.hasExtras) {
+      opt.extras = [options.extras unpack];
     }
   }
 }

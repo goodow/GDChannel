@@ -14,5 +14,4 @@
 
 + (void)scheduleDeferred:(void (^)(id))block argument:(id)argument;
 
-+ (id)parseAnyType:(id)any;
 @end

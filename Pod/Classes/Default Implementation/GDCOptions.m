@@ -3,7 +3,7 @@
 //
 
 #import "GDCOptions.h"
-#import "GDCNotificationBus.h"
+#import "GPBAny+GDChannel.h"
 
 static long const kDefaultTimeout = 30 * 1000;
 
@@ -45,7 +45,7 @@ static NSString *const kExtrasKey = @"extras";
   options.timeout = [json[kTimeoutKey] longValue];
   options.qos = [json[kQosKey] intValue];
 
-  options.extras = [GDCNotificationBus parseAnyType:json[kExtrasKey]];
+  options.extras = [GPBAny unpackFromJson:json[kExtrasKey] error:nil];
   return options;
 }
 
@@ -64,10 +64,7 @@ static NSString *const kExtrasKey = @"extras";
     json[kQosKey] = @(self.qos);
   }
   if (self.extras) {
-    json[kExtrasKey] = self.extras.toJson.mutableCopy;
-    if (![self.extras isKindOfClass:NSMutableDictionary.class] && ![self.extras isKindOfClass:NSMutableArray.class]) {
-      json[kExtrasKey][kJsonTypeKey] = [NSString stringWithFormat:@"gdc://any/%@", NSStringFromClass([self.extras class])];
-    }
+    json[kExtrasKey] = [GPBAny packToJson:self.extras];
   }
   return json;
 }

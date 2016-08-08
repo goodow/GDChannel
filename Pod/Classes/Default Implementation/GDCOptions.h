@@ -6,8 +6,9 @@
 #import "GDCEntry.h"
 
 enum GDCQualityOfService {
-    AtMostOnce, AtLeastOnce, ExactlyOnce
+  GDCQosAtMostOnce, GDCQosAtLeastOnce, GDCQosExactlyOnce
 };
+
 @interface GDCOptions : NSObject <GDCSerializable>
 
 @property(nonatomic) BOOL retained;
