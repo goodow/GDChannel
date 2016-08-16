@@ -6,9 +6,10 @@
 #import "GPBMessage.h"
 #import "FieldMask.pbobjc.h"
 
-static NSString *const messageClass = @"messageClass";
-
-static NSString *const dateFormat = @"EEEE, dd LLL yyyy hh:mm:ss zzz";
+static NSString *const kMessageClassKey = @"messageClass";
+static NSString *const kMaxAgeKey = @"magAge";
+static NSString *const kDateFormat = @"EEEE, dd LLL yyyy hh:mm:ss zzz";
+static NSString *const kDateHeaderName = @"Date";
 
 @interface GDCUrlCache ()
 @property(nonatomic) NSURLCache *cache;
@@ -25,7 +26,7 @@ static NSString *const dateFormat = @"EEEE, dd LLL yyyy hh:mm:ss zzz";
       _instance = [[self alloc] init];
       _instance.cache = [NSURLCache sharedURLCache];
       _instance.dateFormatter = [[NSDateFormatter alloc] init];
-      _instance.dateFormatter.dateFormat = dateFormat;
+      _instance.dateFormatter.dateFormat = kDateFormat;
     }
   }
 
@@ -39,25 +40,33 @@ static NSString *const dateFormat = @"EEEE, dd LLL yyyy hh:mm:ss zzz";
   NSMutableDictionary<NSString *, NSString *> *respHeaders = @{}.mutableCopy;
   respHeaders[@"Cache-Control"] = [NSString stringWithFormat:@"max-age=%d", maxAge];
   respHeaders[@"Content-Length"] = @(data.length).stringValue;
-  respHeaders[@"Last-Modified"] = [self.dateFormatter stringFromDate:[NSDate date]];
-  NSURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:req.URL statusCode:200 HTTPVersion:nil headerFields:respHeaders];
+  respHeaders[kDateHeaderName] = [self.dateFormatter stringFromDate:[NSDate date]];
+  NSURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:req.URL statusCode:200 HTTPVersion:(__bridge NSString *) kCFHTTPVersion1_1 headerFields:respHeaders];
   NSMutableDictionary *info = @{}.mutableCopy;
-  info[messageClass] = NSStringFromClass(respMessage.class);
+  info[kMessageClassKey] = respMessage.class;
+  info[kMaxAgeKey] = @(maxAge);
   NSCachedURLResponse *cachedResponse = [[NSCachedURLResponse alloc] initWithResponse:response data:data userInfo:info storagePolicy:NSURLCacheStorageAllowed];
 
   [self.cache storeCachedResponse:cachedResponse forRequest:req];
 }
 
-- (nullable __kindof GPBMessage *)cachedMessageForPath:(NSString *)path andRequest:(GPBMessage *)reqMessage andKeys:(GPBFieldMask *)keys {
+- (nullable __kindof GPBMessage *)cachedMessageForPath:(NSString *)path andRequest:(GPBMessage *)reqMessage andKeys:(GPBFieldMask *)keys expired:(BOOL *)expired {
   NSURLRequest *req = [self requestForPath:path andRequest:reqMessage andKeys:keys];
   NSCachedURLResponse *cachedResponse = [self.cache cachedResponseForRequest:req];
   NSDictionary *info = cachedResponse.userInfo;
-  GPBMessage *respMessage = [NSClassFromString(info[messageClass]) parseFromData:cachedResponse.data error:nil];
+  if (expired) {
+    NSString *dateStr = ((NSHTTPURLResponse *) cachedResponse.response).allHeaderFields[kDateHeaderName];
+    NSDate *date = [self.dateFormatter dateFromString:dateStr];
+    int maxAge = [info[kMaxAgeKey] intValue];
+    *expired = [[NSDate date] timeIntervalSinceDate:date] > maxAge;
+  }
+
+  GPBMessage *respMessage = [info[kMessageClassKey] parseFromData:cachedResponse.data error:nil];
   return respMessage;
 }
 
 - (NSURLRequest *)requestForPath:(NSString *)path andRequest:(GPBMessage *)reqMessage andKeys:(GPBFieldMask *)keys {
-  const NSString *domain = @"http://caching.gdc.goodow.com";
+  const NSString *domain = @"https://caching.gdc.goodow.com";
   NSMutableString *paths = path.mutableCopy;
   for (NSString *path in keys.pathsArray) {
     id val = [reqMessage valueForKeyPath:path];

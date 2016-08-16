@@ -15,5 +15,5 @@
 
 + (id)packToJson:(id <GDCSerializable>)value;
 
-+ (__kindof id)unpackFromJson:(NSDictionary *)json error:(NSError **)errorPtr;
++ (__kindof id)unpackFromJson:(id)json error:(NSError **)errorPtr;
 @end

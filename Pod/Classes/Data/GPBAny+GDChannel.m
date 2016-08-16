@@ -10,7 +10,7 @@
 + (instancetype)pack:(id)value withTypeUrlPrefix:(NSString *)typeUrlPrefix {
   GPBAny *any = [GPBAny message];
   if ([value isKindOfClass:GPBMessage.class]) {
-    any.typeURL = [self getTypeUrl:value withTypeUrlPrefix:typeUrlPrefix];
+    any.typeURL = [self getTypeUrl:value withPrefix:typeUrlPrefix];
     any.value = ((GPBMessage *) value).data;
   } else {
     NSError *error;
@@ -34,13 +34,13 @@
 + (id)packToJson:(id <GDCSerializable>)value {
   if (![value isKindOfClass:NSMutableDictionary.class] && ![value isKindOfClass:NSMutableArray.class]) {
     NSMutableDictionary *json = value.toJson;
-    json[kJsonTypeKey] = [self getTypeUrl:value withTypeUrlPrefix:nil];
+    json[kJsonTypeKey] = [self getTypeUrl:value withPrefix:nil];
     return json;
   }
   return value;
 }
 
-+ (__kindof id)unpackFromJson:(NSDictionary *)json error:(NSError **)errorPtr {
++ (__kindof id)unpackFromJson:(id)json error:(NSError **)errorPtr {
   if ([json isKindOfClass:NSDictionary.class] && json[kJsonTypeKey]) {
     Class clz = [self getClassFromTypeUrl:json[kJsonTypeKey]];
     if ([clz conformsToProtocol:@protocol(GDCSerializable)]) {
@@ -50,7 +50,7 @@
   return json;
 }
 
-+ (NSString *)getTypeUrl:(id)value withTypeUrlPrefix:(NSString *)typeUrlPrefix {
++ (NSString *)getTypeUrl:(id)value withPrefix:(NSString *)typeUrlPrefix {
   if (!typeUrlPrefix) {
     typeUrlPrefix = @"gdc://any";
   }
