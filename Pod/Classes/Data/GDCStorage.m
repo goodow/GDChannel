@@ -9,7 +9,8 @@
 #import "GPBAny+GDChannel.h"
 
 
-static NSString *const fileExtension = @"archive";
+static NSString *const archiveFileExtension = @"archive";
+static NSString *const protobufFileExtension = @"protobuf";
 
 @implementation GDCStorage {
   NSString *_baseDir;
@@ -60,7 +61,15 @@ static NSString *const fileExtension = @"archive";
 - (void)save:(id <GDCMessage>)message {
   [self cache:message.topic payload:message.payload];
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-      if (![NSKeyedArchiver archiveRootObject:message toFile:[self getPath:message.topic]]) {
+      if ([message.payload isKindOfClass:GPBMessage.class]) {
+        GDCPBMessage *pbMessage = [GDCStorage convertMessageToProtobuf:message];
+        NSOutputStream *outputStream = [NSOutputStream outputStreamToFileAtPath:[self getPath:message.topic withExtension:protobufFileExtension] append:NO];
+        [outputStream open];
+        [pbMessage writeToOutputStream:outputStream];
+        [outputStream close];
+        return;
+      }
+      if (![NSKeyedArchiver archiveRootObject:message toFile:[self getPath:message.topic withExtension:archiveFileExtension]]) {
         NSLog(@"%s failed, message: %@", __PRETTY_FUNCTION__, message);
       }
   });
@@ -79,24 +88,27 @@ static NSString *const fileExtension = @"archive";
 }
 
 - (id <GDCMessage>)getRetainedMessage:(NSString *)topic {
-//  id <GDCMessage> msg = [_cache objectForKey:topic];
-//  if (msg.options.retained) {
-//    return msg;
-//  }
-  return [NSKeyedUnarchiver unarchiveObjectWithFile:[self getPath:topic]];
+  NSData *data = [NSData dataWithContentsOfFile:[self getPath:topic withExtension:protobufFileExtension]];
+  if (data) {
+    NSError *error;
+    GDCPBMessage *pbMessage = [GDCPBMessage parseFromData:data error:&error];
+    return pbMessage ? [GDCStorage convertProtobufToMessage:pbMessage] : nil;
+  }
+  return [NSKeyedUnarchiver unarchiveObjectWithFile:[self getPath:topic withExtension:archiveFileExtension]];
 }
 
 - (void)remove:(NSString *)topic {
   [_cache removeObjectForKey:topic];
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
       NSError *error = nil;
-      if (![[NSFileManager defaultManager] removeItemAtPath:[self getPath:topic] error:&error]) {
+      if (![[NSFileManager defaultManager] removeItemAtPath:[self getPath:topic withExtension:protobufFileExtension] error:&error]) {
         NSLog(@"%s failed, topic: %@", __PRETTY_FUNCTION__, topic);
       }
+      [[NSFileManager defaultManager] removeItemAtPath:[self getPath:topic withExtension:archiveFileExtension] error:&error];
   });
 }
 
-- (NSString *)getPath:(NSString *)topic {
+- (NSString *)getPath:(NSString *)topic withExtension:(NSString *)fileExtension {
   topic = [topic stringByReplacingOccurrencesOfString:@"/" withString:@":"];
   return [[_baseDir stringByAppendingPathComponent:topic] stringByAppendingPathExtension:fileExtension];
 }
@@ -156,7 +168,7 @@ static NSString *const fileExtension = @"archive";
   return toRtn;
 }
 
-- (GDCPBMessage *)convertMessageToProtobuf:(GDCMessageImpl *)msg {
++ (GDCPBMessage *)convertMessageToProtobuf:(GDCMessageImpl *)msg {
   GDCPBMessage *message = [GDCPBMessage message];
   message.topic = msg.topic;
   message.replyTopic = msg.replyTopic;
@@ -178,12 +190,13 @@ static NSString *const fileExtension = @"archive";
       options.extras = [GPBAny pack:opt.extras withTypeUrlPrefix:nil];
     }
   }
+  return message;
 }
 
-- (id <GDCMessage>)convertProtobufToMessage:(GDCPBMessage *)message {
++ (id <GDCMessage>)convertProtobufToMessage:(GDCPBMessage *)message {
   GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
   msg.topic = message.topic;
-  msg.replyTopic = message.replyTopic;
+  msg.replyTopic = message.replyTopic.length ? message.replyTopic : nil;
   msg.local = message.local;
   msg.send = message.send;
 
@@ -203,5 +216,6 @@ static NSString *const fileExtension = @"archive";
       opt.extras = [options.extras unpack];
     }
   }
+  return msg;
 }
 @end

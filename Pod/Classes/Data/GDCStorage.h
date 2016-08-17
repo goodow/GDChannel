@@ -21,7 +21,7 @@
 
 - (void)save:(id <GDCMessage>)message;
 
-- (id)getPayload:(NSString *)topic;
+- (__kindof id)getPayload:(NSString *)topic;
 
 - (id <GDCMessage>)getRetainedMessage:(NSString *)topic;
 

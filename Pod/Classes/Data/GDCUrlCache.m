@@ -8,7 +8,7 @@
 
 static NSString *const kMessageClassKey = @"messageClass";
 static NSString *const kMaxAgeKey = @"magAge";
-static NSString *const kDateFormat = @"EEEE, dd LLL yyyy hh:mm:ss zzz";
+static NSString *const kDateFormat = @"EEE, dd MMM yyyy HH:mm:ss zzz";
 static NSString *const kDateHeaderName = @"Date";
 
 @interface GDCUrlCache ()
@@ -35,7 +35,7 @@ static NSString *const kDateHeaderName = @"Date";
 
 - (void)storeCachedMessage:(GPBMessage *)respMessage forPath:(NSString *)path andRequest:(GPBMessage *)reqMessage andKeys:(GPBFieldMask *)keys withMaxAge:(int)maxAge {
   NSURLRequest *req = [self requestForPath:path andRequest:reqMessage andKeys:keys];
-  
+
   NSData *data = respMessage.data;
   NSMutableDictionary<NSString *, NSString *> *respHeaders = @{}.mutableCopy;
   respHeaders[@"Cache-Control"] = [NSString stringWithFormat:@"max-age=%d", maxAge];
@@ -43,7 +43,7 @@ static NSString *const kDateHeaderName = @"Date";
   respHeaders[kDateHeaderName] = [self.dateFormatter stringFromDate:[NSDate date]];
   NSURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:req.URL statusCode:200 HTTPVersion:(__bridge NSString *) kCFHTTPVersion1_1 headerFields:respHeaders];
   NSMutableDictionary *info = @{}.mutableCopy;
-  info[kMessageClassKey] = respMessage.class;
+  info[kMessageClassKey] = NSStringFromClass(respMessage.class); // 转换成string, 否则应用下次启动后取出的userInfo变为nil
   info[kMaxAgeKey] = @(maxAge);
   NSCachedURLResponse *cachedResponse = [[NSCachedURLResponse alloc] initWithResponse:response data:data userInfo:info storagePolicy:NSURLCacheStorageAllowed];
 
@@ -53,16 +53,18 @@ static NSString *const kDateHeaderName = @"Date";
 - (nullable __kindof GPBMessage *)cachedMessageForPath:(NSString *)path andRequest:(GPBMessage *)reqMessage andKeys:(GPBFieldMask *)keys expired:(BOOL *)expired {
   NSURLRequest *req = [self requestForPath:path andRequest:reqMessage andKeys:keys];
   NSCachedURLResponse *cachedResponse = [self.cache cachedResponseForRequest:req];
+  if (!cachedResponse) {
+    return nil;
+  }
   NSDictionary *info = cachedResponse.userInfo;
-  if (expired) {
+  if (expired && info) {
     NSString *dateStr = ((NSHTTPURLResponse *) cachedResponse.response).allHeaderFields[kDateHeaderName];
     NSDate *date = [self.dateFormatter dateFromString:dateStr];
     int maxAge = [info[kMaxAgeKey] intValue];
     *expired = [[NSDate date] timeIntervalSinceDate:date] > maxAge;
   }
 
-  GPBMessage *respMessage = [info[kMessageClassKey] parseFromData:cachedResponse.data error:nil];
-  return respMessage;
+  return [NSClassFromString(info[kMessageClassKey]) parseFromData:cachedResponse.data error:nil];
 }
 
 - (NSURLRequest *)requestForPath:(NSString *)path andRequest:(GPBMessage *)reqMessage andKeys:(GPBFieldMask *)keys {

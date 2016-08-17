@@ -9,7 +9,7 @@ typedef void (^GDCAsyncResultBlock)(id<GDCAsyncResult> asyncResult);
 
 @protocol GDCMessage <NSObject, NSCoding, NSCopying>
 
-@property(nonatomic, readonly) id payload;
+@property(nonatomic, readonly) __kindof id payload;
 @property(nonatomic, readonly) NSString *topic;
 @property(nonatomic, readonly) NSString *replyTopic;
 @property(nonatomic, readonly) GDCOptions *options;
