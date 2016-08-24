@@ -69,14 +69,12 @@ static NSString *const kDateHeaderName = @"Date";
 
 - (NSURLRequest *)requestForPath:(NSString *)path andRequest:(GPBMessage *)reqMessage andKeys:(GPBFieldMask *)keys {
   const NSString *domain = @"https://caching.gdc.goodow.com";
-  NSMutableString *paths = path.mutableCopy;
+  NSMutableString *url = [NSMutableString stringWithFormat:@"%@/%@", domain, path];
   for (NSString *path in keys.pathsArray) {
     id val = [reqMessage valueForKeyPath:path];
-    [paths appendFormat:@"/%@/%@", path, val];
+    [url appendFormat:@"/%@/%@", path, val];
   }
-  NSURL *url = [NSURL URLWithString:[domain stringByAppendingPathComponent:paths]];
-  NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:url];
-  return req;
+  return [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
 }
 
 @end
