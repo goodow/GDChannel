@@ -4,6 +4,7 @@
 #import "GDCMqttBus.h"
 #import "MQTTKit.h"
 #import "GDCTopicsManager.h"
+#import "GDCOptions+ReadAccess.h"
 
 @interface GDCMqttBus ()
 @property(nonatomic, readonly, strong) MQTTClient *mqtt;
@@ -177,7 +178,7 @@
     @throw [NSException exceptionWithName:@"JSON" reason:[NSString stringWithFormat:@"Failed to encode as JSON: %@", error] userInfo:nil];
   }
   dispatch_async(self.queue, ^{
-      [self.mqtt publishData:jsonData toTopic:message.topic withQos:message.options.qos retain:NO completionHandler:^(int mid) {
+      [self.mqtt publishData:jsonData toTopic:message.topic withQos:message.options.getQos retain:NO completionHandler:^(int mid) {
       }];
   });
 }

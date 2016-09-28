@@ -7,7 +7,7 @@
 #import "GDCMessageImpl.h"
 #import "Channel.pbobjc.h"
 #import "GPBAny+GDChannel.h"
-
+#import "GDCOptions+ReadAccess.h"
 
 static NSString *const archiveFileExtension = @"archive";
 static NSString *const protobufFileExtension = @"protobuf";
@@ -182,12 +182,12 @@ static NSString *const protobufFileExtension = @"protobuf";
   if (msg.options) {
     GDCPBMessage_Options *options = message.options;
     GDCOptions *opt = msg.options;
-    options.retained = opt.retained;
-    options.patch = opt.patch;
-    options.timeout = opt.timeout;
-    options.qos = opt.qos;
-    if (opt.extras) {
-      options.extras = [GPBAny pack:opt.extras withTypeUrlPrefix:nil];
+    options.retained = opt.isRetained;
+    options.patch = opt.isPatch;
+    options.timeout = opt.getTimeout;
+    options.qos = opt.getQos;
+    if (opt.getExtras) {
+      options.extras = [GPBAny pack:opt.getExtras withTypeUrlPrefix:nil];
     }
   }
   return message;
@@ -205,15 +205,12 @@ static NSString *const protobufFileExtension = @"protobuf";
   }
 
   if (message.hasOptions) {
-    GDCOptions *opt = [[GDCOptions alloc] init];
+    GDCOptions *opt = GDCOptions.new;
     msg.options = opt;
     GDCPBMessage_Options *options = message.options;
-    opt.retained = options.retained;
-    opt.patch = options.patch;
-    opt.timeout = options.timeout;
-    opt.qos = options.qos;
+    opt.retained(options.retained).patch(options.patch).timeout(options.timeout).qos(options.qos);
     if (options.hasExtras) {
-      opt.extras = [options.extras unpack];
+      opt.extras([options.extras unpack]);
     }
   }
   return msg;

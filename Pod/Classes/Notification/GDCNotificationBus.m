@@ -9,6 +9,8 @@
 #import "NSMutableArray+GDCSerializable.h"
 #import "NSMutableDictionary+GDCSerializable.h"
 #import "GPBAny+GDChannel.h"
+#import "GDCOptions+ReadAccess.h"
+#import "GDCEntry.h"
 
 static const NSString *object = @"GDCNotificationBus/object";
 static const NSString *messageKey = @"msg";
@@ -112,9 +114,9 @@ static const NSString *messageKey = @"msg";
 - (void)sendOrPub:(GDCMessageImpl *)message replyHandler:(GDCAsyncResultBlock)replyHandler {
   if (replyHandler) {
     [self subscribeToReplyTopic:message.replyTopic replyHandler:replyHandler];
-    if (message.options.timeout != -1) {
+    if (message.options.getTimeout != -1) {
       __weak id <GDCBus> weakBus = self;
-      dispatch_after(dispatch_time(DISPATCH_TIME_NOW, message.options.timeout * NSEC_PER_MSEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+      dispatch_after(dispatch_time(DISPATCH_TIME_NOW, message.options.getTimeout * NSEC_PER_MSEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
           NSError *error = [NSError errorWithDomain:NSStringFromClass(weakBus.class) code:NSURLErrorTimedOut userInfo:@{NSLocalizedDescriptionKey : @"Timed out waiting for a reply"}];
 //          [weakBus sendLocal:message.replyTopic payload:error replyHandler:nil];
       });
@@ -128,7 +130,7 @@ static const NSString *messageKey = @"msg";
       [payload addTopic:message.topic options:message.options];
     }
 
-    if (message.options.retained) {
+    if (message.options.isRetained) {
       if (payload) {
         [self.storage save:message];
       } else {
@@ -143,14 +145,18 @@ static const NSString *messageKey = @"msg";
   for (NSString *filter in topicsToPublish) {
     // Each handler gets a fresh copy
     id <GDCMessage> copied = message.copy;
-    copied.options.retained = NO;
+    if (copied.options.isRetained) {
+      // It MUST set the RETAIN flag to 0 when a PUBLISH Packet is sent to a Client because it matches an established subscription
+      // regardless of how the flag was set in the message it received [MQTT-3.3.1-9].
+      copied.options.retained(NO);
+    }
     [self.notificationCenter postNotificationName:filter object:object userInfo:@{messageKey : copied}];
   }
 }
 
 - (id)typeCastAndPatch:(GDCMessageImpl *)message {
   id newPayload = [GPBAny unpackFromJson:message.payload error:nil];
-  BOOL patch = message.options.patch;
+  BOOL patch = message.options.isPatch;
   if (!newPayload && !patch) {
     return nil;
   }
@@ -200,6 +206,8 @@ static const NSString *messageKey = @"msg";
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
       id <GDCMessage> retained = [self.storage getRetainedMessage:topicFilter];
       if (retained) {
+        // When sending a PUBLISH Packet to a Client the Server MUST set the RETAIN flag to 1
+        // if a message is sent as a result of a new subscription being made by a Client [MQTT-3.3.1-8]
         if ([retained.payload conformsToProtocol:@protocol(GDCEntry)]) {
           [retained.payload addTopic:retained.topic options:retained.options];
         }

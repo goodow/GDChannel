@@ -50,9 +50,8 @@
   entry.str = nil;
   entry.str = nil;
   entry.str = @"";
-  GDCOptions *options = [[GDCOptions alloc] init];
-  options.extras = @{@"optRe" : @YES};
-  options.retained = YES;
+  GDCOptions *options = GDCOptions.new;
+  options.extras(@{@"optRe": @YES}).retained(YES);
 //  [entry addTopic:@"top" options:options];
   GDCSampleEntry *subEntry = [[GDCSampleEntry alloc] init];
   subEntry.str = @"subS";
@@ -72,7 +71,7 @@
         GDCStorage *storage = [[GDCStorage alloc] initWithBaseDirectory:nil];
         id o = [storage getPayload:message.topic];
         GDCSampleEntry *entry = [GDCSampleEntry parseFromJson:message.payload error:nil];
-        GDCOptions *options = [GDCOptions optionWithExtras:@{@"optRe" : @YES}];
+        GDCOptions *options = GDCOptions.new.extras(@{@"optRe": @YES});
         [message reply:@"re" options:options replyHandler:^(id <GDCAsyncResult> asyncResult) {
             id <GDCMessage> result = asyncResult.result;
             NSLog(@"asyncResult2: %@", result);
@@ -82,7 +81,6 @@
 }
 
 - (IBAction)publish:(UIButton *)sender {
-
   GDCStorage *storage = GDCStorage.instance;
   id <GDCMessage> o = [storage getRetainedMessage:@"chao"];
 
@@ -91,16 +89,15 @@
     _entry.floatA++;
     return;
   }
-  _entry = [[GDCSampleEntry alloc] init];
-  _entry.floatA = 2.1;
-  _entry.str = @"testEntry";
-  GDCSampleEntry *subEntry = [[GDCSampleEntry alloc] init];
-  subEntry.floatA = -1.1;
+//  _entry = [[GDCSampleEntry alloc] init];
+//  _entry.floatA = 2.1;
+//  _entry.str = @"testEntry";
+//  GDCSampleEntry *subEntry = [[GDCSampleEntry alloc] init];
+//  subEntry.floatA = -1.1;
 //  _entry.entry = subEntry;
-  GDCOptions *options = [GDCOptions optionWithExtras:@{@"testExtras" : @"xxx"}];
-  options.retained = YES;
-  options.timeout = 1;
-  [self.bus publishLocal:@"sometopic1" payload:_entry options:options];
+  GDCOptions *options = GDCOptions.new.extras(@{@"testExtras" : @"xxx"});
+  options.retained(YES).timeout(1);
+  [self.bus publishLocal:@"sometopic1" payload:@{} options:options];
 //  [self.bus send:@"sometopic1" payload:_entry options:options replyHandler:^(id <GDCAsyncResult> asyncResult) {
 //      id <GDCMessage> o = asyncResult.result;
 //      NSLog(@"asyncResult: %@", o);
