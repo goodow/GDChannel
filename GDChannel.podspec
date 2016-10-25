@@ -24,6 +24,5 @@ Pod::Spec.new do |s|
   s.requires_arc = ['Pod/Classes/**/*']
 
   s.dependency 'MQTTKit', '~> 0.1.0'
-  s.dependency 'Mantle', '~> 2.0.6'
   s.dependency 'Protobuf', '~> 3.0'
 end

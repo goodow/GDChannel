@@ -10,11 +10,6 @@
 
 + (GDCStorage *)instance;
 
-+ (void)expandDictionary:(NSDictionary *)dict to:(NSMutableDictionary *)toRtn;
-+ (NSDictionary *)flattedDictionary:(NSDictionary *)toFlat parentKey:(NSString *)parentKey;
-
-+ (NSMutableDictionary *)mutableContainersAndLeaves:(NSDictionary *)dict;
-
 - (instancetype)initWithBaseDirectory:(NSString *)baseDir;
 
 - (void)cache:(NSString *)topic payload:(id)payload;
@@ -26,4 +21,10 @@
 - (id <GDCMessage>)getRetainedMessage:(NSString *)topic;
 
 - (void)remove:(NSString *)topic;
+
++ (void)expandDictionary:(NSDictionary *)dict to:(NSMutableDictionary *)toRtn;
+
++ (NSDictionary *)flattedDictionary:(NSDictionary *)toFlat parentKey:(NSString *)parentKey;
+
++ (NSMutableDictionary *)mutableContainersAndLeaves:(NSDictionary *)dict;
 @end

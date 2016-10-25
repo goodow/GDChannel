@@ -29,28 +29,28 @@ static long const kDefaultTimeout = 30 * 1000;
   };
 }
 
-- (GDCOptions *(^)(BOOL patch))patch {
+- (GDCOptions *(^)(BOOL))patch {
   return ^GDCOptions *(BOOL patch) {
       _patch = patch;
       return self;
   };
 }
 
-- (GDCOptions *(^)(long patch))timeout {
+- (GDCOptions *(^)(long))timeout {
   return ^GDCOptions *(long timeout) {
       _timeout = timeout;
       return self;
   };
 }
 
-- (GDCOptions *(^)(enum GDCQualityOfService qos))qos {
+- (GDCOptions *(^)(enum GDCQualityOfService))qos {
   return ^GDCOptions *(enum GDCQualityOfService qos) {
       _qos = qos;
       return self;
   };
 }
 
-- (GDCOptions *(^)(NSObject <GDCSerializable> *extras))extras {
+- (GDCOptions *(^)(NSObject <GDCSerializable> *))extras {
   return ^GDCOptions *(NSObject <GDCSerializable> *extras) {
       if ([extras isKindOfClass:NSDictionary.class] && ![extras isKindOfClass:NSMutableDictionary.class]) {
         extras = [extras mutableCopy];

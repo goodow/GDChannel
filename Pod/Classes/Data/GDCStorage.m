@@ -113,6 +113,54 @@ static NSString *const protobufFileExtension = @"protobuf";
   return [[_baseDir stringByAppendingPathComponent:topic] stringByAppendingPathExtension:fileExtension];
 }
 
++ (GDCPBMessage *)convertMessageToProtobuf:(GDCMessageImpl *)msg {
+  GDCPBMessage *message = [GDCPBMessage message];
+  message.topic = msg.topic;
+  message.replyTopic = msg.replyTopic;
+  message.local = msg.local;
+  message.send = msg.send;
+
+  if (msg.payload) {
+    message.payload = [GPBAny pack:msg.payload withTypeUrlPrefix:nil];
+  }
+
+  if (msg.options) {
+    GDCPBMessage_Options *options = message.options;
+    GDCOptions *opt = msg.options;
+    options.retained = opt.isRetained;
+    options.patch = opt.isPatch;
+    options.timeout = opt.getTimeout;
+    options.qos = opt.getQos;
+    if (opt.getExtras) {
+      options.extras = [GPBAny pack:opt.getExtras withTypeUrlPrefix:nil];
+    }
+  }
+  return message;
+}
+
++ (id <GDCMessage>)convertProtobufToMessage:(GDCPBMessage *)message {
+  GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
+  msg.topic = message.topic;
+  msg.replyTopic = message.replyTopic.length ? message.replyTopic : nil;
+  msg.local = message.local;
+  msg.send = message.send;
+
+  if (message.hasPayload) {
+    msg.payload = [message.payload unpack];
+  }
+
+  if (message.hasOptions) {
+    GDCOptions *opt = GDCOptions.new;
+    msg.options = opt;
+    GDCPBMessage_Options *options = message.options;
+    opt.retained(options.retained).patch(options.patch).timeout(options.timeout).qos(options.qos);
+    if (options.hasExtras) {
+      opt.extras([options.extras unpack]);
+    }
+  }
+  return msg;
+}
+
 + (void)expandDictionary:(NSDictionary *)dict to:(NSMutableDictionary *)toRtn {
   void (^block)() = ^(NSMutableDictionary *res, NSString *key, id value) {
       if (![value isKindOfClass:NSDictionary.class]) {
@@ -166,53 +214,5 @@ static NSString *const protobufFileExtension = @"protobuf";
       toRtn[key] = [self mutableContainersAndLeaves:value];
   }];
   return toRtn;
-}
-
-+ (GDCPBMessage *)convertMessageToProtobuf:(GDCMessageImpl *)msg {
-  GDCPBMessage *message = [GDCPBMessage message];
-  message.topic = msg.topic;
-  message.replyTopic = msg.replyTopic;
-  message.local = msg.local;
-  message.send = msg.send;
-
-  if (msg.payload) {
-    message.payload = [GPBAny pack:msg.payload withTypeUrlPrefix:nil];
-  }
-
-  if (msg.options) {
-    GDCPBMessage_Options *options = message.options;
-    GDCOptions *opt = msg.options;
-    options.retained = opt.isRetained;
-    options.patch = opt.isPatch;
-    options.timeout = opt.getTimeout;
-    options.qos = opt.getQos;
-    if (opt.getExtras) {
-      options.extras = [GPBAny pack:opt.getExtras withTypeUrlPrefix:nil];
-    }
-  }
-  return message;
-}
-
-+ (id <GDCMessage>)convertProtobufToMessage:(GDCPBMessage *)message {
-  GDCMessageImpl *msg = [[GDCMessageImpl alloc] init];
-  msg.topic = message.topic;
-  msg.replyTopic = message.replyTopic.length ? message.replyTopic : nil;
-  msg.local = message.local;
-  msg.send = message.send;
-
-  if (message.hasPayload) {
-    msg.payload = [message.payload unpack];
-  }
-
-  if (message.hasOptions) {
-    GDCOptions *opt = GDCOptions.new;
-    msg.options = opt;
-    GDCPBMessage_Options *options = message.options;
-    opt.retained(options.retained).patch(options.patch).timeout(options.timeout).qos(options.qos);
-    if (options.hasExtras) {
-      opt.extras([options.extras unpack]);
-    }
-  }
-  return msg;
 }
 @end

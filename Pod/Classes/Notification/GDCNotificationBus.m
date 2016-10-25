@@ -10,7 +10,6 @@
 #import "NSMutableDictionary+GDCSerializable.h"
 #import "GPBAny+GDChannel.h"
 #import "GDCOptions+ReadAccess.h"
-#import "GDCEntry.h"
 
 static const NSString *object = @"GDCNotificationBus/object";
 static const NSString *messageKey = @"msg";
@@ -126,10 +125,6 @@ static const NSString *messageKey = @"msg";
   if (!message.send || !message.local) {
     // 如果没有订阅, 应该短路返回
     id payload = message.payload = [self typeCastAndPatch:message];
-    if ([payload conformsToProtocol:@protocol(GDCEntry)]) {
-      [payload addTopic:message.topic options:message.options];
-    }
-
     if (message.options.isRetained) {
       if (payload) {
         [self.storage save:message];
@@ -208,9 +203,6 @@ static const NSString *messageKey = @"msg";
       if (retained) {
         // When sending a PUBLISH Packet to a Client the Server MUST set the RETAIN flag to 1
         // if a message is sent as a result of a new subscription being made by a Client [MQTT-3.3.1-8]
-        if ([retained.payload conformsToProtocol:@protocol(GDCEntry)]) {
-          [retained.payload addTopic:retained.topic options:retained.options];
-        }
         [GDCNotificationBus scheduleDeferred:handler argument:retained];
       }
   });
