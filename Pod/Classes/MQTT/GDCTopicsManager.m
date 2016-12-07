@@ -60,8 +60,9 @@
   if (topicsRetainCounter[topic]) {
     [matches addObject:topic];
   }
-  for (NSString *filter in topicToPattern) {
-    NSTextCheckingResult *match = [topicToPattern[filter] firstMatchInString:topic options:0 range:NSMakeRange(0, topic.length)];
+  NSDictionary *filters = topicToPattern.copy;
+  for (NSString *filter in filters) {
+    NSTextCheckingResult *match = [filters[filter] firstMatchInString:topic options:0 range:NSMakeRange(0, topic.length)];
     if (match) {
       [matches addObject:filter];
     }

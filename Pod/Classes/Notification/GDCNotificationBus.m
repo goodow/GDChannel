@@ -175,7 +175,7 @@ static const NSString *messageKey = @"msg";
     return oldPayload;
   }
   if ([oldPayload conformsToProtocol:@protocol(GDCSerializable)]) {
-    if ([newPayload isKindOfClass:NSDictionary.class]) {
+    if (!newPayload || [newPayload isKindOfClass:NSDictionary.class]) { // 当 newPayload 为 nil 时, 清空 oldPayload
       [oldPayload mergeFromJson:newPayload];
     } else {
       [oldPayload mergeFrom:newPayload];

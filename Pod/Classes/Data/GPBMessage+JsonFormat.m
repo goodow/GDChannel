@@ -116,8 +116,9 @@
     case GPBDataTypeEnum:
       [self assert:json isKindOfClass:NSString.class];
       int32_t outValue;
-      [field.enumDescriptor getValue:&outValue forEnumName:json];
-      [msg setValue:@(outValue) forKey:field.name];
+      if ([field.enumDescriptor getValue:&outValue forEnumTextFormatName:json]) {
+        [msg setValue:@(outValue) forKey:field.name];
+      }
       break;
     case GPBDataTypeBytes:
     case GPBDataTypeString: {
@@ -183,7 +184,7 @@
         int32_t outValue = 0;
         if (ele != NSNull.null) {
           [self assert:ele isKindOfClass:NSString.class];
-          [field.enumDescriptor getValue:&outValue forEnumName:ele];
+          [field.enumDescriptor getValue:&outValue forEnumTextFormatName:ele];
         }
         [(GPBEnumArray *) genericArray addRawValue:outValue];
         break;
@@ -335,8 +336,8 @@
       valueToFill.valueInt32 = [val intValue];
       break;
     case GPBDataTypeEnum: {
-      int32_t outValue;
-      [field.enumDescriptor getValue:&outValue forEnumName:val];
+      int32_t outValue = 0;
+      [field.enumDescriptor getValue:&outValue forEnumTextFormatName:val];
       valueToFill.valueEnum = outValue;
       break;
     }
