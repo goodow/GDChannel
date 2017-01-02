@@ -49,7 +49,16 @@
   }
   if ([self.payload isKindOfClass:NSError.class]) {
     NSError *error = self.payload;
-    dict[errorKey] = @{errorDomainKey : error.domain, errorCodeKey : @(error.code), errorUserInfoKey : error.userInfo};
+    NSDictionary *userInfo = error.userInfo;
+    if (!userInfo.count) {
+      dict[errorKey] = @{errorDomainKey: error.domain, errorCodeKey: @(error.code)};
+    } else {
+      NSMutableDictionary *info = @{}.mutableCopy;
+      for (NSString *key in userInfo) {
+        info[key] = [userInfo[key] conformsToProtocol:@protocol(GDCSerializable)] ? [userInfo[key] toJson] : userInfo[key];
+      }
+      dict[errorKey] = @{errorDomainKey: error.domain, errorCodeKey: @(error.code), errorUserInfoKey: info};
+    }
   } else if ([self.payload conformsToProtocol:@protocol(GDCSerializable)]) {
     dict[payloadKey] = [self.payload toJson];
   } else if (self.payload) {

@@ -399,7 +399,11 @@
       continue;
     }
     id jsonVal = [self printField:field value:[msg valueForKey:field.name]];
-    json[field.name] = jsonVal;
+    NSString *name = field.name;
+    if (field.fieldType == GPBFieldTypeRepeated) {
+      name = [name substringToIndex:name.length - @"Array".length];
+    }
+    json[name] = jsonVal;
   }
   return json;
 }
