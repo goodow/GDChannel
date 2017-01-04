@@ -8,6 +8,8 @@
 #import "GPBUtilities.h"
 #import "GPBDictionary_PackagePrivate.h"
 
+static NSString *const arraySuffix = @"Array";
+
 @implementation GPBMessage (JsonFormat)
 
 + (instancetype)parseFromJson:(nullable NSDictionary *)json error:(NSError **)errorPtr {
@@ -20,7 +22,7 @@
     return msg;
   } @catch (NSException *exception) {
     if (errorPtr) {
-      NSDictionary *userInfo = exception.reason.length ? @{@"Reason" : exception.reason} : nil;
+      NSDictionary *userInfo = exception.reason.length ? @{@"Reason": exception.reason} : nil;
       *errorPtr = [NSError errorWithDomain:GPBMessageErrorDomain code:-105 userInfo:userInfo];
     }
   }
@@ -33,7 +35,7 @@
 
 - (NSDictionary *)toJson {
   @try {
-    NSDictionary *json = [self.class printMessage:self];
+    NSDictionary *json = [self.class printMessage:self useTextFormatKey:NO];
     return json;
   } @catch (NSException *exception) {
     // This really shouldn't happen. The only way printMessage:
@@ -62,8 +64,14 @@
       continue;
     }
     GPBFieldDescriptor *field = [descriptor fieldWithName:key];
+    field = field ?: [self fieldWithTextFormatName:key inDescriptor:descriptor];
     if (!field) {
-      field = [self fieldWithTextFormatName:key inDescriptor:descriptor];
+      if (![key hasSuffix:arraySuffix]) {
+        field = [descriptor fieldWithName:[key stringByAppendingString:arraySuffix]];
+        if (field.fieldType != GPBFieldTypeRepeated) {
+          field = nil;
+        }
+      }
       if (!field) {
         // message doesn't have the field set, on to the next.
         continue;
@@ -390,7 +398,7 @@
 
 #pragma mark  Converts protobuf message to JSON format.
 
-+ (NSDictionary *)printMessage:(GPBMessage *)msg {
++ (NSDictionary *)printMessage:(GPBMessage *)msg useTextFormatKey:(BOOL)useTextFormatKey {
   NSMutableDictionary *json = [NSMutableDictionary dictionary];
   GPBDescriptor *descriptor = [msg.class descriptor];
   for (GPBFieldDescriptor *field in descriptor.fields) {
@@ -398,29 +406,29 @@
       // Nothing to print, out of here.
       continue;
     }
-    id jsonVal = [self printField:field value:[msg valueForKey:field.name]];
-    NSString *name = field.name;
-    if (field.fieldType == GPBFieldTypeRepeated) {
-      name = [name substringToIndex:name.length - @"Array".length];
+    id jsonVal = [self printField:field value:[msg valueForKey:field.name] useTextFormatKey:useTextFormatKey];
+    NSString *name = useTextFormatKey ? field.textFormatName : field.name;
+    if (!useTextFormatKey && field.fieldType == GPBFieldTypeRepeated) {
+      name = [name substringToIndex:name.length - arraySuffix.length];
     }
     json[name] = jsonVal;
   }
   return json;
 }
 
-+ (id)printField:(GPBFieldDescriptor *)field value:(id)val {
++ (id)printField:(GPBFieldDescriptor *)field value:(id)val useTextFormatKey:(BOOL)useTextFormatKey {
   switch (field.fieldType) {
     case GPBFieldTypeSingle:
-      return [self printSingleFieldValue:field value:val];
+      return [self printSingleFieldValue:field value:val useTextFormatKey:useTextFormatKey];
     case GPBFieldTypeRepeated:
-      return [self printRepeatedFieldValue:field value:val];
+      return [self printRepeatedFieldValue:field value:val useTextFormatKey:useTextFormatKey];
     case GPBFieldTypeMap:
-      return [self printMapFieldValue:field value:val];
+      return [self printMapFieldValue:field value:val useTextFormatKey:useTextFormatKey];
   }
   return nil;
 }
 
-+ (id)printSingleFieldValue:(GPBFieldDescriptor *)field value:(id)val {
++ (id)printSingleFieldValue:(GPBFieldDescriptor *)field value:(id)val useTextFormatKey:(BOOL)useTextFormatKey {
   switch (field.dataType) {
     case GPBDataTypeBool:
     case GPBDataTypeDouble:
@@ -445,11 +453,11 @@
     }
     case GPBDataTypeMessage:
     case GPBDataTypeGroup:
-      return [self printMessage:val];
+      return [self printMessage:val useTextFormatKey:useTextFormatKey];
   }
 }
 
-+ (id)printRepeatedFieldValue:(GPBFieldDescriptor *)field value:(id)arrayVal {
++ (id)printRepeatedFieldValue:(GPBFieldDescriptor *)field value:(id)arrayVal useTextFormatKey:(BOOL)useTextFormatKey {
   NSMutableArray *json = [NSMutableArray array];
   switch (field.dataType) {
     case GPBDataTypeBool:
@@ -495,14 +503,14 @@
     case GPBDataTypeMessage:
       [self assert:arrayVal isKindOfClass:NSArray.class];
       for (id ele in arrayVal) {
-        [json addObject:[self printMessage:ele]];
+        [json addObject:[self printMessage:ele useTextFormatKey:useTextFormatKey]];
       }
       break;
   }
   return json;
 }
 
-+ (id)printMapFieldValue:(GPBFieldDescriptor *)field value:(id)mapVal {
++ (id)printMapFieldValue:(GPBFieldDescriptor *)field value:(id)mapVal useTextFormatKey:(BOOL)useTextFormatKey {
   NSMutableDictionary *json = [NSMutableDictionary dictionary];
   GPBDataType keyDataType = field.mapKeyDataType;
   GPBDataType valueDataType = field.dataType;
@@ -520,7 +528,7 @@
           break;
         case GPBDataTypeGroup:
         case GPBDataTypeMessage:
-          jsonVal = [self printMessage:mapVal[key]];
+          jsonVal = [self printMessage:mapVal[key] useTextFormatKey:useTextFormatKey];
           break;
       }
       json[key] = jsonVal;
