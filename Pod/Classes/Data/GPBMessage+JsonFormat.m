@@ -122,10 +122,14 @@ static NSString *const arraySuffix = @"Array";
       [msg setValue:[json copy] forKey:field.name];
       break;
     case GPBDataTypeEnum:
-      [self assert:json isKindOfClass:NSString.class];
-      int32_t outValue;
-      if ([field.enumDescriptor getValue:&outValue forEnumTextFormatName:json]) {
-        [msg setValue:@(outValue) forKey:field.name];
+      if ([json isKindOfClass:NSNumber.class]) {
+        [msg setValue:json forKey:field.name];
+      } else {
+        [self assert:json isKindOfClass:NSString.class];
+        int32_t outValue;
+        if ([field.enumDescriptor getValue:&outValue forEnumTextFormatName:json]) {
+          [msg setValue:@(outValue) forKey:field.name];
+        }
       }
       break;
     case GPBDataTypeBytes:
@@ -191,8 +195,12 @@ static NSString *const arraySuffix = @"Array";
       case GPBDataTypeEnum: {
         int32_t outValue = 0;
         if (ele != NSNull.null) {
-          [self assert:ele isKindOfClass:NSString.class];
-          [field.enumDescriptor getValue:&outValue forEnumTextFormatName:ele];
+          if ([json isKindOfClass:NSNumber.class]) {
+            outValue = [json intValue];
+          } else {
+            [self assert:ele isKindOfClass:NSString.class];
+            [field.enumDescriptor getValue:&outValue forEnumTextFormatName:ele];
+          }
         }
         [(GPBEnumArray *) genericArray addRawValue:outValue];
         break;
@@ -345,7 +353,11 @@ static NSString *const arraySuffix = @"Array";
       break;
     case GPBDataTypeEnum: {
       int32_t outValue = 0;
-      [field.enumDescriptor getValue:&outValue forEnumTextFormatName:val];
+      if ([val isKindOfClass:NSNumber.class]) {
+        outValue = [val intValue];
+      } else {
+        [field.enumDescriptor getValue:&outValue forEnumTextFormatName:val];
+      }
       valueToFill.valueEnum = outValue;
       break;
     }
