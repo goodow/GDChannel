@@ -21,3 +21,28 @@ message Message {
   }
 }
 
+// https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/PayloadKeyReference.html
+message ApplePushNotification {
+  ApnsPayload aps = 1;
+  Message gdc = 2;
+  GoogleGCM gcm = 3;
+  string du = 100;
+
+  message ApnsPayload {
+    Alert alert = 1;
+    int32 badge = 2;
+    string sound = 3;
+    //  int32 content-available = 4;
+    string category = 5;
+    //  string thread-id = 6;
+
+    message Alert {
+      string title = 1;
+      string body = 2;
+      //    string title-loc-key = 1;
+    }
+  }
+  message GoogleGCM {
+    string message_id = 1;
+  }
+}

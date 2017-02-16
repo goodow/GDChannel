@@ -29,17 +29,8 @@
 
 @implementation GDCPBChannelRoot
 
-+ (GPBExtensionRegistry*)extensionRegistry {
-  // This is called by +initialize so there is no need to worry
-  // about thread safety and initialization of registry.
-  static GPBExtensionRegistry* registry = nil;
-  if (!registry) {
-    GPBDebugCheckRuntimeVersion();
-    registry = [[GPBExtensionRegistry alloc] init];
-    [registry addExtensions:[GPBAnyRoot extensionRegistry]];
-  }
-  return registry;
-}
+// No extensions in the file and none of the imports (direct or indirect)
+// defined extensions, so no need to generate +extensionRegistry.
 
 @end
 
@@ -50,8 +41,9 @@ static GPBFileDescriptor *GDCPBChannelRoot_FileDescriptor(void) {
   // about thread safety of the singleton.
   static GPBFileDescriptor *descriptor = NULL;
   if (!descriptor) {
-    GPBDebugCheckRuntimeVersion();
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
     descriptor = [[GPBFileDescriptor alloc] initWithPackage:@"goodow.channel"
+                                                 objcPrefix:@"GDCPB"
                                                      syntax:GPBFileSyntaxProto3];
   }
   return descriptor;
@@ -115,7 +107,7 @@ typedef struct GDCPBMessage__storage_ {
         .number = GDCPBMessage_FieldNumber_ReplyTopic,
         .hasIndex = 3,
         .offset = (uint32_t)offsetof(GDCPBMessage__storage_, replyTopic),
-        .flags = GPBFieldOptional | GPBFieldTextFormatNameCustom,
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
         .dataType = GPBDataTypeString,
       },
       {
@@ -144,7 +136,7 @@ typedef struct GDCPBMessage__storage_ {
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(GDCPBMessage__storage_)
-                                         flags:0];
+                                         flags:GPBDescriptorInitializationFlag_None];
 #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     static const char *extraTextFormatInfo =
         "\001\004\n\000";
@@ -234,7 +226,260 @@ typedef struct GDCPBMessage_Options__storage_ {
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(GDCPBMessage_Options__storage_)
-                                         flags:0];
+                                         flags:GPBDescriptorInitializationFlag_None];
+    [localDescriptor setupContainingMessageClassName:GPBStringifySymbol(GDCPBMessage)];
+    NSAssert(descriptor == nil, @"Startup recursed!");
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - GDCPBApplePushNotification
+
+@implementation GDCPBApplePushNotification
+
+@dynamic hasAps, aps;
+@dynamic hasGdc, gdc;
+@dynamic hasGcm, gcm;
+@dynamic du;
+
+typedef struct GDCPBApplePushNotification__storage_ {
+  uint32_t _has_storage_[1];
+  GDCPBApplePushNotification_ApnsPayload *aps;
+  GDCPBMessage *gdc;
+  GDCPBApplePushNotification_GoogleGCM *gcm;
+  NSString *du;
+} GDCPBApplePushNotification__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "aps",
+        .dataTypeSpecific.className = GPBStringifySymbol(GDCPBApplePushNotification_ApnsPayload),
+        .number = GDCPBApplePushNotification_FieldNumber_Aps,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(GDCPBApplePushNotification__storage_, aps),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "gdc",
+        .dataTypeSpecific.className = GPBStringifySymbol(GDCPBMessage),
+        .number = GDCPBApplePushNotification_FieldNumber_Gdc,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(GDCPBApplePushNotification__storage_, gdc),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "gcm",
+        .dataTypeSpecific.className = GPBStringifySymbol(GDCPBApplePushNotification_GoogleGCM),
+        .number = GDCPBApplePushNotification_FieldNumber_Gcm,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(GDCPBApplePushNotification__storage_, gcm),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "du",
+        .dataTypeSpecific.className = NULL,
+        .number = GDCPBApplePushNotification_FieldNumber_Du,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(GDCPBApplePushNotification__storage_, du),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeString,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:[GDCPBApplePushNotification class]
+                                     rootClass:[GDCPBChannelRoot class]
+                                          file:GDCPBChannelRoot_FileDescriptor()
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(GDCPBApplePushNotification__storage_)
+                                         flags:GPBDescriptorInitializationFlag_None];
+    NSAssert(descriptor == nil, @"Startup recursed!");
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - GDCPBApplePushNotification_ApnsPayload
+
+@implementation GDCPBApplePushNotification_ApnsPayload
+
+@dynamic hasAlert, alert;
+@dynamic badge;
+@dynamic sound;
+@dynamic category;
+
+typedef struct GDCPBApplePushNotification_ApnsPayload__storage_ {
+  uint32_t _has_storage_[1];
+  int32_t badge;
+  GDCPBApplePushNotification_ApnsPayload_Alert *alert;
+  NSString *sound;
+  NSString *category;
+} GDCPBApplePushNotification_ApnsPayload__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "alert",
+        .dataTypeSpecific.className = GPBStringifySymbol(GDCPBApplePushNotification_ApnsPayload_Alert),
+        .number = GDCPBApplePushNotification_ApnsPayload_FieldNumber_Alert,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(GDCPBApplePushNotification_ApnsPayload__storage_, alert),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "badge",
+        .dataTypeSpecific.className = NULL,
+        .number = GDCPBApplePushNotification_ApnsPayload_FieldNumber_Badge,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(GDCPBApplePushNotification_ApnsPayload__storage_, badge),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeInt32,
+      },
+      {
+        .name = "sound",
+        .dataTypeSpecific.className = NULL,
+        .number = GDCPBApplePushNotification_ApnsPayload_FieldNumber_Sound,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(GDCPBApplePushNotification_ApnsPayload__storage_, sound),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "category",
+        .dataTypeSpecific.className = NULL,
+        .number = GDCPBApplePushNotification_ApnsPayload_FieldNumber_Category,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(GDCPBApplePushNotification_ApnsPayload__storage_, category),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeString,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:[GDCPBApplePushNotification_ApnsPayload class]
+                                     rootClass:[GDCPBChannelRoot class]
+                                          file:GDCPBChannelRoot_FileDescriptor()
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(GDCPBApplePushNotification_ApnsPayload__storage_)
+                                         flags:GPBDescriptorInitializationFlag_None];
+    [localDescriptor setupContainingMessageClassName:GPBStringifySymbol(GDCPBApplePushNotification)];
+    NSAssert(descriptor == nil, @"Startup recursed!");
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - GDCPBApplePushNotification_ApnsPayload_Alert
+
+@implementation GDCPBApplePushNotification_ApnsPayload_Alert
+
+@dynamic title;
+@dynamic body;
+
+typedef struct GDCPBApplePushNotification_ApnsPayload_Alert__storage_ {
+  uint32_t _has_storage_[1];
+  NSString *title;
+  NSString *body;
+} GDCPBApplePushNotification_ApnsPayload_Alert__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "title",
+        .dataTypeSpecific.className = NULL,
+        .number = GDCPBApplePushNotification_ApnsPayload_Alert_FieldNumber_Title,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(GDCPBApplePushNotification_ApnsPayload_Alert__storage_, title),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "body",
+        .dataTypeSpecific.className = NULL,
+        .number = GDCPBApplePushNotification_ApnsPayload_Alert_FieldNumber_Body,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(GDCPBApplePushNotification_ApnsPayload_Alert__storage_, body),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeString,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:[GDCPBApplePushNotification_ApnsPayload_Alert class]
+                                     rootClass:[GDCPBChannelRoot class]
+                                          file:GDCPBChannelRoot_FileDescriptor()
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(GDCPBApplePushNotification_ApnsPayload_Alert__storage_)
+                                         flags:GPBDescriptorInitializationFlag_None];
+    [localDescriptor setupContainingMessageClassName:GPBStringifySymbol(GDCPBApplePushNotification_ApnsPayload)];
+    NSAssert(descriptor == nil, @"Startup recursed!");
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - GDCPBApplePushNotification_GoogleGCM
+
+@implementation GDCPBApplePushNotification_GoogleGCM
+
+@dynamic messageId;
+
+typedef struct GDCPBApplePushNotification_GoogleGCM__storage_ {
+  uint32_t _has_storage_[1];
+  NSString *messageId;
+} GDCPBApplePushNotification_GoogleGCM__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "messageId",
+        .dataTypeSpecific.className = NULL,
+        .number = GDCPBApplePushNotification_GoogleGCM_FieldNumber_MessageId,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(GDCPBApplePushNotification_GoogleGCM__storage_, messageId),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeString,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:[GDCPBApplePushNotification_GoogleGCM class]
+                                     rootClass:[GDCPBChannelRoot class]
+                                          file:GDCPBChannelRoot_FileDescriptor()
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(GDCPBApplePushNotification_GoogleGCM__storage_)
+                                         flags:GPBDescriptorInitializationFlag_None];
+    [localDescriptor setupContainingMessageClassName:GPBStringifySymbol(GDCPBApplePushNotification)];
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }
