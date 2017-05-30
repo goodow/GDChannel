@@ -19,15 +19,12 @@ static NSString *const protobufFileExtension = @"protobuf";
 }
 
 + (GDCStorage *)instance {
-  static GDCStorage *_instance = nil;
-
-  @synchronized (self) {
-    if (_instance == nil) {
-      _instance = [[self alloc] initWithBaseDirectory:nil];
-    }
-  }
-
-  return _instance;
+  static GDCStorage *instance = nil;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+      instance = [[GDCStorage alloc] initWithBaseDirectory:nil];
+  });
+  return instance;
 }
 
 - (instancetype)initWithBaseDirectory:(NSString *)baseDir {

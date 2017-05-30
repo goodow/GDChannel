@@ -7,6 +7,7 @@
 #import "GPBArray.h"
 #import "GPBUtilities.h"
 #import "GPBDictionary_PackagePrivate.h"
+#import "GPBUtilities_PackagePrivate.h"
 
 static NSString *const arraySuffix = @"Array";
 
@@ -102,12 +103,18 @@ static NSString *const arraySuffix = @"Array";
     case GPBDataTypeUInt64:
     case GPBDataTypeFloat:
     case GPBDataTypeDouble:
-    case GPBDataTypeEnum:
       json = [self canonicalValue:json field:field toJson:NO];
       if (ignoreDefVal && [json isEqualToNumber:@(0)]) {
         return;
       }
       [msg setValue:json forKey:field.name];
+      break;
+    case GPBDataTypeEnum:
+      json = [self canonicalValue:json field:field toJson:NO];
+      if (ignoreDefVal && [json isEqualToNumber:@(0)]) {
+        return;
+      }
+      GPBSetInt32IvarWithFieldInternal(msg, field, [json intValue], msg.class.descriptor.file.syntax);
       break;
     case GPBDataTypeBytes:
     case GPBDataTypeString: {
@@ -342,7 +349,7 @@ static NSString *const arraySuffix = @"Array";
       // Nothing to print, out of here.
       continue;
     }
-    id jsonVal = [self printField:field value:[msg valueForKey:field.name] useTextFormatKey:useTextFormatKey];
+    id jsonVal = [self printField:field msg:msg useTextFormatKey:useTextFormatKey];
     NSString *name = useTextFormatKey ? field.textFormatName : field.name;
     if (!useTextFormatKey && field.fieldType == GPBFieldTypeRepeated) {
       name = [name substringToIndex:name.length - arraySuffix.length];
@@ -352,27 +359,29 @@ static NSString *const arraySuffix = @"Array";
   return json;
 }
 
-+ (id)printField:(GPBFieldDescriptor *)field value:(nonnull id)val useTextFormatKey:(BOOL)useTextFormatKey {
++ (id)printField:(GPBFieldDescriptor *)field msg:(GPBMessage *)msg useTextFormatKey:(BOOL)useTextFormatKey {
   switch (field.fieldType) {
     case GPBFieldTypeSingle:
-      return [self printSingleFieldValue:field value:val useTextFormatKey:useTextFormatKey];
+      return [self printSingleFieldValue:field msg:msg useTextFormatKey:useTextFormatKey];
     case GPBFieldTypeRepeated:
-      return [self printRepeatedFieldValue:field value:val useTextFormatKey:useTextFormatKey];
+      return [self printRepeatedFieldValue:field value:[msg valueForKey:field.name] useTextFormatKey:useTextFormatKey];
     case GPBFieldTypeMap:
-      return [self printMapFieldValue:field value:val useTextFormatKey:useTextFormatKey];
+      return [self printMapFieldValue:field value:[msg valueForKey:field.name] useTextFormatKey:useTextFormatKey];
     default:
       NSCAssert(NO, @"Can't happen");
       break;
   }
 }
 
-+ (id)printSingleFieldValue:(GPBFieldDescriptor *)field value:(nonnull id)val useTextFormatKey:(BOOL)useTextFormatKey {
++ (id)printSingleFieldValue:(GPBFieldDescriptor *)field msg:(GPBMessage *)msg useTextFormatKey:(BOOL)useTextFormatKey {
   switch (field.dataType) {
     case GPBDataTypeMessage:
     case GPBDataTypeGroup:
-      return [self printMessage:val useTextFormatKey:useTextFormatKey];
+      return [self printMessage:[msg valueForKey:field.name] useTextFormatKey:useTextFormatKey];
+    case GPBDataTypeEnum:
+      return [self canonicalValue:@(GPBGetMessageInt32Field(msg, field)) field:field toJson:YES];
     default:
-      return [self canonicalValue:val field:field toJson:YES];
+      return [self canonicalValue:[msg valueForKey:field.name] field:field toJson:YES];
   }
 }
 
@@ -485,19 +494,6 @@ static NSString *const arraySuffix = @"Array";
 }
 
 #pragma mark Exception assert
-
-// copied from GPBUtilities_PackagePrivate.h
-BOOL GPBDataTypeIsObject(GPBDataType type) {
-  switch (type) {
-    case GPBDataTypeBytes:
-    case GPBDataTypeString:
-    case GPBDataTypeMessage:
-    case GPBDataTypeGroup:
-      return YES;
-    default:
-      return NO;
-  }
-}
 
 + (id)canonicalValue:(nonnull id)value field:(GPBFieldDescriptor *)field toJson:(BOOL)toJson {
   switch (field.dataType) {
