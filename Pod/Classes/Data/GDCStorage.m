@@ -5,7 +5,7 @@
 #import "GDCStorage.h"
 #import "GDCMessage.h"
 #import "GDCMessageImpl.h"
-#import "Channel.pbobjc.h"
+#import "GoodowChannel.pbobjc.h"
 #import "GPBAny+GDChannel.h"
 #import "GDCOptions+ReadAccess.h"
 #import "GDCBusProvider.h"

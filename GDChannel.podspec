@@ -23,6 +23,8 @@ Pod::Spec.new do |s|
   s.source_files = 'Pod/Classes/**/*', 'Pod/Generated/**/*'
   s.requires_arc = ['Pod/Classes/**/*']
 
+  s.resource_bundle = { 'GDChannel' => 'protos/*.proto' }
+
   s.dependency 'MQTTKit', '~> 0.1.0'
   s.dependency 'Protobuf', '~> 3.0'
 end

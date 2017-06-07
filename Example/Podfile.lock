@@ -3,20 +3,20 @@ PODS:
     - MQTTKit (~> 0.1.0)
     - Protobuf (~> 3.0)
   - MQTTKit (0.1.0)
-  - Protobuf (3.1.0)
+  - Protobuf (3.3.0)
 
 DEPENDENCIES:
   - GDChannel (from `../`)
 
 EXTERNAL SOURCES:
   GDChannel:
-    :path: ../
+    :path: "../"
 
 SPEC CHECKSUMS:
-  GDChannel: 188843d9ae255227f5a72fcc35ae7d048509682c
+  GDChannel: 8fd65c33feff9cb061e85865ce631f3d59267b34
   MQTTKit: a4e6b8aa92db1aeae917d2b773fd72a7749937c4
-  Protobuf: 265e9977d04a83eba9cefb0bed3ad07e41033b4a
+  Protobuf: d582fecf68201eac3d79ed61369ef45734394b9c
 
 PODFILE CHECKSUM: d43afe03f564aee89085e35ebd1c8d15ec07a300
 
-COCOAPODS: 1.0.1
+COCOAPODS: 1.2.0
