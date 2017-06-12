@@ -1,7 +1,7 @@
 source 'https://github.com/CocoaPods/Specs.git'
 
 target 'GDChannel' do
-  pod "GDChannel", :path => "../"
+  pod "GDChannel/Firebase", :path => "../"
 end
 
 # target 'Tests', :exclusive => true do

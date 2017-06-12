@@ -19,12 +19,23 @@ Pod::Spec.new do |s|
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.platform     = :ios, '7.0'
+  s.default_subspec = 'Core'
 
-  s.source_files = 'Pod/Classes/**/*', 'Pod/Generated/**/*'
-  s.requires_arc = ['Pod/Classes/**/*']
+  s.subspec 'Core' do |sp|
+    sp.dependency 'MQTTKit', '~> 0.1.0'
+    sp.dependency 'Protobuf', '~> 3.0'
 
-  s.resource_bundle = { 'GDChannel' => 'protos/*.proto' }
+    sp.source_files = 'Pod/Classes/**/*', 'Pod/Generated/**/*'
+    sp.requires_arc = ['Pod/Classes/**/*']
+    sp.exclude_files = 'Pod/Classes/Firebase/**/*'
 
-  s.dependency 'MQTTKit', '~> 0.1.0'
-  s.dependency 'Protobuf', '~> 3.0'
+    sp.resource_bundle = { 'GDChannel' => 'protos/*.proto' }
+  end
+
+  s.subspec 'Firebase' do |sp|
+    sp.dependency 'Firebase/Database'
+    sp.dependency 'GDChannel/Core'
+
+    sp.source_files = 'Pod/Classes/Firebase/**/*'
+  end
 end

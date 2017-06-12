@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3F85BD61B5D0E2D0539D9F1A /* libPods-GDChannel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F004427CEBD8F8E6C19B36D /* libPods-GDChannel.a */; };
+		46BDF7DE1EF2BE960032D0A8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 46BDF7DD1EF2BE960032D0A8 /* GoogleService-Info.plist */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
@@ -22,6 +23,7 @@
 
 /* Begin PBXFileReference section */
 		2F004427CEBD8F8E6C19B36D /* libPods-GDChannel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GDChannel.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		46BDF7DD1EF2BE960032D0A8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* GDChannel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GDChannel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -65,11 +67,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		46BDF7DB1EF2BE960032D0A8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				46BDF7DC1EF2BE960032D0A8 /* Firebase */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		46BDF7DC1EF2BE960032D0A8 /* Firebase */ = {
+			isa = PBXGroup;
+			children = (
+				46BDF7DD1EF2BE960032D0A8 /* GoogleService-Info.plist */,
+			);
+			path = Firebase;
+			sourceTree = "<group>";
+		};
 		6003F581195388D10070C39A = {
 			isa = PBXGroup;
 			children = (
 				60FF7A9C1954A5C5007DD14C /* Podspec Metadata */,
 				6003F593195388D20070C39A /* GDChannel */,
+				46BDF7DB1EF2BE960032D0A8 /* Resources */,
 				6003F5B5195388D20070C39A /* Tests */,
 				6003F58C195388D20070C39A /* Frameworks */,
 				6003F58B195388D20070C39A /* Products */,
@@ -227,6 +246,7 @@
 			files = (
 				6003F5A4195388D20070C39A /* Main_iPad.storyboard in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
+				46BDF7DE1EF2BE960032D0A8 /* GoogleService-Info.plist in Resources */,
 				6003F5A1195388D20070C39A /* Main_iPhone.storyboard in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
 			);

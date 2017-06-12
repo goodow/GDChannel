@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>API_KEY</key>
+        <string>AIzaSyAygC2FFfZ9gpXrMyx5ixEEitq1ptb4Q4w</string>
+        <key>GCM_SENDER_ID</key>
+        <string>598242009211</string>
+        <key>PLIST_VERSION</key>
+        <string>1</string>
+        <key>BUNDLE_ID</key>
+        <string>com.goodow.realtime.GDOperation</string>
+        <key>GOOGLE_APP_ID</key>
+        <string>1:598242009211:ios:dbb4c9f3c3d30100</string>
+        <key>DATABASE_URL</key>
+        <string>https://tencent-live.firebaseio.com</string>
+    </dict>
+</plist>

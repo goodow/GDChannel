@@ -7,12 +7,18 @@
 //
 
 #import "GDCAppDelegate.h"
+#import "Firebase.h"
+#import "GDCFirebaseChannel.h"
 
-@implementation GDCAppDelegate
+@implementation GDCAppDelegate {
+  GDCFirebaseChannel *_bus;
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+  [FIRApp configure];
+  _bus = [[GDCFirebaseChannel alloc] initWithClientId:@"/topics/qq3175830003"];
     return YES;
 }
 							

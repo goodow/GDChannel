@@ -4,6 +4,7 @@
 
 #import "GPBAny+GDChannel.h"
 #import "GDCSerializable.h"
+#import "GPBMessage+JsonFormat.h"
 
 @implementation GPBAny (GDChannel)
 
@@ -32,10 +33,22 @@
 }
 
 + (id)packToJson:(id <GDCSerializable>)value {
-  if (![value isKindOfClass:NSMutableDictionary.class] && ![value isKindOfClass:NSMutableArray.class]) {
-    NSMutableDictionary *json = value.toJson;
+  if ([value isKindOfClass:GPBMessage.class]) {
+    NSMutableDictionary *json = [value toJson];
     json[kJsonTypeKey] = [self getTypeUrl:value withPrefix:nil];
     return json;
+  } else if ([value isKindOfClass:NSArray.class]) {
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:((NSArray *) value).count];
+    for (id ele in value) {
+      if ([ele isKindOfClass:GPBMessage.class]) {
+        NSMutableDictionary *json = [ele toJson];
+        json[kJsonTypeKey] = [self getTypeUrl:ele withPrefix:nil];
+        [array addObject:json];
+        continue;
+      }
+      [array addObject:ele];
+    }
+    return array;
   }
   return value;
 }
