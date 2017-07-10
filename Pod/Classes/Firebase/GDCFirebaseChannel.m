@@ -49,13 +49,16 @@
 }
 
 - (void)goOnline:(id)clientInfo {
-  self.bufRef = [[FIRDatabase.database reference] child:@"bus"];
   FIRDatabaseReference *clientIdRef = [[self.bufRef child:@"clients"] child:self.clientId];
-  [clientIdRef onDisconnectRemoveValueWithCompletionBlock:^(NSError *error, FIRDatabaseReference *ref) {
-      if (error) {
-        return;
+  [[FIRDatabase.database referenceWithPath:@".info/connected"] observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *snapshot) {
+      if ([snapshot.value boolValue]) {
+        [clientIdRef onDisconnectRemoveValueWithCompletionBlock:^(NSError *error, FIRDatabaseReference *ref) {
+            if (error) {
+              return;
+            }
+            [clientIdRef setValue:clientInfo];
+        }];
       }
-      [clientIdRef setValue:clientInfo];
   }];
 }
 
@@ -81,6 +84,12 @@
   if ([topic hasPrefix:[GDCBusProvider.clientId stringByAppendingString:@"/"]]) {
     topic = [topic substringFromIndex:GDCBusProvider.clientId.length + 1];
   }
+  NSRange range = [topic rangeOfString:@"/"];
+  NSUInteger index = range.location;
+  if (index == NSNotFound) {
+    return;
+  }
+
   historyPath = [NSString stringWithFormat:@"history/%@/messages/", [topic stringByReplacingOccurrencesOfString:@"/" withString:@"_"]];
   FIRDatabaseReference *historyRef = [self.bufRef child:historyPath].childByAutoId;
   historyPath = [historyPath stringByAppendingPathComponent:historyRef.key];
@@ -91,20 +100,15 @@
   msg[@"client"] = self.clientId;
   msg[topicKey] = topic;
   msg[replyTopicKey] = nil;
+  msg[@"time"] = FIRServerValue.timestamp;
 
   NSMutableDictionary *values = @{}.mutableCopy;
   values[historyPath] = msg;
 
   NSString *categoryPath = @"category";
   NSMutableDictionary *categoryValue = @{}.mutableCopy;
-  NSRange range = [topic rangeOfString:@"/"];
-  NSUInteger index = range.location;
-  if (index != NSNotFound) {
-    categoryPath = [NSString stringWithFormat:@"%@/%@/topics/%@", categoryPath, [topic substringToIndex:index],
-                                              [[topic substringFromIndex:index + 1] stringByReplacingOccurrencesOfString:@"/" withString:@"_"]];
-  } else {
-    categoryPath = [categoryPath stringByAppendingPathComponent:topic];
-  }
+  categoryPath = [NSString stringWithFormat:@"%@/%@/topics/%@", categoryPath, [topic substringToIndex:index],
+                                            [[topic substringFromIndex:index + 1] stringByReplacingOccurrencesOfString:@"/" withString:@"_"]];
   categoryValue[@"version"] = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
   values[categoryPath] = categoryValue;
 
