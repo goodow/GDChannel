@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "GDChannel"
-  s.version          = "0.6.0"
+  s.version          = "0.8.0"
   s.summary          = "iOS and Mac OS X client for realtime-channel."
   s.homepage         = "https://github.com/goodow/GDChannel"
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
